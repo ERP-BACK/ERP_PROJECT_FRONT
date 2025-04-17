@@ -1,28 +1,29 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { usePathname } from "next/navigation"
+import { useState } from "react";
+import { usePathname } from "next/navigation";
 
-import { DashboardHeader } from "@/components/dashboard/header"
-import { DashboardSidebar } from "@/components/dashboard/sidebar"
+import { DashboardHeader } from "@/components/dashboard/header";
+import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import Providers from "../providres";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
-  const pathname = usePathname()
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const pathname = usePathname();
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <DashboardSidebar open={sidebarOpen} pathname={pathname} />
       <div className="flex flex-col flex-1">
         <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="flex-1 p-6">{children}</main>
+        <Providers>{children}</Providers>
       </div>
     </div>
-  )
+  );
 }
