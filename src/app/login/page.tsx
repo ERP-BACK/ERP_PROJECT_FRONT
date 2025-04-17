@@ -4,7 +4,7 @@ import { auth, signIn } from "@/auth";
 
 export default async function Home() {
   const session = await auth();
-  if (session) {
+  if (session?.user) {
     // 🚨 ESTA es la forma correcta y automática de redirigir a Keycloak
     redirect("/dashboard");
   }
