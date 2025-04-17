@@ -20,7 +20,7 @@ import {
 
 export default async function Dashboard() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 m-2">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>

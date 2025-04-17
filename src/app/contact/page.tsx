@@ -99,18 +99,25 @@ export default function ContactoPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col ">
+    <div className="flex min-h-screen flex-col  ">
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b">
         <Link href="/" className="flex items-center gap-2">
-          <Database className="h-6 w-6" />
-          <span className="text-xl font-bold">ERP System</span>
+          <div className="flex justify-center">
+            <img
+              src="/logo_out.png"
+              alt="Dashboard ERP"
+              className="rounded-lg object-cover"
+              width={100}
+              height={200}
+            />
+          </div>
         </Link>
         <Link href="/login">
           <Button>Iniciar Sesión</Button>
         </Link>
       </header>
 
-      <main className="flex-1 container max-w-4xl py-12">
+      <main className="flex-1 container max-w-4xl py-12 justify-center align-center mx-auto px-4 lg:px-6">
         {isSuccess ? (
           <Card className="w-full">
             <CardContent className="pt-6">

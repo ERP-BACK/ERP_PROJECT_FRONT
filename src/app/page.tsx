@@ -15,9 +15,15 @@ import {
   Database,
   Shield,
 } from "lucide-react";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  if (session) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b">
@@ -35,7 +41,9 @@ export default function Home() {
         <form
           action={async () => {
             "use server";
-            await signIn("keycloak");
+            await signIn("keycloak", {
+              callbackUrl: "http://localhost:3000/dashboard",
+            });
           }}
         >
           <button type="submit">Iniciar Sesion</button>
@@ -58,7 +66,9 @@ export default function Home() {
                   <form
                     action={async () => {
                       "use server";
-                      await signIn("keycloak");
+                      await signIn("keycloak", {
+                        callbackUrl: "http://localhost:3000/dashboard",
+                      });
                     }}
                   >
                     <Button size="lg" className="gap-1" type="submit">
@@ -190,7 +200,9 @@ export default function Home() {
                 <form
                   action={async () => {
                     "use server";
-                    await signIn("keycloak");
+                    await signIn("keycloak", {
+                      callbackUrl: "http://localhost:3000/dashboard",
+                    });
                   }}
                 >
                   <Button size="lg" className="gap-1" type="submit">

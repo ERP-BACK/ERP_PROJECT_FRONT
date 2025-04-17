@@ -10,9 +10,9 @@ const apiAuthPrefix = "/api/auth";
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-
-  console.log({ isLoggedIn, path: nextUrl.pathname });
+  /// const isLoggedIn2 = req.auth ? !!req.auth.isLoggedIn : false;
+  // console.log("Middleware Auth", { isLoggedIn, nextUrl });
+  // console.log({ isLoggedIn, path: nextUrl.pathname });
 
   // // Permitir todas las rutas de API de autenticación
   //   if (nextUrl.pathname.startsWith(apiAuthPrefix)) {

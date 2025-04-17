@@ -8,6 +8,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session: {
         strategy: "jwt",
     },
+    pages: {
+        signIn: "/auth/signin",
+        //  signOut: "/auth/signout",
+        error: "/auth/error", // Error code passed in query string as ?error=
+        verifyRequest: "/auth/verify-request", // (used for check email message)
+        newUser: '/' // Will disable the new account creation screen if set to false
+    },
     callbacks: {
         async jwt({ token, account }) {
             const nowTimeStamp = Math.floor(Date.now() / 1000);
