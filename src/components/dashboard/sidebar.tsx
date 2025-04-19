@@ -54,7 +54,7 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
   return (
     <div
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-white transition-transform duration-300 lg:static lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 flex w-40 flex-col border-r bg-white transition-transform duration-300 lg:static lg:translate-x-0",
         open ? "translate-x-0" : "-translate-x-full"
       )}
     >
@@ -63,8 +63,15 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
           href="/dashboard"
           className="flex items-center gap-2 font-semibold"
         >
-          <Home className="h-6 w-6" />
-          <span>ERP System</span>
+          <div className="flex justify-center">
+            <img
+              src="/logo_out.png"
+              alt="Dashboard ERP"
+              className="rounded-lg object-cover"
+              width={100}
+              height={200}
+            />
+          </div>
         </Link>
       </div>
       <nav className="flex-1 overflow-auto py-6 px-4">
