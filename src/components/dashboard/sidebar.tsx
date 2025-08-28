@@ -49,6 +49,11 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
       href: "/dashboard/reports",
       icon: BarChart3,
     },
+    {
+      title: "Terceros",
+      href: "/dashboard/third-party",
+      icon: Box,
+    },
   ];
 
   return (
