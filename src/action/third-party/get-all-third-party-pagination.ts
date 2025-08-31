@@ -14,6 +14,7 @@ export const getAllThirdPartyPagination = async (paginationShared: IPaginationSh
         (res) => res.json()
     )
 
-    console.log(response)
+
+
     return response
 }

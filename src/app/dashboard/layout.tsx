@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import Providers from "../providres";
-
+import { FlotingChat } from "../chatbot/ui/FlotingChat";
 export default function DashboardLayout({
   children,
 }: {
@@ -21,6 +21,7 @@ export default function DashboardLayout({
     <div className="flex min-h-screen bg-gray-100">
       <DashboardSidebar open={sidebarOpen} pathname={pathname} />
       <div className="flex flex-col flex-1">
+        <FlotingChat />
         <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         <Providers>{children}</Providers>
       </div>

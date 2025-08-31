@@ -11,6 +11,13 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Show } from "../show/Show.component";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 
 interface SidebarProps {
   open: boolean;
@@ -23,36 +30,49 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
       title: "Dashboard",
       href: "/dashboard",
       icon: LayoutDashboard,
+      type: "NA",
     },
     {
       title: "Inventario",
       href: "/dashboard/inventory",
       icon: Package,
+      type: "NA",
     },
     {
       title: "Ventas",
       href: "/dashboard/sales",
       icon: ShoppingCart,
+      type: "NA",
     },
     {
       title: "Clientes",
       href: "/dashboard/customers",
       icon: Users,
+      type: "NA",
     },
     {
       title: "Productos",
       href: "/dashboard/products",
+      type: "NA",
       icon: Box,
     },
     {
       title: "Reportes",
       href: "/dashboard/reports",
       icon: BarChart3,
+      type: "NA",
     },
     {
-      title: "Terceros",
-      href: "/dashboard/third-party",
-      icon: Box,
+      title: "Maestros",
+      href: "/dashboard/masters/third-party",
+      type: "Accordion",
+      element: [
+        {
+          title: "Terceros",
+          href: "/dashboard/masters/third-party",
+          icon: Box,
+        },
+      ],
     },
   ];
 
@@ -82,20 +102,68 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
       <nav className="flex-1 overflow-auto py-6 px-4">
         <div className="space-y-1">
           {modules.map((module) => (
-            <Link key={module.href} href={module.href}>
-              <Button
-                variant={pathname === module.href ? "secondary" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  pathname === module.href
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-500 hover:text-gray-900"
-                )}
-              >
-                <module.icon className="mr-2 h-5 w-5" />
-                {module.title}
-              </Button>
-            </Link>
+            <Show
+              key={module.title}
+              when={!(module.type === "Accordion")}
+              fallback={
+                <Accordion
+                  type="single"
+                  collapsible
+                  className="w-full"
+                  defaultValue="item-1"
+                >
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>Maestros</AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-4 text-balance">
+                      {module.element &&
+                        module.element.map((singleModule) => (
+                          <Link
+                            key={singleModule.href}
+                            href={singleModule.href}
+                          >
+                            <Button
+                              variant={
+                                pathname === singleModule.href
+                                  ? "secondary"
+                                  : "ghost"
+                              }
+                              className={cn(
+                                "w-full justify-start",
+                                pathname === module.href
+                                  ? "bg-gray-100 text-gray-900"
+                                  : "text-gray-500 hover:text-gray-900"
+                              )}
+                            >
+                              <singleModule.icon className="mr-2 h-5 w-5" />
+                              {singleModule.title}
+                            </Button>
+                          </Link>
+                        ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              }
+            >
+              <Link key={module.href} href={module.href}>
+                <Button
+                  variant={pathname === module.href ? "secondary" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    pathname === module.href
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-500 hover:text-gray-900"
+                  )}
+                >
+                  {module.icon ? (
+                    <module.icon
+                      className="mr-2 h-5 w-5"
+                      aria-label="icono del módulo"
+                    />
+                  ) : null}
+                  {module.title}
+                </Button>
+              </Link>
+            </Show>
           ))}
         </div>
       </nav>
