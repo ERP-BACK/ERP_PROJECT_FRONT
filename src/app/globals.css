@@ -120,3 +120,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 400ms;
+} */

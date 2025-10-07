@@ -107,6 +107,82 @@ export default async function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
+            <CardTitle>Maestros</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+              <Link href="/dashboard/masters/third-party">
+                <Card className="hover:bg-gray-50 transition-colors">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      Terceros
+                    </CardTitle>
+                    <Package className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription>
+                      Gestión de terceros, carga, creación y actualización
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>Actividad Reciente</CardTitle>
+            <CardDescription>
+              Últimas 5 actividades en el sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                {
+                  action: "Venta completada",
+                  user: "María López",
+                  time: "Hace 5 minutos",
+                },
+                {
+                  action: "Producto actualizado",
+                  user: "Juan Pérez",
+                  time: "Hace 15 minutos",
+                },
+                { action: "Nuevo cliente", user: "Admin", time: "Hace 1 hora" },
+                {
+                  action: "Inventario actualizado",
+                  user: "Carlos Ruiz",
+                  time: "Hace 3 horas",
+                },
+                {
+                  action: "Reporte generado",
+                  user: "Admin",
+                  time: "Hace 5 horas",
+                },
+              ].map((activity, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="mr-4 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                    {index + 1}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {activity.action}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {activity.user} • {activity.time}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
             <CardTitle>Resumen de Módulos</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
@@ -171,55 +247,6 @@ export default async function Dashboard() {
                   </CardContent>
                 </Card>
               </Link>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Actividad Reciente</CardTitle>
-            <CardDescription>
-              Últimas 5 actividades en el sistema
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[
-                {
-                  action: "Venta completada",
-                  user: "María López",
-                  time: "Hace 5 minutos",
-                },
-                {
-                  action: "Producto actualizado",
-                  user: "Juan Pérez",
-                  time: "Hace 15 minutos",
-                },
-                { action: "Nuevo cliente", user: "Admin", time: "Hace 1 hora" },
-                {
-                  action: "Inventario actualizado",
-                  user: "Carlos Ruiz",
-                  time: "Hace 3 horas",
-                },
-                {
-                  action: "Reporte generado",
-                  user: "Admin",
-                  time: "Hace 5 horas",
-                },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="mr-4 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    {index + 1}
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {activity.action}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {activity.user} • {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
             </div>
           </CardContent>
         </Card>
