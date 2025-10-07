@@ -33,6 +33,18 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
       type: "NA",
     },
     {
+      title: "Maestros",
+      href: "/dashboard/masters/third-party",
+      type: "Accordion",
+      element: [
+        {
+          title: "Terceros",
+          href: "/dashboard/masters/third-party",
+          icon: Box,
+        },
+      ],
+    },
+    {
       title: "Inventario",
       href: "/dashboard/inventory",
       icon: Package,
@@ -61,18 +73,6 @@ export function DashboardSidebar({ open, pathname }: SidebarProps) {
       href: "/dashboard/reports",
       icon: BarChart3,
       type: "NA",
-    },
-    {
-      title: "Maestros",
-      href: "/dashboard/masters/third-party",
-      type: "Accordion",
-      element: [
-        {
-          title: "Terceros",
-          href: "/dashboard/masters/third-party",
-          icon: Box,
-        },
-      ],
     },
   ];
 

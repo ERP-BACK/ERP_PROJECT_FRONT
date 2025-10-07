@@ -107,7 +107,7 @@ export default async function Dashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Resumen de Módulos</CardTitle>
+            <CardTitle>Maestros</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
