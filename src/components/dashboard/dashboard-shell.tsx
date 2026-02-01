@@ -19,7 +19,7 @@ export function DashboardShell({ children, roles, userName, userEmail }: Dashboa
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-background">
       <DashboardSidebar
         open={sidebarOpen}
         pathname={pathname}

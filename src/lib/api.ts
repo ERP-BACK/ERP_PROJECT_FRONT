@@ -2,12 +2,24 @@ import { auth } from "@/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3009";
 
+export class AuthenticationError extends Error {
+  constructor(message = "Session expired") {
+    super(message);
+    this.name = "AuthenticationError";
+  }
+}
+
 interface ApiOptions extends Omit<RequestInit, "headers"> {
   headers?: Record<string, string>;
 }
 
 export async function apiClient<T = unknown>(path: string, options: ApiOptions = {}): Promise<T> {
   const session = await auth();
+
+  if (session?.error === "RefreshTokenError") {
+    throw new AuthenticationError();
+  }
+
   const token = session?.access_token;
 
   const headers: Record<string, string> = {
@@ -23,6 +35,10 @@ export async function apiClient<T = unknown>(path: string, options: ApiOptions =
     ...options,
     headers,
   });
+
+  if (res.status === 401) {
+    throw new AuthenticationError();
+  }
 
   if (!res.ok) {
     let message = `Error ${res.status}`;

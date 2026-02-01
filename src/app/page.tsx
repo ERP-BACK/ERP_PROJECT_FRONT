@@ -1,22 +1,68 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChevronRight,
+  ArrowRight,
   BarChart3,
-  Users,
+  Box,
+  Lock,
   Settings,
-  Database,
-  Shield,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import { auth, signIn } from "@/auth";
 import { redirect } from "next/navigation";
+
+function SignInForm({ children }: { children: React.ReactNode }) {
+  return (
+    <form
+      action={async () => {
+        "use server";
+        await signIn("keycloak", { redirectTo: "/" });
+      }}
+    >
+      {children}
+    </form>
+  );
+}
+
+const features = [
+  {
+    icon: BarChart3,
+    title: "Analisis Financiero",
+    description:
+      "Informes detallados sobre el rendimiento financiero con dashboards personalizables.",
+  },
+  {
+    icon: Users,
+    title: "Gestion de RRHH",
+    description:
+      "Administre informacion de empleados, nominas y procesos de contratacion.",
+  },
+  {
+    icon: Box,
+    title: "Inventario",
+    description:
+      "Control de inventario en tiempo real con optimizacion de niveles de stock.",
+  },
+  {
+    icon: Settings,
+    title: "Operaciones",
+    description:
+      "Automatizacion de procesos operativos para mayor eficiencia productiva.",
+  },
+  {
+    icon: Lock,
+    title: "Seguridad",
+    description:
+      "Proteccion de datos empresariales con autenticacion avanzada y permisos granulares.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "CRM",
+    description:
+      "Gestion de relaciones con clientes para mejorar retencion y satisfaccion.",
+  },
+];
 
 export default async function Home() {
   const session = await auth();
@@ -29,57 +75,51 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b">
-        <div className="flex items-center gap-2">
-          <img
-            src="/logo_out.png"
-            alt="Dashboard ERP"
-            className="rounded-lg object-cover"
-            width={100}
-            height={200}
-          />
-          <Database className="h-6 w-6" />
-          <div className="flex justify-center"></div>
+    <div className="flex min-h-screen flex-col bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="flex items-center">
+            <img
+              src="/logo_out.png"
+              alt="OnERP"
+              className="h-9 w-auto object-contain"
+            />
+          </Link>
+          <SignInForm>
+            <Button variant="ghost" size="sm" type="submit">
+              Iniciar Sesion
+            </Button>
+          </SignInForm>
         </div>
-        <form
-          action={async () => {
-            "use server";
-            await signIn("keycloak", {
-              redirectTo: "/",
-            });
-          }}
-        >
-          <button type="submit">Iniciar Sesion</button>
-        </form>
       </header>
+
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-muted/50 to-muted">
-          <div className="container px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+        {/* Hero */}
+        <section className="relative overflow-hidden bg-muted/50">
+          {/* Subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-transparent" />
+          <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-28 lg:py-36">
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              <div className="max-w-lg">
+                <div className="mb-4 inline-flex items-center rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
+                  Planificacion de Recursos Empresariales
+                </div>
+                <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
                   Sistema ERP completo para su empresa
                 </h1>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  Gestione todos los aspectos de su negocio con nuestra
-                  plataforma integral de planificación de recursos
-                  empresariales.
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                  Gestione todos los aspectos de su negocio con una plataforma
+                  integral. Inventario, ventas, clientes y reportes en un solo
+                  lugar.
                 </p>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signIn("keycloak", {
-                        redirectTo: "/",
-                      });
-                    }}
-                  >
-                    <Button size="lg" className="gap-1" type="submit">
-                      Iniciar Sesión
-                      <ChevronRight className="h-4 w-4" />
+                <div className="mt-8 flex items-center gap-3">
+                  <SignInForm>
+                    <Button type="submit" size="lg">
+                      Iniciar Sesion
+                      <ArrowRight className="ml-1.5 h-4 w-4" />
                     </Button>
-                  </form>
+                  </SignInForm>
                   <Link href="/contact">
                     <Button variant="outline" size="lg">
                       Solicitar Demo
@@ -87,136 +127,133 @@ export default async function Home() {
                   </Link>
                 </div>
               </div>
-              <div className="flex justify-center">
-                <img
-                  src="/presentation.png"
-                  alt="Dashboard ERP"
-                  className="rounded-lg object-cover shadow-lg"
-                  width={500}
-                  height={400}
-                />
+
+              {/* Hero visual — abstract data representation instead of stock image */}
+              <div className="relative hidden lg:block">
+                <div className="relative mx-auto w-full max-w-md">
+                  {/* Background shape */}
+                  <div className="absolute -inset-4 rounded-2xl bg-primary/[0.04] ring-1 ring-primary/[0.06]" />
+
+                  {/* Mock dashboard card */}
+                  <div className="relative rounded-xl border bg-card p-6 shadow-[0_1px_3px_0_rgb(0_0_0/0.04)]">
+                    {/* Top bar */}
+                    <div className="flex items-center gap-2 mb-5">
+                      <div className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
+                      <div className="h-2.5 w-2.5 rounded-full bg-warning/60" />
+                      <div className="h-2.5 w-2.5 rounded-full bg-success/60" />
+                      <div className="ml-3 h-3 w-32 rounded bg-muted" />
+                    </div>
+
+                    {/* Mini metrics */}
+                    <div className="grid grid-cols-3 gap-3 mb-5">
+                      {[
+                        { label: "Ventas", value: "$45.2K", color: "bg-primary" },
+                        { label: "Clientes", value: "2,350", color: "bg-success" },
+                        { label: "Ordenes", value: "12.2K", color: "bg-chart-2" },
+                      ].map((m) => (
+                        <div
+                          key={m.label}
+                          className="relative overflow-hidden rounded-lg border bg-background p-3"
+                        >
+                          <div className={`absolute inset-y-0 left-0 w-0.5 ${m.color}`} />
+                          <p className="text-[10px] text-muted-foreground">{m.label}</p>
+                          <p className="mt-1 text-sm font-semibold tabular-nums">{m.value}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Mini chart bars */}
+                    <div className="mb-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <div className="h-2.5 w-24 rounded bg-muted" />
+                        <div className="h-2.5 w-12 rounded bg-muted" />
+                      </div>
+                      <div className="flex items-end gap-1.5 h-20">
+                        {[40, 65, 45, 80, 55, 70, 90, 60, 75, 50, 85, 65].map((h, i) => (
+                          <div
+                            key={i}
+                            className="flex-1 rounded-t bg-primary/20"
+                            style={{ height: `${h}%` }}
+                          >
+                            <div
+                              className="w-full rounded-t bg-primary transition-all"
+                              style={{ height: `${h > 60 ? 100 : 70}%` }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Mini table rows */}
+                    <div className="space-y-2">
+                      {[1, 2, 3].map((row) => (
+                        <div key={row} className="flex items-center gap-3">
+                          <div className="h-2.5 w-2.5 rounded-full bg-muted" />
+                          <div className="h-2.5 flex-1 rounded bg-muted" />
+                          <div className="h-2.5 w-16 rounded bg-muted" />
+                          <div className="h-5 w-14 rounded-full bg-success/15" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                  Características Principales
-                </h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Nuestro ERP ofrece todas las herramientas que necesita para
-                  optimizar sus operaciones comerciales.
-                </p>
-              </div>
+
+        {/* Features */}
+        <section className="border-t bg-card">
+          <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                Todo lo que necesita en un solo sistema
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Herramientas integradas para optimizar cada area de su operacion.
+              </p>
             </div>
-            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mt-8">
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <BarChart3 className="h-8 w-8" />
-                  <CardTitle>Análisis Financiero</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Obtenga información detallada sobre el rendimiento
-                    financiero de su empresa con informes personalizables.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Users className="h-8 w-8" />
-                  <CardTitle>Gestión de RRHH</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Administre fácilmente la información de los empleados,
-                    nóminas y procesos de contratación.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Database className="h-8 w-8" />
-                  <CardTitle>Inventario</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Controle su inventario en tiempo real y optimice los niveles
-                    de stock para reducir costos.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Settings className="h-8 w-8" />
-                  <CardTitle>Operaciones</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Automatice y optimice los procesos operativos para aumentar
-                    la eficiencia.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Shield className="h-8 w-8" />
-                  <CardTitle>Seguridad</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Proteja sus datos empresariales con nuestras avanzadas
-                    medidas de seguridad.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <Users className="h-8 w-8" />
-                  <CardTitle>CRM</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription>
-                    Gestione las relaciones con sus clientes y mejore la
-                    satisfacción del cliente.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                  ¿Listo para empezar?
-                </h2>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Acceda a su cuenta o solicite una demostración para ver cómo
-                  nuestro ERP puede transformar su negocio.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <form
-                  action={async () => {
-                    "use server";
-                    await signIn("keycloak", {
-                      redirectTo: "/",
-                    });
-                  }}
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="group rounded-lg border bg-background p-5 transition-colors hover:border-primary/20 hover:bg-muted/40"
                 >
-                  <Button size="lg" className="gap-1" type="submit">
-                    Iniciar Sesión
-                    <ChevronRight className="h-4 w-4" />
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/8 transition-colors group-hover:bg-primary/12">
+                    <feature.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-semibold">{feature.title}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="border-t bg-muted/40">
+          <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+            <div className="mx-auto max-w-lg text-center">
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                Comience a gestionar su empresa hoy
+              </h2>
+              <p className="mt-3 text-muted-foreground">
+                Acceda a su cuenta o solicite una demostracion para ver como
+                OnERP puede transformar sus operaciones.
+              </p>
+              <div className="mt-8 flex items-center justify-center gap-3">
+                <SignInForm>
+                  <Button type="submit" size="lg">
+                    Iniciar Sesion
+                    <ArrowRight className="ml-1.5 h-4 w-4" />
                   </Button>
-                </form>
-                <Link href="/contacto">
+                </SignInForm>
+                <Link href="/contact">
                   <Button variant="outline" size="lg">
-                    Solicitar Demo
+                    Contactar
                   </Button>
                 </Link>
               </div>
@@ -224,21 +261,34 @@ export default async function Home() {
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full border-t px-4 md:px-6">
-        <p className="text-xs text-muted-foreground">
-          © 2025 ERP System. Todos los derechos reservados.
-        </p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Términos de Servicio
-          </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Política de Privacidad
-          </Link>
-          <Link className="text-xs hover:underline underline-offset-4" href="#">
-            Contacto
-          </Link>
-        </nav>
+
+      {/* Footer */}
+      <footer className="border-t">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 py-6 sm:flex-row sm:justify-between">
+          <p className="text-xs text-muted-foreground">
+            &copy; 2025 OnERP. Todos los derechos reservados.
+          </p>
+          <nav className="flex gap-6">
+            <Link
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              href="#"
+            >
+              Terminos de Servicio
+            </Link>
+            <Link
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              href="#"
+            >
+              Politica de Privacidad
+            </Link>
+            <Link
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              href="#"
+            >
+              Contacto
+            </Link>
+          </nav>
+        </div>
       </footer>
     </div>
   );

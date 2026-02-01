@@ -14,38 +14,49 @@ export type thirdPartyColumns = {
   Type: string;
 };
 
+const currency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
 export const columnsThirdParty: ColumnDef<thirdPartyColumns>[] = [
   {
     accessorKey: "comercial_name",
     header: "Nombre comercial",
+    cell: ({ row }) => (
+      <span className="font-medium">{row.getValue("comercial_name")}</span>
+    ),
   },
   {
     accessorKey: "credit_limit",
-    header: "Limite de credito",
+    header: () => <span className="block text-right">Limite de credito</span>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("credit_limit"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="text-right tabular-nums">
+          {currency.format(amount)}
+        </div>
+      );
     },
   },
   {
     accessorKey: "balance",
-    header: "Balance",
+    header: () => <span className="block text-right">Balance</span>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("balance"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-      return <div className="text-right font-medium">{formatted}</div>;
+      return (
+        <div className="text-right tabular-nums">
+          {currency.format(amount)}
+        </div>
+      );
     },
   },
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => (
+      <span className="text-muted-foreground">{row.getValue("email")}</span>
+    ),
   },
   {
     accessorKey: "tax_regime",
@@ -62,10 +73,10 @@ export const columnsThirdParty: ColumnDef<thirdPartyColumns>[] = [
             status === "active"
               ? "success"
               : status === "inactive"
-              ? "warning"
-              : status === "inactivea"
-              ? "destructive"
-              : "outline"
+                ? "warning"
+                : status === "inactivea"
+                  ? "destructive"
+                  : "outline"
           }
         >
           {status}

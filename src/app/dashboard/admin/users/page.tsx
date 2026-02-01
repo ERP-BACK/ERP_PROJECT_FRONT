@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { adminGetAllUsers } from "@/action/user/admin-get-all-users.action";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -9,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Plus, Users, XCircle } from "lucide-react";
 
 export default async function UsersPage() {
   let users: Awaited<ReturnType<typeof adminGetAllUsers>> = [];
@@ -22,54 +23,75 @@ export default async function UsersPage() {
   }
 
   return (
-    <main className="flex-1 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Usuarios</h1>
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Usuarios</h1>
+          <p className="text-sm text-muted-foreground">
+            Administracion de usuarios del sistema
+          </p>
+        </div>
         <Link href="/dashboard/admin/users/create">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button size="sm">
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
             Crear Usuario
           </Button>
         </Link>
       </div>
 
       {error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-700">
-          {error}
+        <div className="flex items-start gap-2 rounded-md bg-destructive/8 px-3 py-2.5 text-sm text-destructive">
+          <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>{error}</span>
         </div>
       ) : (
-        <div className="rounded-md border bg-white">
+        <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted/40 hover:bg-muted/40">
                 <TableHead>Username</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Nombre</TableHead>
                 <TableHead>Rol</TableHead>
-                <TableHead>Compañía</TableHead>
-                <TableHead>Fecha Creación</TableHead>
+                <TableHead>Compania</TableHead>
+                <TableHead>Fecha Creacion</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center text-gray-500 py-8">
-                    No hay usuarios registrados
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={6} className="h-48">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                        <Users className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm font-medium">Sin usuarios</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        No hay usuarios registrados
+                      </p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
                 users.map((user) => (
                   <TableRow key={user.user_Id}>
-                    <TableCell className="font-medium">{user.username}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.first_name} {user.last_name}</TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                        {user.roles}
-                      </span>
+                    <TableCell className="font-medium">
+                      {user.username}
                     </TableCell>
-                    <TableCell>{user.company_name || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.email}
+                    </TableCell>
                     <TableCell>
+                      {user.first_name} {user.last_name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{user.roles}</Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.company_name || "—"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground tabular-nums">
                       {user.created_at
                         ? new Date(user.created_at).toLocaleDateString("es-CO")
                         : "—"}
@@ -81,6 +103,6 @@ export default async function UsersPage() {
           </Table>
         </div>
       )}
-    </main>
+    </div>
   );
 }

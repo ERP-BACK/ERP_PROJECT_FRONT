@@ -12,9 +12,18 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend,
 } from "recharts";
-import { Download, Filter, Package, Plus, RefreshCcw } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowUp,
+  DollarSign,
+  Download,
+  Filter,
+  Package,
+  PackageX,
+  Plus,
+  Search,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -43,351 +52,362 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Datos de ejemplo para el inventario
 const inventoryData = [
-  {
-    id: 1,
-    name: "Laptop HP Pavilion",
-    category: "Electrónicos",
-    stock: 45,
-    price: 899.99,
-    status: "En stock",
-  },
-  {
-    id: 2,
-    name: 'Monitor Dell 27"',
-    category: "Electrónicos",
-    stock: 30,
-    price: 349.99,
-    status: "En stock",
-  },
-  {
-    id: 3,
-    name: "Teclado Mecánico",
-    category: "Accesorios",
-    stock: 100,
-    price: 79.99,
-    status: "En stock",
-  },
-  {
-    id: 4,
-    name: "Mouse Inalámbrico",
-    category: "Accesorios",
-    stock: 75,
-    price: 29.99,
-    status: "En stock",
-  },
-  {
-    id: 5,
-    name: "Impresora HP LaserJet",
-    category: "Electrónicos",
-    stock: 15,
-    price: 299.99,
-    status: "Bajo stock",
-  },
-  {
-    id: 6,
-    name: "Auriculares Bluetooth",
-    category: "Audio",
-    stock: 60,
-    price: 129.99,
-    status: "En stock",
-  },
-  {
-    id: 7,
-    name: "Tablet Samsung",
-    category: "Electrónicos",
-    stock: 5,
-    price: 449.99,
-    status: "Crítico",
-  },
-  {
-    id: 8,
-    name: "Cámara Web HD",
-    category: "Accesorios",
-    stock: 0,
-    price: 89.99,
-    status: "Sin stock",
-  },
+  { id: 1, name: "Laptop HP Pavilion", category: "Electronicos", stock: 45, price: 899.99, status: "En stock" },
+  { id: 2, name: 'Monitor Dell 27"', category: "Electronicos", stock: 30, price: 349.99, status: "En stock" },
+  { id: 3, name: "Teclado Mecanico", category: "Accesorios", stock: 100, price: 79.99, status: "En stock" },
+  { id: 4, name: "Mouse Inalambrico", category: "Accesorios", stock: 75, price: 29.99, status: "En stock" },
+  { id: 5, name: "Impresora HP LaserJet", category: "Electronicos", stock: 15, price: 299.99, status: "Bajo stock" },
+  { id: 6, name: "Auriculares Bluetooth", category: "Audio", stock: 60, price: 129.99, status: "En stock" },
+  { id: 7, name: "Tablet Samsung", category: "Electronicos", stock: 5, price: 449.99, status: "Critico" },
+  { id: 8, name: "Camara Web HD", category: "Accesorios", stock: 0, price: 89.99, status: "Sin stock" },
 ];
 
-// Datos para el gráfico de barras
 const stockByCategory = [
-  { name: "Electrónicos", stock: 95 },
+  { name: "Electronicos", stock: 95 },
   { name: "Accesorios", stock: 175 },
   { name: "Audio", stock: 60 },
   { name: "Cables", stock: 120 },
   { name: "Almacenamiento", stock: 80 },
 ];
 
-// Datos para el gráfico circular
 const stockStatus = [
   { name: "En stock", value: 310 },
   { name: "Bajo stock", value: 15 },
-  { name: "Crítico", value: 5 },
-  { name: "Sin stock", value: 0 },
+  { name: "Critico", value: 5 },
+  { name: "Sin stock", value: 1 },
 ];
 
-const COLORS = ["#4ade80", "#facc15", "#f97316", "#ef4444"];
+// Corporate palette derived from chart tokens
+const PIE_COLORS = [
+  "oklch(0.55 0.15 155)", // success green
+  "oklch(0.70 0.15 75)",  // warning amber
+  "oklch(0.55 0.12 25)",  // muted red
+  "oklch(0.50 0.01 255)", // neutral slate
+];
+
+const currency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
+function StatusBadge({ status }: { status: string }) {
+  const variant =
+    status === "En stock"
+      ? "success"
+      : status === "Bajo stock"
+        ? "warning"
+        : status === "Critico"
+          ? "destructive"
+          : "outline";
+  return <Badge variant={variant}>{status}</Badge>;
+}
 
 export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("all");
 
-  const filteredInventory = inventoryData.filter(
-    (item) =>
+  const filteredInventory = inventoryData.filter((item) => {
+    const matchesSearch =
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      item.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = category === "all" || item.category === category;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
-    <div className="space-y-6 m-2">
-      <Tabs defaultValue="estadisticas" className="w-full">
-        <div className="flex justify-evenly items-center mb-4">
-          <div className="w-full">
-            <h2 className="text-3xl font-bold tracking-tight">Inventario</h2>
-            <p className="text-muted-foreground">
-              Gestión de productos, stock y categorías
-            </p>
-          </div>
-          <div className="flex items-center justify-center mb-4 w-full">
-            <TabsList className="grid min-w-20 max-w-80 grid-cols-2 mb-6 justify-center">
-              <TabsTrigger value="estadisticas">Estadísticas</TabsTrigger>
-              <TabsTrigger value="tabla">Tabla de Clientes</TabsTrigger>
-            </TabsList>
-          </div>
-          <div className="flex items-center gap-2 w-full justify-end">
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Exportar
-            </Button>
-            <Button size="sm">
-              <Plus className="mr-2 h-4 w-4" />
-              Nuevo Producto
-            </Button>
-          </div>
+    <div className="space-y-6 p-6">
+      {/* Page header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Inventario</h1>
+          <p className="text-sm text-muted-foreground">
+            Gestion de productos, stock y categorias
+          </p>
         </div>
+        <div className="flex items-center gap-2">
+          <Tabs defaultValue="estadisticas" className="hidden sm:block">
+            <TabsList>
+              <TabsTrigger value="estadisticas">Estadisticas</TabsTrigger>
+              <TabsTrigger value="tabla">Productos</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <Download className="mr-1.5 h-3.5 w-3.5" />
+            Exportar
+          </Button>
+          <Button size="sm">
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
+            Nuevo Producto
+          </Button>
+        </div>
+      </div>
 
-        <TabsContent value="estadisticas">
-          <div className="grid gap-6 md:grid-cols-3 mb-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total de Productos
-                </CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">573</div>
-                <p className="text-xs text-muted-foreground">
-                  8 categorías diferentes
+      {/* Wrap content in Tabs but control from header */}
+      <Tabs defaultValue="estadisticas">
+        {/* Mobile tabs */}
+        <TabsList className="mb-4 sm:hidden">
+          <TabsTrigger value="estadisticas">Estadisticas</TabsTrigger>
+          <TabsTrigger value="tabla">Productos</TabsTrigger>
+        </TabsList>
+
+        {/* Statistics tab */}
+        <TabsContent value="estadisticas" className="mt-0 space-y-6">
+          {/* Metric cards */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-0.5 bg-primary" />
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Total de Productos</p>
+                    <p className="text-2xl font-semibold tracking-tight tabular-nums">573</p>
+                  </div>
+                  <div className="rounded-lg bg-muted p-2">
+                    <Package className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  8 categorias diferentes
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Valor del Inventario
-                </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                </svg>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">$125,430.89</div>
-                <p className="text-xs text-muted-foreground">
-                  +2.5% desde el mes pasado
-                </p>
+
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-0.5 bg-success" />
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Valor del Inventario</p>
+                    <p className="text-2xl font-semibold tracking-tight tabular-nums">
+                      $125,430.89
+                    </p>
+                  </div>
+                  <div className="rounded-lg bg-muted p-2">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-xs">
+                  <span className="flex items-center gap-0.5 text-success">
+                    <ArrowUp className="h-3 w-3" />
+                    +2.5%
+                  </span>
+                  <span className="text-muted-foreground">vs. mes anterior</span>
+                </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Productos sin Stock
-                </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <rect width="20" height="14" x="2" y="5" rx="2" />
-                  <path d="M2 10h20" />
-                </svg>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">12</div>
-                <p className="text-xs text-muted-foreground">
-                  5 productos en estado crítico
-                </p>
+
+            <Card className="relative overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-0.5 bg-destructive" />
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Productos sin Stock</p>
+                    <p className="text-2xl font-semibold tracking-tight tabular-nums">12</p>
+                  </div>
+                  <div className="rounded-lg bg-muted p-2">
+                    <PackageX className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-xs">
+                  <AlertTriangle className="h-3 w-3 text-warning" />
+                  <span className="text-muted-foreground">5 en estado critico</span>
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 ">
-            <Card>
-              <CardHeader>
-                <CardTitle>Stock por Categoría</CardTitle>
+          {/* Charts */}
+          <div className="grid gap-6 lg:grid-cols-5">
+            <Card className="lg:col-span-3">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Stock por Categoria</CardTitle>
                 <CardDescription>
-                  Distribución de productos por categoría
+                  Distribucion de productos por categoria
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px]">
+                <div className="h-[280px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={stockByCategory}
-                      margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                      }}
+                      margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="stock" fill="#3b82f6" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="oklch(0.91 0.005 255)"
+                      />
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 12, fill: "oklch(0.50 0.01 255)" }}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 12, fill: "oklch(0.50 0.01 255)" }}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          borderRadius: "8px",
+                          border: "1px solid oklch(0.91 0.005 255)",
+                          boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.04)",
+                          fontSize: "13px",
+                        }}
+                      />
+                      <Bar
+                        dataKey="stock"
+                        fill="oklch(0.45 0.15 255)"
+                        radius={[4, 4, 0, 0]}
+                        maxBarSize={48}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Estado del Inventario</CardTitle>
+
+            <Card className="lg:col-span-2">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Estado del Inventario</CardTitle>
                 <CardDescription>
-                  Distribución por estado de stock
+                  Distribucion por estado de stock
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px]">
+                <div className="h-[220px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
                         data={stockStatus}
                         cx="50%"
                         cy="50%"
-                        labelLine={false}
+                        innerRadius={50}
                         outerRadius={80}
-                        fill="#8884d8"
+                        paddingAngle={2}
                         dataKey="value"
-                        label={({ name, percent }) =>
-                          `${name} ${(percent * 100).toFixed(0)}%`
-                        }
+                        strokeWidth={0}
                       >
-                        {stockStatus.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
+                        {stockStatus.map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
                         ))}
                       </Pie>
-                      <Tooltip />
-                      <Legend />
+                      <Tooltip
+                        contentStyle={{
+                          borderRadius: "8px",
+                          border: "1px solid oklch(0.91 0.005 255)",
+                          boxShadow: "0 1px 3px 0 rgb(0 0 0 / 0.04)",
+                          fontSize: "13px",
+                        }}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
+                </div>
+                {/* Custom legend */}
+                <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+                  {stockStatus.map((entry, i) => (
+                    <div key={entry.name} className="flex items-center gap-2">
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full"
+                        style={{ backgroundColor: PIE_COLORS[i] }}
+                      />
+                      <span className="text-xs text-muted-foreground">
+                        {entry.name}
+                      </span>
+                      <span className="ml-auto text-xs font-medium tabular-nums">
+                        {entry.value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
-        <TabsContent value="tabla">
-          <Card>
-            <CardHeader>
-              <CardTitle>Lista de Productos</CardTitle>
-              <CardDescription>
-                Gestione su inventario de productos
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex w-full max-w-sm items-center space-x-2">
-                  <Input
-                    placeholder="Buscar productos..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                  <Button type="submit" size="sm" variant="ghost">
-                    <RefreshCcw className="h-4 w-4" />
-                    <span className="sr-only">Buscar</span>
-                  </Button>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Select defaultValue="all">
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas las categorías</SelectItem>
-                      <SelectItem value="electronics">Electrónicos</SelectItem>
-                      <SelectItem value="accessories">Accesorios</SelectItem>
-                      <SelectItem value="audio">Audio</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="sm">
-                    <Filter className="mr-2 h-4 w-4" />
-                    Filtros
-                  </Button>
-                </div>
-              </div>
-              <div className="mt-6 rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Categoría</TableHead>
-                      <TableHead>Stock</TableHead>
-                      <TableHead>Precio</TableHead>
-                      <TableHead>Estado</TableHead>
+
+        {/* Table tab */}
+        <TabsContent value="tabla" className="mt-0 space-y-4">
+          {/* Toolbar */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative max-w-sm flex-1">
+              <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar productos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-9 pl-8 text-sm"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="h-9 w-[180px] text-sm">
+                  <SelectValue placeholder="Categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas las categorias</SelectItem>
+                  <SelectItem value="Electronicos">Electronicos</SelectItem>
+                  <SelectItem value="Accesorios">Accesorios</SelectItem>
+                  <SelectItem value="Audio">Audio</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" size="sm">
+                <Filter className="mr-1.5 h-3.5 w-3.5" />
+                Filtros
+              </Button>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-hidden rounded-lg border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/40 hover:bg-muted/40">
+                  <TableHead className="w-16">ID</TableHead>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Categoria</TableHead>
+                  <TableHead className="text-right">Stock</TableHead>
+                  <TableHead className="text-right">Precio</TableHead>
+                  <TableHead>Estado</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredInventory.length > 0 ? (
+                  filteredInventory.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-mono text-xs text-muted-foreground">
+                        {item.id}
+                      </TableCell>
+                      <TableCell className="font-medium">{item.name}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {item.category}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {item.stock}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {currency.format(item.price)}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={item.status} />
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredInventory.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{item.id}</TableCell>
-                        <TableCell className="font-medium">
-                          {item.name}
-                        </TableCell>
-                        <TableCell>{item.category}</TableCell>
-                        <TableCell>{item.stock}</TableCell>
-                        <TableCell>${item.price.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              item.status === "En stock"
-                                ? "success"
-                                : item.status === "Bajo stock"
-                                ? "warning"
-                                : item.status === "Crítico"
-                                ? "destructive"
-                                : "outline"
-                            }
-                          >
-                            {item.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+                  ))
+                ) : (
+                  <TableRow className="hover:bg-transparent">
+                    <TableCell colSpan={6} className="h-32 text-center">
+                      <p className="text-sm text-muted-foreground">
+                        No se encontraron productos
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

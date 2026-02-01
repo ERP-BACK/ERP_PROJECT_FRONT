@@ -1,10 +1,12 @@
 import {
-  Activity,
   ArrowDown,
   ArrowUp,
+  BarChart3,
+  Box,
   DollarSign,
   Package,
   ShoppingCart,
+  TrendingUp,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -18,235 +20,216 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default async function Dashboard() {
+function MetricCard({
+  label,
+  value,
+  change,
+  trend,
+  icon: Icon,
+}: {
+  label: string;
+  value: string;
+  change: string;
+  trend: "up" | "down";
+  icon: React.ComponentType<{ className?: string }>;
+}) {
   return (
-    <div className="space-y-6 m-2">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
-            Bienvenido al panel de control de su sistema ERP
+    <Card className="relative overflow-hidden">
+      <div
+        className={`absolute inset-y-0 left-0 w-0.5 ${
+          trend === "up" ? "bg-success" : "bg-destructive"
+        }`}
+      />
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">{label}</p>
+            <p className="text-2xl font-semibold tracking-tight">{value}</p>
+          </div>
+          <div className="rounded-lg bg-muted p-2">
+            <Icon className="h-4 w-4 text-muted-foreground" />
+          </div>
+        </div>
+        <div className="mt-3 flex items-center gap-1.5 text-xs">
+          {trend === "up" ? (
+            <span className="flex items-center gap-0.5 text-success">
+              <ArrowUp className="h-3 w-3" />
+              {change}
+            </span>
+          ) : (
+            <span className="flex items-center gap-0.5 text-destructive">
+              <ArrowDown className="h-3 w-3" />
+              {change}
+            </span>
+          )}
+          <span className="text-muted-foreground">vs. mes anterior</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ModuleLink({
+  href,
+  title,
+  description,
+  icon: Icon,
+}: {
+  href: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <Link href={href}>
+      <div className="group flex items-start gap-3 rounded-lg border border-transparent p-3 transition-colors hover:border-border hover:bg-accent/50">
+        <div className="rounded-md bg-primary/8 p-2 transition-colors group-hover:bg-primary/12">
+          <Icon className="h-4 w-4 text-primary" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-foreground">{title}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
+            {description}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button>Descargar Reporte</Button>
+      </div>
+    </Link>
+  );
+}
+
+const activities = [
+  { action: "Venta completada", user: "Maria Lopez", time: "5 min" },
+  { action: "Producto actualizado", user: "Juan Perez", time: "15 min" },
+  { action: "Nuevo cliente", user: "Admin", time: "1 h" },
+  { action: "Inventario actualizado", user: "Carlos Ruiz", time: "3 h" },
+  { action: "Reporte generado", user: "Admin", time: "5 h" },
+];
+
+export default async function Dashboard() {
+  return (
+    <div className="space-y-6 p-6">
+      {/* Page header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
+            Panel de control del sistema ERP
+          </p>
         </div>
+        <Button size="sm" variant="outline">
+          Descargar Reporte
+        </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Ventas Totales
-            </CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">$45,231.89</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-500 flex items-center">
-                <ArrowUp className="mr-1 h-4 w-4" />
-                +20.1%
-              </span>{" "}
-              desde el mes pasado
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Productos</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-red-500 flex items-center">
-                <ArrowDown className="mr-1 h-4 w-4" />
-                -4.5%
-              </span>{" "}
-              desde el mes pasado
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Clientes</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-500 flex items-center">
-                <ArrowUp className="mr-1 h-4 w-4" />
-                +10.1%
-              </span>{" "}
-              desde el mes pasado
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Órdenes Activas
-            </CardTitle>
-            <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+12,234</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-500 flex items-center">
-                <ArrowUp className="mr-1 h-4 w-4" />
-                +19%
-              </span>{" "}
-              desde el mes pasado
-            </p>
-          </CardContent>
-        </Card>
+      {/* KPI metrics */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          label="Ventas Totales"
+          value="$45,231.89"
+          change="+20.1%"
+          trend="up"
+          icon={DollarSign}
+        />
+        <MetricCard
+          label="Productos"
+          value="573"
+          change="-4.5%"
+          trend="down"
+          icon={Package}
+        />
+        <MetricCard
+          label="Clientes"
+          value="2,350"
+          change="+10.1%"
+          trend="up"
+          icon={Users}
+        />
+        <MetricCard
+          label="Ordenes Activas"
+          value="12,234"
+          change="+19%"
+          trend="up"
+          icon={ShoppingCart}
+        />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Maestros</CardTitle>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-              <Link href="/dashboard/masters/third-party">
-                <Card className="hover:bg-gray-50 transition-colors">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Terceros
-                    </CardTitle>
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>
-                      Gestión de terceros, carga, creación y actualización
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Actividad Reciente</CardTitle>
+      {/* Main content grid */}
+      <div className="grid gap-6 lg:grid-cols-5">
+        {/* Modules */}
+        <Card className="lg:col-span-3">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Modulos</CardTitle>
             <CardDescription>
-              Últimas 5 actividades en el sistema
+              Acceso rapido a las areas del sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                {
-                  action: "Venta completada",
-                  user: "María López",
-                  time: "Hace 5 minutos",
-                },
-                {
-                  action: "Producto actualizado",
-                  user: "Juan Pérez",
-                  time: "Hace 15 minutos",
-                },
-                { action: "Nuevo cliente", user: "Admin", time: "Hace 1 hora" },
-                {
-                  action: "Inventario actualizado",
-                  user: "Carlos Ruiz",
-                  time: "Hace 3 horas",
-                },
-                {
-                  action: "Reporte generado",
-                  user: "Admin",
-                  time: "Hace 5 horas",
-                },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-center">
-                  <div className="mr-4 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                    {index + 1}
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {activity.action}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {activity.user} • {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="grid gap-1 sm:grid-cols-2">
+              <ModuleLink
+                href="/dashboard/masters/third-party"
+                title="Terceros"
+                description="Gestion de terceros, carga y actualizacion"
+                icon={Box}
+              />
+              <ModuleLink
+                href="/dashboard/inventory"
+                title="Inventario"
+                description="Productos, stock y categorias"
+                icon={Package}
+              />
+              <ModuleLink
+                href="/dashboard/sales"
+                title="Ventas"
+                description="Ordenes, facturacion y clientes"
+                icon={ShoppingCart}
+              />
+              <ModuleLink
+                href="/dashboard/customers"
+                title="Clientes"
+                description="Gestion de clientes y contactos"
+                icon={Users}
+              />
+              <ModuleLink
+                href="/dashboard/reports"
+                title="Reportes"
+                description="Analisis y rendimiento"
+                icon={BarChart3}
+              />
             </div>
           </CardContent>
         </Card>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Resumen de Módulos</CardTitle>
+        {/* Activity feed */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Actividad Reciente</CardTitle>
+            <CardDescription>
+              Ultimas acciones en el sistema
+            </CardDescription>
           </CardHeader>
-          <CardContent className="pl-2">
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-              <Link href="/dashboard/inventory">
-                <Card className="hover:bg-gray-50 transition-colors">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Inventario
-                    </CardTitle>
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>
-                      Gestión de productos, stock y categorías
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
-              <Link href="/dashboard/sales">
-                <Card className="hover:bg-gray-50 transition-colors">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Ventas
-                    </CardTitle>
-                    <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>
-                      Gestión de órdenes, clientes y facturación
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
-              <Link href="/dashboard/customers">
-                <Card className="hover:bg-gray-50 transition-colors">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Clientes
-                    </CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>
-                      Gestión de clientes y contactos
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
-              <Link href="/dashboard/reports">
-                <Card className="hover:bg-gray-50 transition-colors">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Reportes
-                    </CardTitle>
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription>
-                      Análisis y reportes de rendimiento
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </Link>
+          <CardContent>
+            <div className="space-y-1">
+              {activities.map((activity, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 rounded-md px-2 py-2.5"
+                >
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+                    {i + 1}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium leading-none">
+                      {activity.action}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {activity.user}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground/60">
+                    {activity.time}
+                  </span>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

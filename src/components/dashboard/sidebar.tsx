@@ -6,6 +6,7 @@ import {
   BarChart3,
   Box,
   Building2,
+  ChevronRight,
   Home,
   LayoutDashboard,
   Package,
@@ -22,6 +23,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface SidebarProps {
   open: boolean;
@@ -108,104 +110,116 @@ export function DashboardSidebar({ open, pathname, roles, userName, userEmail }:
   const isSysAdmin = roles?.includes("sysAdmin") ?? false;
   const modules = isSysAdmin ? adminModules : erpModules;
 
+  const initials = userName
+    ? userName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+    : "U";
+
   return (
     <div
       className={cn(
-        "fixed inset-y-0 left-0 z-50 flex w-40 flex-col border-r bg-white transition-transform duration-300 lg:static lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-50 flex w-56 flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-200 ease-out lg:static lg:translate-x-0",
         open ? "translate-x-0" : "-translate-x-full",
       )}
     >
-      <div className="flex h-16 items-center border-b px-6">
+      {/* Logo */}
+      <div className="flex h-16 shrink-0 items-center border-b border-sidebar-border px-5">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 font-semibold"
+          className="flex items-center gap-2"
         >
-          <div className="flex justify-center">
-            <img
-              src="/logo_out.png"
-              alt="Dashboard ERP"
-              className="rounded-lg object-cover"
-              width={100}
-              height={200}
-            />
-          </div>
+          <img
+            src="/logo_out.png"
+            alt="Dashboard ERP"
+            className="h-8 w-auto object-contain"
+          />
         </Link>
       </div>
-      <nav className="flex-1 overflow-auto py-6 px-4">
-        <div className="space-y-1">
-          {modules.map((module) => (
-            <Show
-              key={module.title}
-              when={!(module.type === "Accordion")}
-              fallback={
-                <Accordion
-                  type="single"
-                  collapsible
-                  className="w-full"
-                  defaultValue="item-1"
-                >
-                  <AccordionItem value="item-1" id={accordionId}>
-                    <AccordionTrigger>Maestros</AccordionTrigger>
-                    <AccordionContent className="flex flex-col gap-4 text-balance">
-                      {"element" in module &&
-                        module.element &&
-                        module.element.map((singleModule) => (
-                          <Link
-                            key={singleModule.href}
-                            href={singleModule.href}
-                          >
-                            <Button
-                              variant={
-                                pathname === singleModule.href
-                                  ? "secondary"
-                                  : "ghost"
-                              }
-                              className={cn(
-                                "w-full justify-start",
-                                pathname === module.href
-                                  ? "bg-gray-100 text-gray-900"
-                                  : "text-gray-500 hover:text-gray-900",
-                              )}
+
+      {/* Navigation */}
+      <ScrollArea className="flex-1 py-3">
+        <nav className="px-3">
+          <div className="space-y-0.5">
+            {modules.map((module) => (
+              <Show
+                key={module.title}
+                when={!(module.type === "Accordion")}
+                fallback={
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="w-full"
+                    defaultValue="item-1"
+                  >
+                    <AccordionItem value="item-1" id={accordionId} className="border-none">
+                      <AccordionTrigger className="py-2 px-3 text-sm font-medium text-sidebar-foreground/70 hover:no-underline hover:text-sidebar-foreground">
+                        Maestros
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-1 pl-2">
+                        {"element" in module &&
+                          module.element &&
+                          module.element.map((singleModule) => (
+                            <Link
+                              key={singleModule.href}
+                              href={singleModule.href}
                             >
-                              <singleModule.icon className="mr-2 h-5 w-5" />
-                              {singleModule.title}
-                            </Button>
-                          </Link>
-                        ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              }
-            >
-              <Link key={module.href} href={module.href}>
-                <Button
-                  variant={pathname === module.href ? "secondary" : "ghost"}
-                  className={cn(
-                    "w-full justify-start",
-                    pathname === module.href
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-500 hover:text-gray-900",
-                  )}
-                >
-                  {"icon" in module && module.icon ? (
-                    <module.icon
-                      className="mr-2 h-5 w-5"
-                      aria-label="icono del módulo"
-                    />
-                  ) : null}
-                  {module.title}
-                </Button>
-              </Link>
-            </Show>
-          ))}
-        </div>
-      </nav>
-      <div className="border-t p-4">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-gray-200" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{userName ?? "Usuario"}</p>
-            <p className="text-xs text-gray-500 truncate">{userEmail ?? ""}</p>
+                              <button
+                                className={cn(
+                                  "flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
+                                  pathname === singleModule.href
+                                    ? "bg-primary/10 text-primary font-medium"
+                                    : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                                )}
+                              >
+                                {pathname === singleModule.href && (
+                                  <span className="absolute left-0 h-5 w-0.5 rounded-r bg-primary" />
+                                )}
+                                <singleModule.icon className="h-4 w-4 shrink-0" />
+                                {singleModule.title}
+                              </button>
+                            </Link>
+                          ))}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                }
+              >
+                <Link key={module.href} href={module.href}>
+                  <button
+                    className={cn(
+                      "relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
+                      pathname === module.href
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                    )}
+                  >
+                    {pathname === module.href && (
+                      <span className="absolute left-0 h-5 w-0.5 rounded-r bg-primary" />
+                    )}
+                    {"icon" in module && module.icon ? (
+                      <module.icon className="h-4 w-4 shrink-0" />
+                    ) : null}
+                    {module.title}
+                  </button>
+                </Link>
+              </Show>
+            ))}
+          </div>
+        </nav>
+      </ScrollArea>
+
+      {/* User profile */}
+      <div className="border-t border-sidebar-border p-3">
+        <div className="flex items-center gap-2.5 rounded-md px-2 py-1.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+            {initials}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-sidebar-foreground">
+              {userName ?? "Usuario"}
+            </p>
+            <p className="truncate text-xs text-sidebar-foreground/50">
+              {userEmail ?? ""}
+            </p>
           </div>
         </div>
       </div>

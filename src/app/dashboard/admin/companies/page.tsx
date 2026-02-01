@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAllCompanies } from "@/action/company/get-all-companies.action";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -9,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus } from "lucide-react";
+import { Building2, Inbox, Plus, XCircle } from "lucide-react";
 
 export default async function CompaniesPage() {
   let companies: Awaited<ReturnType<typeof getAllCompanies>> = [];
@@ -18,64 +19,83 @@ export default async function CompaniesPage() {
   try {
     companies = await getAllCompanies();
   } catch (e) {
-    error = e instanceof Error ? e.message : "Error al cargar compañías";
+    error = e instanceof Error ? e.message : "Error al cargar companias";
   }
 
   return (
-    <main className="flex-1 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Compañías</h1>
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Companias</h1>
+          <p className="text-sm text-muted-foreground">
+            Administracion de companias del sistema
+          </p>
+        </div>
         <Link href="/dashboard/admin/companies/create">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Crear Compañía
+          <Button size="sm">
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
+            Crear Compania
           </Button>
         </Link>
       </div>
 
       {error ? (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-700">
-          {error}
+        <div className="flex items-start gap-2 rounded-md bg-destructive/8 px-3 py-2.5 text-sm text-destructive">
+          <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>{error}</span>
         </div>
       ) : (
-        <div className="rounded-md border bg-white">
+        <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="bg-muted/40 hover:bg-muted/40">
                 <TableHead>Nombre</TableHead>
                 <TableHead>NIT / Tax ID</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Estado Tenant</TableHead>
-                <TableHead>Fecha Creación</TableHead>
+                <TableHead>Fecha Creacion</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {companies.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                    No hay compañías registradas
+                <TableRow className="hover:bg-transparent">
+                  <TableCell colSpan={5} className="h-48">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                        <Building2 className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <p className="text-sm font-medium">Sin companias</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        No hay companias registradas
+                      </p>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
                 companies.map((company) => (
                   <TableRow key={company.company_Id}>
                     <TableCell className="font-medium">{company.name}</TableCell>
-                    <TableCell>{company.tax_id}</TableCell>
-                    <TableCell>{company.email}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {company.tax_id}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {company.email}
+                    </TableCell>
                     <TableCell>
-                      <span
-                        className={
+                      <Badge
+                        variant={
                           company.tenant_status === "provisioned"
-                            ? "inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800"
+                            ? "success"
                             : company.tenant_status === "failed"
-                            ? "inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800"
-                            : "inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800"
+                              ? "destructive"
+                              : "warning"
                         }
                       >
                         {company.tenant_status}
-                      </span>
+                      </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-muted-foreground tabular-nums">
                       {new Date(company.created_at).toLocaleDateString("es-CO")}
                     </TableCell>
                   </TableRow>
@@ -85,6 +105,6 @@ export default async function CompaniesPage() {
           </Table>
         </div>
       )}
-    </main>
+    </div>
   );
 }

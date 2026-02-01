@@ -14,8 +14,8 @@ export default auth((req) => {
         return NextResponse.next();
     }
 
-    // Not authenticated — redirect to home
-    if (!session) {
+    // Not authenticated or refresh token failed — redirect to home
+    if (!session || (session as any).error === "RefreshTokenError") {
         const url = req.nextUrl.clone();
         url.pathname = "/";
         return NextResponse.redirect(url);

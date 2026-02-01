@@ -2,6 +2,49 @@ import NextAuth from "next-auth"
 import { jwtDecode } from "jwt-decode";
 import authConfig from "@/auth.config";
 
+async function refreshAccessToken(token: Record<string, unknown>) {
+    try {
+        const issuer = process.env.KEYCLOAK_ISSUER!;
+        const tokenUrl = `${issuer}/protocol/openid-connect/token`;
+
+        const response = await fetch(tokenUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+                grant_type: "refresh_token",
+                client_id: process.env.KEYCLOAK_ID!,
+                client_secret: process.env.KEYCLOAK_SECRET!,
+                refresh_token: token.refresh_token as string,
+            }),
+        });
+
+        const refreshed = await response.json();
+
+        if (!response.ok) {
+            throw new Error(refreshed.error || "Failed to refresh token");
+        }
+
+        const decoded = jwtDecode<{
+            realm_access?: { roles?: string[] };
+            company_id?: string;
+        }>(refreshed.access_token);
+
+        return {
+            ...token,
+            accessToken: refreshed.access_token,
+            id_token: refreshed.id_token,
+            expires_at: Math.floor(Date.now() / 1000) + refreshed.expires_in,
+            refresh_token: refreshed.refresh_token ?? token.refresh_token,
+            decoded,
+            company_id: decoded?.company_id,
+            error: undefined,
+        };
+    } catch (error) {
+        console.error("Error refreshing access token:", error);
+        return { ...token, error: "RefreshTokenError" };
+    }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
     ...authConfig,
     session: {
@@ -29,6 +72,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt({ token, account }) {
             const nowTimeStamp = Math.floor(Date.now() / 1000);
+
+            // Login inicial — guardar tokens de Keycloak
             if (account) {
                 const decoded = account.access_token ? jwtDecode<{
                     realm_access?: { roles?: string[] };
@@ -41,14 +86,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 token.refresh_token = account.refresh_token;
                 token.company_id = decoded?.company_id;
                 return token;
-            } else if (nowTimeStamp < (token.expires_at as number)) {
-                return token;
-            } else {
-                console.log("Token expired, refreshing...");
+            }
+
+            // Token aun vigente — retornar sin cambios
+            if (nowTimeStamp < (token.expires_at as number)) {
                 return token;
             }
+
+            // Token expirado — renovar con refresh_token
+            console.log("Token expired, refreshing...");
+            return refreshAccessToken(token);
         },
         async session({ session, token }) {
+            // Si el refresh fallo, forzar re-login
+            if (token.error === "RefreshTokenError") {
+                session.error = "RefreshTokenError";
+            }
+
             session.user.access_token = token.accessToken as string;
             session.user.id_token = token.id_token as string;
             session.access_token = token.accessToken as string;
