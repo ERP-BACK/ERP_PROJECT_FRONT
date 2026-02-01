@@ -17,7 +17,7 @@ import {
   Home,
 } from "lucide-react";
 import Link from "next/link";
-import { unstable_ViewTransition as ViewTransition } from "react";
+import { ViewTransition } from "react";
 import { SidebarHeaderChatBot } from "./ui/SidebarHeaderChatBot";
 import { NavigationChatBot } from "./ui/NavigationChatBot";
 import { UserProfileChatBot } from "./ui/UserProfileChatBot";

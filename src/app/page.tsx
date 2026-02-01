@@ -21,6 +21,10 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const session = await auth();
   if (session) {
+    const roles = session.roles ?? [];
+    if (roles.includes("sysAdmin")) {
+      redirect("/dashboard/admin/companies");
+    }
     redirect("/dashboard");
   }
 
@@ -42,7 +46,7 @@ export default async function Home() {
           action={async () => {
             "use server";
             await signIn("keycloak", {
-              callbackUrl: "http://localhost:3000/dashboard",
+              redirectTo: "/",
             });
           }}
         >
@@ -67,7 +71,7 @@ export default async function Home() {
                     action={async () => {
                       "use server";
                       await signIn("keycloak", {
-                        callbackUrl: "http://localhost:3000/dashboard",
+                        redirectTo: "/",
                       });
                     }}
                   >
@@ -201,7 +205,7 @@ export default async function Home() {
                   action={async () => {
                     "use server";
                     await signIn("keycloak", {
-                      callbackUrl: "http://localhost:3000/dashboard",
+                      redirectTo: "/",
                     });
                   }}
                 >

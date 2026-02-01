@@ -1,6 +1,7 @@
 "use client"
 
-import { Bell, Menu, Search } from "lucide-react"
+import { Bell, LogOut, Menu, Search } from "lucide-react"
+import { signOut } from "next-auth/react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,9 +25,18 @@ export function DashboardHeader({ onMenuClick }: HeaderProps) {
           </div>
         </form>
       </div>
-      <Button variant="ghost" size="icon" className="ml-auto">
+      <Button variant="ghost" size="icon">
         <Bell className="h-5 w-5" />
         <span className="sr-only">Notificaciones</span>
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => signOut({ redirectTo: "/" })}
+        title="Cerrar Sesión"
+      >
+        <LogOut className="h-5 w-5" />
+        <span className="sr-only">Cerrar Sesión</span>
       </Button>
     </header>
   )

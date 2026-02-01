@@ -1,30 +1,21 @@
-"use client";
-
 import type React from "react";
-
-import { useState } from "react";
-import { usePathname } from "next/navigation";
-
-import { DashboardHeader } from "@/components/dashboard/header";
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { auth } from "@/auth";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import Providers from "../providres";
-import { FlotingChat } from "../chatbot/ui/FlotingChat";
-export default function DashboardLayout({
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const pathname = usePathname();
+  const session = await auth();
+  const roles = session?.roles ?? [];
+  const userName = session?.user?.name ?? "Usuario";
+  const userEmail = session?.user?.email ?? "";
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <DashboardSidebar open={sidebarOpen} pathname={pathname} />
-      <div className="flex flex-col flex-1">
-        <FlotingChat />
-        <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        <Providers>{children}</Providers>
-      </div>
-    </div>
+    <DashboardShell roles={roles} userName={userName} userEmail={userEmail}>
+      <Providers>{children}</Providers>
+    </DashboardShell>
   );
 }
