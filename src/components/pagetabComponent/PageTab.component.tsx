@@ -15,7 +15,7 @@ interface Props {
 export const PageTabComponent = (prop: Props) => {
   const { isHandleTab } = prop;
   return (
-    <div className="space-y-6 m-2">
+    <div className="flex h-full flex-col gap-6 p-6">
       <Show when={isHandleTab} fallback={<PageSideTitle {...prop} />}>
         <PageTabOption {...prop} />
       </Show>

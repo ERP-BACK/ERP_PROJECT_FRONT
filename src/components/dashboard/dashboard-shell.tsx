@@ -15,22 +15,32 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children, roles, userName, userEmail }: DashboardShellProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar
         open={sidebarOpen}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+        onClose={() => setSidebarOpen(false)}
         pathname={pathname}
         roles={roles}
         userName={userName}
         userEmail={userEmail}
       />
-      <div className="flex flex-col flex-1">
+      <div className="flex min-w-0 flex-1 flex-col">
         <FlotingChat />
-        <DashboardHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        {children}
+        <DashboardHeader
+          onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          onCollapseToggle={() => setSidebarCollapsed((v) => !v)}
+          collapsed={sidebarCollapsed}
+        />
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
       </div>
     </div>
   );

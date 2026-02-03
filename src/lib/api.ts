@@ -44,10 +44,20 @@ export async function apiClient<T = unknown>(path: string, options: ApiOptions =
     let message = `Error ${res.status}`;
     try {
       const body = await res.json();
-      message = body.message ?? body.error ?? message;
+      // Handle class-validator array of messages
+      if (Array.isArray(body.message)) {
+        message = body.message.join(", ");
+      } else {
+        message = body.message ?? body.error ?? message;
+      }
+      // Append statusCode if available
+      if (body.statusCode && body.statusCode !== res.status) {
+        message = `[${body.statusCode}] ${message}`;
+      }
     } catch {
       // response wasn't JSON
     }
+    console.error(`[API Error] ${res.status} ${res.url}: ${message}`);
     throw new Error(message);
   }
 

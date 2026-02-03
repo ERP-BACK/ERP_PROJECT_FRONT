@@ -107,7 +107,7 @@ const activities = [
 
 export default async function Dashboard() {
   return (
-    <div className="space-y-6 p-6">
+    <div className="flex h-full flex-col gap-6 p-6">
       {/* Page header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>

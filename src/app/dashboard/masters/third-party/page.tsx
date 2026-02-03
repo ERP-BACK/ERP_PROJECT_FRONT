@@ -1,17 +1,13 @@
-import { MainTablePageThirparty } from "./ui/MainTablePageThirparty";
+import { ThirdPartiesTablePage } from "./presentation/components/ThirdPartiesTablePage";
 
-async function ThirdPartypage() {
+export default function ThirdPartyPage() {
   return (
-    <div className="space-y-6 p-6">
+    <div className="flex h-full flex-col gap-6 p-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Maestros</h1>
-        <p className="text-sm text-muted-foreground">
-          Gestion de terceros
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">Terceros</h1>
+        <p className="text-sm text-muted-foreground">Gestión de terceros</p>
       </div>
-      <MainTablePageThirparty />
+      <ThirdPartiesTablePage />
     </div>
   );
 }
-
-export default ThirdPartypage;
