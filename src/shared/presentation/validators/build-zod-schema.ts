@@ -63,6 +63,14 @@ export function buildZodSchema(fields: FormFieldConfig[]): z.ZodObject<Record<st
           : z.string().uuid().optional().or(z.literal(''));
         break;
       }
+      case 'autocomplete': {
+        let s = z.string();
+        if (field.required) {
+          s = s.min(1, `${field.label} es requerido`);
+        }
+        schema = field.required ? s : s.optional().or(z.literal(''));
+        break;
+      }
       default:
         schema = z.string().optional();
     }

@@ -10,24 +10,31 @@ import {
   ChevronLeft,
   ChevronRight,
   CircleDollarSign,
+  ClipboardList,
   CreditCard,
   Database,
   FileText,
+  FolderTree,
   Globe,
   Hash,
   Landmark,
+  Layers,
   LayoutDashboard,
   LogOut,
   MapPin,
+  MapPinned,
   Package,
   Receipt,
+  ScrollText,
   Settings,
   ShoppingCart,
   Ship,
   Store,
+  Tags,
   Truck,
   Users,
   Wallet,
+  Warehouse,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -65,6 +72,39 @@ const adminSections = [
     items: [
       { title: "Compañías", href: "/dashboard/admin/companies", icon: Building2 },
       { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
+    ],
+  },
+];
+
+// ── Inventario sub-groups ──────────────────────────────────────
+const inventarioSubGroups = [
+  {
+    label: "Catálogos",
+    items: [
+      { title: "Categorías", href: "/dashboard/inventory/product-categories", icon: FolderTree },
+      { title: "Productos", href: "/dashboard/inventory/products", icon: Package },
+      { title: "Razones de Movimiento", href: "/dashboard/inventory/movement-reasons", icon: Tags },
+    ],
+  },
+  {
+    label: "Almacenes",
+    items: [
+      { title: "Almacenes", href: "/dashboard/inventory/warehouses", icon: Warehouse },
+      { title: "Ubicaciones", href: "/dashboard/inventory/warehouse-locations", icon: MapPinned },
+    ],
+  },
+  {
+    label: "Control",
+    items: [
+      { title: "Lotes", href: "/dashboard/inventory/lots", icon: Layers },
+      { title: "Niveles de Stock", href: "/dashboard/inventory/stock-levels", icon: Box },
+    ],
+  },
+  {
+    label: "Movimientos",
+    items: [
+      { title: "Kardex", href: "/dashboard/inventory/kardex", icon: ScrollText },
+      { title: "Conteos", href: "/dashboard/inventory/inventory-counts", icon: ClipboardList },
     ],
   },
 ];
@@ -133,14 +173,16 @@ const erpSections = [
     label: "OPERACIONES",
     items: [
       { title: "Ventas", href: "/dashboard/sales", icon: ShoppingCart },
-      { title: "Inventario", href: "/dashboard/inventory", icon: Package },
-      { title: "Productos", href: "/dashboard/products", icon: Box },
       { title: "Clientes", href: "/dashboard/customers", icon: Users },
     ],
   },
   {
+    label: "INVENTARIO",
+    accordion: "inventario",
+  },
+  {
     label: "MAESTROS",
-    accordion: true,
+    accordion: "maestros",
   },
   {
     label: "ANÁLISIS",
@@ -221,16 +263,22 @@ function SectionHeader({
   );
 }
 
-// ── Collapsed maestros popover ─────────────────────────────────
+// ── Collapsed accordion popover (generic) ──────────────────────
 
-function CollapsedMaestrosButton({
+function CollapsedAccordionButton({
   pathname,
+  subGroups,
+  icon: Icon,
+  label,
 }: {
   pathname: string;
+  subGroups: typeof maestrosSubGroups;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
 }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const isAnyActive = maestrosSubGroups.some((g) =>
-    g.items.some((i) => pathname === i.href),
+  const isAnyActive = subGroups.some((g) =>
+    g.items.some((i) => pathname === i.href || pathname.startsWith(i.href + "/")),
   );
 
   return (
@@ -249,10 +297,10 @@ function CollapsedMaestrosButton({
             {isAnyActive && (
               <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r bg-primary" />
             )}
-            <Database className="h-4 w-4 shrink-0" />
+            <Icon className="h-4 w-4 shrink-0" />
           </button>
         </TooltipTrigger>
-        <TooltipContent side="right">Maestros</TooltipContent>
+        <TooltipContent side="right">{label}</TooltipContent>
       </Tooltip>
 
       {popoverOpen && (
@@ -263,7 +311,7 @@ function CollapsedMaestrosButton({
             onClick={() => setPopoverOpen(false)}
           />
           <div className="absolute left-full top-0 z-50 ml-2 w-56 max-h-[70vh] overflow-y-auto rounded-lg border border-sidebar-border bg-sidebar p-2 shadow-lg">
-            {maestrosSubGroups.map((group) => (
+            {subGroups.map((group) => (
               <div key={group.label} className="mb-2 last:mb-0">
                 <p className="text-[10px] font-medium uppercase tracking-wide text-sidebar-foreground/40 px-2 mb-1">
                   {group.label}
@@ -277,7 +325,7 @@ function CollapsedMaestrosButton({
                     <button
                       className={cn(
                         "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors duration-150",
-                        pathname === item.href
+                        pathname === item.href || pathname.startsWith(item.href + "/")
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
                       )}
@@ -296,22 +344,39 @@ function CollapsedMaestrosButton({
   );
 }
 
-// ── Expanded maestros accordion ────────────────────────────────
+// ── Expanded accordion (generic) ───────────────────────────────
 
-function ExpandedMaestrosAccordion({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+function ExpandedAccordion({
+  pathname,
+  onNavigate,
+  subGroups,
+  icon: Icon,
+  label,
+  value,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+  subGroups: typeof maestrosSubGroups;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+}) {
   const accordionId = useId();
+  const isAnyActive = subGroups.some((g) =>
+    g.items.some((i) => pathname === i.href || pathname.startsWith(i.href + "/")),
+  );
 
   return (
-    <Accordion type="single" collapsible className="w-full" defaultValue="maestros">
-      <AccordionItem value="maestros" id={accordionId} className="border-none">
+    <Accordion type="single" collapsible className="w-full" defaultValue={isAnyActive ? value : undefined}>
+      <AccordionItem value={value} id={accordionId} className="border-none">
         <AccordionTrigger className="py-2 px-3 text-sm font-medium text-sidebar-foreground/70 hover:no-underline hover:text-sidebar-foreground">
           <span className="flex items-center gap-2.5">
-            <Database className="h-4 w-4 shrink-0" />
-            Maestros
+            <Icon className="h-4 w-4 shrink-0" />
+            {label}
           </span>
         </AccordionTrigger>
         <AccordionContent className="pb-1">
-          {maestrosSubGroups.map((group) => (
+          {subGroups.map((group) => (
             <div key={group.label} className="mb-1 last:mb-0">
               <p className="text-[10px] font-medium uppercase tracking-wide text-sidebar-foreground/40 pl-7 pr-3 mt-2 mb-1">
                 {group.label}
@@ -322,12 +387,12 @@ function ExpandedMaestrosAccordion({ pathname, onNavigate }: { pathname: string;
                     <button
                       className={cn(
                         "relative flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-sm transition-colors duration-150",
-                        pathname === item.href
+                        pathname === item.href || pathname.startsWith(item.href + "/")
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
                       )}
                     >
-                      {pathname === item.href && (
+                      {(pathname === item.href || pathname.startsWith(item.href + "/")) && (
                         <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r bg-primary" />
                       )}
                       <item.icon className="h-4 w-4 shrink-0" />
@@ -413,8 +478,14 @@ export function DashboardSidebar({
           <nav className={cn("px-3", collapsed && "px-1.5")}>
             <div className="space-y-0.5">
               {sections.map((section, sIdx) => {
-                // Maestros accordion section
+                // Accordion sections (inventario, maestros)
                 if ("accordion" in section && section.accordion) {
+                  const isInventario = section.accordion === "inventario";
+                  const subGroups = isInventario ? inventarioSubGroups : maestrosSubGroups;
+                  const icon = isInventario ? Package : Database;
+                  const label = isInventario ? "Inventario" : "Maestros";
+                  const value = isInventario ? "inventario" : "maestros";
+
                   return (
                     <div key={section.label}>
                       <SectionHeader
@@ -423,9 +494,21 @@ export function DashboardSidebar({
                         first={sIdx === 0}
                       />
                       {collapsed ? (
-                        <CollapsedMaestrosButton pathname={pathname} />
+                        <CollapsedAccordionButton
+                          pathname={pathname}
+                          subGroups={subGroups}
+                          icon={icon}
+                          label={label}
+                        />
                       ) : (
-                        <ExpandedMaestrosAccordion pathname={pathname} onNavigate={handleMobileClose} />
+                        <ExpandedAccordion
+                          pathname={pathname}
+                          onNavigate={handleMobileClose}
+                          subGroups={subGroups}
+                          icon={icon}
+                          label={label}
+                          value={value}
+                        />
                       )}
                     </div>
                   );

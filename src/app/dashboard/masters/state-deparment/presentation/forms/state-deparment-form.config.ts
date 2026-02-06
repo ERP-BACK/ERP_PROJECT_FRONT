@@ -1,8 +1,19 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
+import { searchCountries } from "@/app/dashboard/masters/countries/application/use-cases/country-search.action";
 
 export const stateDeparmentFormConfig: FormConfig = {
   fields: [
-    { name: "country_id", label: "ID País", type: "text", required: true, placeholder: "UUID del país" },
+    {
+      name: "country_id",
+      label: "País",
+      type: "autocomplete",
+      required: true,
+      autocompleteConfig: {
+        searchAction: searchCountries,
+        returnMode: "code",
+        placeholder: "Buscar país...",
+      },
+    },
     { name: "code", label: "Código", type: "text", required: true, maxLength: 20 },
     { name: "name", label: "Nombre", type: "text", required: true, maxLength: 150 },
     { name: "dane_code", label: "Código DANE", type: "text", required: true, maxLength: 20, placeholder: "Código DANE" },

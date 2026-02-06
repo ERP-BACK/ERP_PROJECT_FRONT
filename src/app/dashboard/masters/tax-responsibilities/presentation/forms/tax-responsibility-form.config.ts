@@ -1,4 +1,5 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
+import { searchCountries } from "@/app/dashboard/masters/countries/application/use-cases/country-search.action";
 
 export const taxResponsibilityFormConfig: FormConfig = {
   fields: [
@@ -19,7 +20,17 @@ export const taxResponsibilityFormConfig: FormConfig = {
       ],
       defaultValue: "other",
     },
-    { name: "country_id", label: "ID País", type: "text", required: true, placeholder: "UUID del país" },
+    {
+      name: "country_id",
+      label: "País",
+      type: "autocomplete",
+      required: true,
+      autocompleteConfig: {
+        searchAction: searchCountries,
+        returnMode: "code",
+        placeholder: "Buscar país...",
+      },
+    },
     { name: "is_active", label: "Activo", type: "boolean", defaultValue: true },
   ],
 };

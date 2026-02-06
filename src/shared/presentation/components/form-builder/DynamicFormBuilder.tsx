@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import type { FormConfig, FormFieldConfig } from "../../types/form-config.types";
 import { buildZodSchema } from "../../validators/build-zod-schema";
+import { Autocomplete } from "../autocomplete/Autocomplete";
 
 interface DynamicFormBuilderProps {
   config: FormConfig;
@@ -96,6 +97,20 @@ function FieldRenderer({
                   ))}
                 </SelectContent>
               </Select>
+            ) : fieldConfig.type === "autocomplete" && fieldConfig.autocompleteConfig ? (
+              <Autocomplete
+                searchAction={fieldConfig.autocompleteConfig.searchAction}
+                returnMode={fieldConfig.autocompleteConfig.returnMode}
+                value={field.value as string}
+                onChange={field.onChange}
+                onSelect={fieldConfig.autocompleteConfig.onSelect}
+                placeholder={fieldConfig.autocompleteConfig.placeholder ?? fieldConfig.placeholder}
+                disabled={isLoading}
+                minChars={fieldConfig.autocompleteConfig.minChars}
+                debounceMs={fieldConfig.autocompleteConfig.debounceMs}
+                initialDisplayValue={fieldConfig.autocompleteConfig.initialDisplayValue}
+                queryKeyPrefix={fieldConfig.name}
+              />
             ) : fieldConfig.type === "boolean" ? (
               <div className="flex items-center gap-2 pt-0.5">
                 <Switch

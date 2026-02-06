@@ -1,7 +1,9 @@
+import type { AutocompleteConfig } from "./autocomplete.types";
+
 export interface FormFieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'select' | 'boolean' | 'textarea' | 'date' | 'uuid';
+  type: 'text' | 'number' | 'select' | 'boolean' | 'textarea' | 'date' | 'uuid' | 'autocomplete';
   required?: boolean;
   maxLength?: number;
   min?: number;
@@ -12,6 +14,7 @@ export interface FormFieldConfig {
   pattern?: { regex: string; message: string };
   hidden?: boolean;
   gridCols?: 1 | 2;
+  autocompleteConfig?: AutocompleteConfig;
 }
 
 export interface FormSection {

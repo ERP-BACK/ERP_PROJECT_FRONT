@@ -1,11 +1,22 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
+import { searchBanks } from "@/app/dashboard/masters/banks/application/use-cases/bank-search.action";
 
 export const bankAccountFormConfig: FormConfig = {
   sections: [
     {
       title: "Datos de la Cuenta",
       fields: [
-        { name: "bank_id", label: "ID del Banco", type: "text", required: true, placeholder: "UUID del banco" },
+        {
+          name: "bank_id",
+          label: "Banco",
+          type: "autocomplete",
+          required: true,
+          autocompleteConfig: {
+            searchAction: searchBanks,
+            returnMode: "code",
+            placeholder: "Buscar banco...",
+          },
+        },
         { name: "account_number", label: "Número de Cuenta", type: "text", required: true, maxLength: 50 },
         { name: "account_name", label: "Nombre de Cuenta", type: "text", required: true, maxLength: 150 },
         {
