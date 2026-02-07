@@ -48,6 +48,7 @@ export function SalesOrdersTablePage() {
               variant="ghost"
               size="icon"
               className="h-7 w-7"
+              onClick={() => router.push(`/dashboard/sales/sales-orders/${order.sales_order_id}`)}
               title="Ver detalle"
             >
               <Eye className="h-4 w-4" />
