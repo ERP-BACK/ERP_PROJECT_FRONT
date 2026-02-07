@@ -1,8 +1,20 @@
 import { apiClient } from "@/lib/api";
 
+interface PaginatedResponse<T> {
+  data: T[];
+  pageInfo: {
+    limit: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+    startCursor?: string;
+    endCursor?: string;
+  };
+}
+
 export function createListActions<T>(basePath: string) {
   async function findAll(): Promise<T[]> {
-    return apiClient<T[]>(basePath, { method: "GET" });
+    const response = await apiClient<PaginatedResponse<T>>(basePath, { method: "GET" });
+    return response.data;
   }
 
   async function findById(id: string): Promise<T> {

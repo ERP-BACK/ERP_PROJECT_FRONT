@@ -4,7 +4,7 @@ import { apiClient } from "@/lib/api";
 import { createPaginatedActions } from "@/shared/application/use-cases/create-paginated-actions";
 import type { PurchaseOrder } from "../../domain/entities/purchase-order.entity";
 
-const BASE_PATH = "/onerp/purchasing/orders";
+const BASE_PATH = "/onerp/purchasing/purchase-orders";
 const actions = createPaginatedActions<PurchaseOrder>(BASE_PATH);
 
 export const findAllPaginated = actions.findAllPaginated;
