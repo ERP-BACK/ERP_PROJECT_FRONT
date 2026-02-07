@@ -11,9 +11,11 @@ import {
   ChevronRight,
   CircleDollarSign,
   ClipboardList,
+  ClipboardCheck,
   CreditCard,
   Database,
   FileText,
+  FileSpreadsheet,
   FolderTree,
   Globe,
   Hash,
@@ -24,11 +26,16 @@ import {
   MapPin,
   MapPinned,
   Package,
+  PackageCheck,
+  PackageOpen,
   Receipt,
+  RotateCcw,
   ScrollText,
   Settings,
   ShoppingCart,
+  ShoppingBag,
   Ship,
+  Star,
   Store,
   Tags,
   Truck,
@@ -72,6 +79,43 @@ const adminSections = [
     items: [
       { title: "Compañías", href: "/dashboard/admin/companies", icon: Building2 },
       { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
+    ],
+  },
+];
+
+// ── Ventas sub-groups ─────────────────────────────────────────
+const ventasSubGroups = [
+  {
+    label: "Transacciones",
+    items: [
+      { title: "Órdenes de Venta", href: "/dashboard/sales/sales-orders", icon: ShoppingCart },
+      { title: "Cotizaciones", href: "/dashboard/sales/quotations", icon: FileSpreadsheet },
+      { title: "Despachos", href: "/dashboard/sales/shipments", icon: PackageCheck },
+      { title: "Devoluciones", href: "/dashboard/sales/returns", icon: RotateCcw },
+    ],
+  },
+  {
+    label: "Configuración",
+    items: [
+      { title: "Listas de Precios", href: "/dashboard/sales/price-lists", icon: Receipt },
+    ],
+  },
+];
+
+// ── Compras sub-groups ────────────────────────────────────────
+const comprasSubGroups = [
+  {
+    label: "Transacciones",
+    items: [
+      { title: "Órdenes de Compra", href: "/dashboard/purchasing/purchase-orders", icon: ShoppingBag },
+      { title: "Requisiciones", href: "/dashboard/purchasing/requisitions", icon: ClipboardCheck },
+      { title: "Recepciones", href: "/dashboard/purchasing/receipts", icon: PackageOpen },
+    ],
+  },
+  {
+    label: "Gestión",
+    items: [
+      { title: "Evaluación Proveedores", href: "/dashboard/purchasing/vendor-evaluations", icon: Star },
     ],
   },
 ];
@@ -170,11 +214,12 @@ const erpSections = [
     ],
   },
   {
-    label: "OPERACIONES",
-    items: [
-      { title: "Ventas", href: "/dashboard/sales", icon: ShoppingCart },
-      { title: "Clientes", href: "/dashboard/customers", icon: Users },
-    ],
+    label: "VENTAS",
+    accordion: "ventas",
+  },
+  {
+    label: "COMPRAS",
+    accordion: "compras",
   },
   {
     label: "INVENTARIO",
@@ -191,6 +236,14 @@ const erpSections = [
     ],
   },
 ];
+
+// ── RRHH section (for hrManager) ────────────────────────────────
+const rrhhSection = {
+  label: "RECURSOS HUMANOS",
+  items: [
+    { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
+  ],
+};
 
 // ── Helpers ────────────────────────────────────────────────────
 
@@ -422,7 +475,16 @@ export function DashboardSidebar({
   userEmail,
 }: SidebarProps) {
   const isSysAdmin = roles?.includes("sysAdmin") ?? false;
-  const sections = isSysAdmin ? adminSections : erpSections;
+  const isHrManager = roles?.includes("hrManager") ?? false;
+  const isCeo = roles?.includes("ceo") ?? false;
+  const canManageUsers = isHrManager || isCeo;
+
+  // Build sections based on role
+  const sections = isSysAdmin
+    ? adminSections
+    : canManageUsers
+    ? [...erpSections, rrhhSection]
+    : erpSections;
 
   const initials = userName
     ? userName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
@@ -478,13 +540,34 @@ export function DashboardSidebar({
           <nav className={cn("px-3", collapsed && "px-1.5")}>
             <div className="space-y-0.5">
               {sections.map((section, sIdx) => {
-                // Accordion sections (inventario, maestros)
+                // Accordion sections (ventas, compras, inventario, maestros)
                 if ("accordion" in section && section.accordion) {
-                  const isInventario = section.accordion === "inventario";
-                  const subGroups = isInventario ? inventarioSubGroups : maestrosSubGroups;
-                  const icon = isInventario ? Package : Database;
-                  const label = isInventario ? "Inventario" : "Maestros";
-                  const value = isInventario ? "inventario" : "maestros";
+                  const accordionType = section.accordion;
+                  const subGroups =
+                    accordionType === "ventas"
+                      ? ventasSubGroups
+                      : accordionType === "compras"
+                      ? comprasSubGroups
+                      : accordionType === "inventario"
+                      ? inventarioSubGroups
+                      : maestrosSubGroups;
+                  const icon =
+                    accordionType === "ventas"
+                      ? ShoppingCart
+                      : accordionType === "compras"
+                      ? ShoppingBag
+                      : accordionType === "inventario"
+                      ? Package
+                      : Database;
+                  const label =
+                    accordionType === "ventas"
+                      ? "Ventas"
+                      : accordionType === "compras"
+                      ? "Compras"
+                      : accordionType === "inventario"
+                      ? "Inventario"
+                      : "Maestros";
+                  const value = accordionType;
 
                   return (
                     <div key={section.label}>

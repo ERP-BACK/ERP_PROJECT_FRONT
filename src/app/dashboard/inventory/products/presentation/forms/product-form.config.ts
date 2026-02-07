@@ -1,6 +1,8 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
 import { searchProductCategories } from "@/app/dashboard/inventory/product-categories/application/use-cases/product-category-search.action";
 import { searchWarehouses } from "@/app/dashboard/inventory/warehouses/application/use-cases/warehouse-search.action";
+import { searchUom } from "@/app/dashboard/masters/uom/application/use-cases/uom-search.action";
+import { searchVendors } from "@/app/dashboard/masters/third-party/application/use-cases/vendor-search.action";
 import {
   PRODUCT_TYPE_OPTIONS,
   VALUATION_METHOD_OPTIONS,
@@ -67,26 +69,58 @@ export const productFormConfig: FormConfig = {
           },
         },
         {
+          name: "subcategory_id",
+          label: "Subcategoría",
+          type: "autocomplete",
+          required: false,
+          autocompleteConfig: {
+            searchAction: searchProductCategories,
+            returnMode: "code",
+            placeholder: "Buscar subcategoría...",
+          },
+        },
+        // TODO: Implementar módulo de Brands
+        // {
+        //   name: "brand_id",
+        //   label: "Marca",
+        //   type: "autocomplete",
+        //   required: false,
+        //   autocompleteConfig: {
+        //     searchAction: searchBrands,
+        //     returnMode: "code",
+        //     placeholder: "Buscar marca...",
+        //   },
+        // },
+        {
           name: "base_uom_id",
           label: "Unidad de Medida Base",
-          type: "text",
+          type: "autocomplete",
           required: true,
-          maxLength: 50,
-          placeholder: "Ej: UND, KG, LT",
+          autocompleteConfig: {
+            searchAction: searchUom,
+            returnMode: "code",
+            placeholder: "Buscar unidad de medida...",
+          },
         },
         {
           name: "purchase_uom_id",
           label: "UOM Compras",
-          type: "text",
-          maxLength: 50,
-          placeholder: "UOM para órdenes de compra",
+          type: "autocomplete",
+          autocompleteConfig: {
+            searchAction: searchUom,
+            returnMode: "code",
+            placeholder: "Buscar UOM para compras...",
+          },
         },
         {
           name: "sales_uom_id",
           label: "UOM Ventas",
-          type: "text",
-          maxLength: 50,
-          placeholder: "UOM para órdenes de venta",
+          type: "autocomplete",
+          autocompleteConfig: {
+            searchAction: searchUom,
+            returnMode: "code",
+            placeholder: "Buscar UOM para ventas...",
+          },
         },
       ],
     },
@@ -177,6 +211,17 @@ export const productFormConfig: FormConfig = {
             searchAction: searchWarehouses,
             returnMode: "code",
             placeholder: "Buscar almacén...",
+          },
+        },
+        {
+          name: "default_vendor_id",
+          label: "Proveedor por Defecto",
+          type: "autocomplete",
+          required: false,
+          autocompleteConfig: {
+            searchAction: searchVendors,
+            returnMode: "code",
+            placeholder: "Buscar proveedor...",
           },
         },
         {

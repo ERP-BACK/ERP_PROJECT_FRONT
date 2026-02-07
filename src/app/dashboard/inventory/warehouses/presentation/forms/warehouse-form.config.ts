@@ -22,6 +22,31 @@ export const warehouseFormConfig: FormConfig = {
           placeholder: "Nombre del almacén",
         },
         {
+          name: "type",
+          label: "Tipo de Almacén",
+          type: "select",
+          required: true,
+          options: [
+            { label: "Físico", value: "physical" },
+            { label: "Virtual", value: "virtual" },
+            { label: "Consignación", value: "consignment" },
+            { label: "Tránsito", value: "transit" },
+          ],
+          defaultValue: "physical",
+        },
+        // TODO: Implementar searchUsers cuando exista el módulo
+        // {
+        //   name: "manager_id",
+        //   label: "Responsable",
+        //   type: "autocomplete",
+        //   required: false,
+        //   autocompleteConfig: {
+        //     searchAction: searchUsers,
+        //     returnMode: "code",
+        //     placeholder: "Buscar responsable...",
+        //   },
+        // },
+        {
           name: "description",
           label: "Descripción",
           type: "textarea",

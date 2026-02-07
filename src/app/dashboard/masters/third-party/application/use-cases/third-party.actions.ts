@@ -18,6 +18,7 @@ export async function create(data: Partial<ThirdParty>): Promise<ThirdParty> {
       company_id: (data as Record<string, string>).company_id ?? "",
       type: data.type ?? "customer",
       tax_id: (data as Record<string, string>).tax_id ?? "",
+      verification_dv: (data as Record<string, string>).verification_dv ?? undefined,
       legal_name: (data as Record<string, string>).legal_name ?? "",
       comercial_name: data.comercial_name ?? undefined,
       email: data.email ?? undefined,
@@ -31,9 +32,9 @@ export async function create(data: Partial<ThirdParty>): Promise<ThirdParty> {
     },
     third_party_address: {
       label: (data as Record<string, string>).address_label ?? "billing",
-      country: (data as Record<string, string>).address_country ?? undefined,
-      state: (data as Record<string, string>).address_state ?? undefined,
-      city: (data as Record<string, string>).address_city ?? undefined,
+      country: (data as Record<string, string>).address_country_id ?? undefined,
+      state: (data as Record<string, string>).address_state_id ?? undefined,
+      city: (data as Record<string, string>).address_city_id ?? undefined,
       postal_code: (data as Record<string, string>).address_postal_code ?? undefined,
       street_line1: (data as Record<string, string>).address_street_line1 ?? undefined,
       street_line2: (data as Record<string, string>).address_street_line2 ?? undefined,
@@ -55,6 +56,7 @@ export async function create(data: Partial<ThirdParty>): Promise<ThirdParty> {
       currency: (data as Record<string, string>).bank_currency ?? undefined,
       is_primary: true,
     },
+    payment_term_id: (data as Record<string, string>).payment_term_id ?? undefined,
   };
 
   return apiClient<ThirdParty>(BASE_PATH, {

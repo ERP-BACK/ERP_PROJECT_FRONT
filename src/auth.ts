@@ -98,9 +98,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return refreshAccessToken(token);
         },
         async session({ session, token }) {
-            // Si el refresh fallo, forzar re-login
+            // Si el refresh fallo, marcar la sesión con error
             if (token.error === "RefreshTokenError") {
                 session.error = "RefreshTokenError";
+                // Retornar sesión con error pero sin tokens válidos
+                return session;
             }
 
             session.user.access_token = token.accessToken as string;

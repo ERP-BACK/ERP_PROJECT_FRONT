@@ -66,6 +66,12 @@ const features = [
 
 export default async function Home() {
   const session = await auth();
+
+  // Si hay error de refresh token, redirigir a logout para limpiar cookies
+  if (session?.error === "RefreshTokenError") {
+    redirect("/auth/logout");
+  }
+
   if (session) {
     const roles = session.roles ?? [];
     if (roles.includes("sysAdmin")) {

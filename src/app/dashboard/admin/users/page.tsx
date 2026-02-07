@@ -11,6 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Plus, Users, XCircle } from "lucide-react";
+import { UserActions } from "./components/user-actions";
+
+const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  active: { label: "Activo", variant: "default" },
+  inactive: { label: "Inactivo", variant: "secondary" },
+  blocked: { label: "Bloqueado", variant: "destructive" },
+  suspended: { label: "Suspendido", variant: "outline" },
+};
 
 export default async function UsersPage() {
   let users: Awaited<ReturnType<typeof adminGetAllUsers>> = [];
@@ -54,14 +62,16 @@ export default async function UsersPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Nombre</TableHead>
                 <TableHead>Rol</TableHead>
+                <TableHead>Estado</TableHead>
                 <TableHead>Compania</TableHead>
                 <TableHead>Fecha Creacion</TableHead>
+                <TableHead className="w-[70px]">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={6} className="h-48">
+                  <TableCell colSpan={8} className="h-48">
                     <div className="flex flex-col items-center justify-center text-center">
                       <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                         <Users className="h-5 w-5 text-muted-foreground" />
@@ -74,30 +84,43 @@ export default async function UsersPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                users.map((user) => (
-                  <TableRow key={user.user_Id}>
-                    <TableCell className="font-medium">
-                      {user.username}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {user.email}
-                    </TableCell>
-                    <TableCell>
-                      {user.first_name} {user.last_name}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{user.roles}</Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {user.company_name || "—"}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground tabular-nums">
-                      {user.created_at
-                        ? new Date(user.created_at).toLocaleDateString("es-CO")
-                        : "—"}
-                    </TableCell>
-                  </TableRow>
-                ))
+                users.map((user) => {
+                  const status = statusConfig[user.status] || statusConfig.active;
+                  return (
+                    <TableRow key={user.user_Id}>
+                      <TableCell className="font-medium">
+                        {user.username}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {user.email}
+                      </TableCell>
+                      <TableCell>
+                        {user.first_name} {user.last_name}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary">{user.roles}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={status.variant}>{status.label}</Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {user.company_name || "—"}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground tabular-nums">
+                        {user.created_at
+                          ? new Date(user.created_at).toLocaleDateString("es-CO")
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        <UserActions
+                          userId={user.user_Id}
+                          username={user.username}
+                          currentStatus={user.status}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>

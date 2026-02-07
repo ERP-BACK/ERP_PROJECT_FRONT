@@ -1,5 +1,6 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
 import { searchBanks } from "@/app/dashboard/masters/banks/application/use-cases/bank-search.action";
+import { searchCurrencies } from "@/app/dashboard/masters/currencies/application/use-cases/currency-search.action";
 
 export const bankAccountFormConfig: FormConfig = {
   sections: [
@@ -15,6 +16,17 @@ export const bankAccountFormConfig: FormConfig = {
             searchAction: searchBanks,
             returnMode: "code",
             placeholder: "Buscar banco...",
+          },
+        },
+        {
+          name: "currency_id",
+          label: "Moneda",
+          type: "autocomplete",
+          required: true,
+          autocompleteConfig: {
+            searchAction: searchCurrencies,
+            returnMode: "code",
+            placeholder: "Buscar moneda...",
           },
         },
         { name: "account_number", label: "Número de Cuenta", type: "text", required: true, maxLength: 50 },

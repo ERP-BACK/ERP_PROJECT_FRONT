@@ -1,9 +1,21 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
+import { searchCountries } from "@/app/dashboard/masters/countries/application/use-cases/country-search.action";
 
 export const documentTypeFormConfig: FormConfig = {
   fields: [
     { name: "code", label: "Código", type: "text", required: true, maxLength: 20 },
     { name: "name", label: "Nombre", type: "text", required: true, maxLength: 100 },
+    {
+      name: "country_id",
+      label: "País",
+      type: "autocomplete",
+      required: false,
+      autocompleteConfig: {
+        searchAction: searchCountries,
+        returnMode: "code",
+        placeholder: "Buscar país...",
+      },
+    },
     { name: "description", label: "Descripción", type: "textarea", maxLength: 255, gridCols: 2 },
     {
       name: "applies_to",

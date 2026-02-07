@@ -1,5 +1,6 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
 import { searchWarehouses } from "@/app/dashboard/inventory/warehouses/application/use-cases/warehouse-search.action";
+import { searchWarehouseLocations } from "@/app/dashboard/inventory/warehouse-locations/application/use-cases/warehouse-location-search.action";
 import { LOCATION_TYPE_OPTIONS } from "@/app/dashboard/inventory/shared/types/inventory.types";
 
 export const warehouseLocationFormConfig: FormConfig = {
@@ -16,6 +17,17 @@ export const warehouseLocationFormConfig: FormConfig = {
             searchAction: searchWarehouses,
             returnMode: "code",
             placeholder: "Buscar almacén...",
+          },
+        },
+        {
+          name: "parent_location_id",
+          label: "Ubicación Padre",
+          type: "autocomplete",
+          required: false,
+          autocompleteConfig: {
+            searchAction: searchWarehouseLocations,
+            returnMode: "code",
+            placeholder: "Buscar ubicación padre...",
           },
         },
         {

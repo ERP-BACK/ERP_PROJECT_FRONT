@@ -1,4 +1,5 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
+import { searchBranches } from "@/app/dashboard/masters/branches/application/use-cases/branch-search.action";
 
 export const documentSequenceFormConfig: FormConfig = {
   sections: [
@@ -7,6 +8,17 @@ export const documentSequenceFormConfig: FormConfig = {
       fields: [
         { name: "sequence_code", label: "Código", type: "text", required: true, maxLength: 50 },
         { name: "sequence_name", label: "Nombre", type: "text", required: true, maxLength: 150 },
+        {
+          name: "branch_id",
+          label: "Sucursal",
+          type: "autocomplete",
+          required: false,
+          autocompleteConfig: {
+            searchAction: searchBranches,
+            returnMode: "code",
+            placeholder: "Buscar sucursal...",
+          },
+        },
         { name: "prefix", label: "Prefijo", type: "text", maxLength: 20, placeholder: "FAC-" },
         { name: "suffix", label: "Sufijo", type: "text", maxLength: 20 },
       ],

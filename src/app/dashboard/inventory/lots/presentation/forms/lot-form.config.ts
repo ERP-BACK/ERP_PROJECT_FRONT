@@ -1,5 +1,8 @@
 import type { FormConfig } from "@/shared/presentation/types/form-config.types";
 import { searchProducts } from "@/app/dashboard/inventory/products/application/use-cases/product-search.action";
+import { searchVendors } from "@/app/dashboard/masters/third-party/application/use-cases/vendor-search.action";
+import { searchWarehouses } from "@/app/dashboard/inventory/warehouses/application/use-cases/warehouse-search.action";
+import { searchWarehouseLocations } from "@/app/dashboard/inventory/warehouse-locations/application/use-cases/warehouse-location-search.action";
 import { LOT_STATUS_OPTIONS } from "@/app/dashboard/inventory/shared/types/inventory.types";
 
 export const lotFormConfig: FormConfig = {
@@ -16,6 +19,39 @@ export const lotFormConfig: FormConfig = {
             searchAction: searchProducts,
             returnMode: "code",
             placeholder: "Buscar producto por SKU o nombre...",
+          },
+        },
+        {
+          name: "vendor_id",
+          label: "Proveedor",
+          type: "autocomplete",
+          required: false,
+          autocompleteConfig: {
+            searchAction: searchVendors,
+            returnMode: "code",
+            placeholder: "Buscar proveedor...",
+          },
+        },
+        {
+          name: "warehouse_id",
+          label: "Almacén",
+          type: "autocomplete",
+          required: true,
+          autocompleteConfig: {
+            searchAction: searchWarehouses,
+            returnMode: "code",
+            placeholder: "Buscar almacén...",
+          },
+        },
+        {
+          name: "location_id",
+          label: "Ubicación",
+          type: "autocomplete",
+          required: false,
+          autocompleteConfig: {
+            searchAction: searchWarehouseLocations,
+            returnMode: "code",
+            placeholder: "Buscar ubicación...",
           },
         },
         {

@@ -10,7 +10,7 @@ export interface CreateUserInput {
   first_name: string;
   last_name: string;
   roles: string;
-  company_Id: string;
+  company_Id?: string; // Optional - injected by backend for hrManager
 }
 
 export async function adminCreateUser(

@@ -136,7 +136,8 @@ const roleGroups = [
   },
 ];
 
-const userSchema = z.object({
+// Schema for sysAdmin (requires company selection)
+const sysAdminUserSchema = z.object({
   username: z.string().min(3, "El username debe tener al menos 3 caracteres"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
@@ -146,7 +147,19 @@ const userSchema = z.object({
   company_Id: z.string().uuid("Seleccione una compañía"),
 });
 
-type UserFormValues = z.infer<typeof userSchema>;
+// Schema for hrManager (company injected from JWT)
+const hrManagerUserSchema = z.object({
+  username: z.string().min(3, "El username debe tener al menos 3 caracteres"),
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  first_name: z.string().min(2, "El nombre es requerido"),
+  last_name: z.string().min(2, "El apellido es requerido"),
+  roles: z.string().min(1, "Seleccione un rol"),
+});
+
+type SysAdminFormValues = z.infer<typeof sysAdminUserSchema>;
+type HrManagerFormValues = z.infer<typeof hrManagerUserSchema>;
+type UserFormValues = SysAdminFormValues | HrManagerFormValues;
 
 interface Company {
   company_Id: string;
@@ -155,15 +168,18 @@ interface Company {
 
 interface Props {
   companies: Company[];
+  isSysAdmin: boolean;
 }
 
-export function CreateUserForm({ companies }: Props) {
+export function CreateUserForm({ companies, isSysAdmin }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const schema = isSysAdmin ? sysAdminUserSchema : hrManagerUserSchema;
+
   const form = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       username: "",
       email: "",
@@ -171,14 +187,20 @@ export function CreateUserForm({ companies }: Props) {
       first_name: "",
       last_name: "",
       roles: "",
-      company_Id: "",
+      ...(isSysAdmin && { company_Id: "" }),
     },
   });
 
   async function onSubmit(data: UserFormValues) {
     setLoading(true);
     setError(null);
-    const result = await adminCreateUser(data);
+
+    // For hrManager, company_Id is not in the form (injected by backend from JWT)
+    const payload = isSysAdmin
+      ? (data as SysAdminFormValues)
+      : { ...data, company_Id: undefined };
+
+    const result = await adminCreateUser(payload as SysAdminFormValues);
     if (result.success) {
       router.push("/dashboard/admin/users");
     } else {
@@ -303,36 +325,38 @@ export function CreateUserForm({ companies }: Props) {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="company_Id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Compania</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Seleccionar compañía" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {companies.map((company) => (
-                              <SelectItem
-                                key={company.company_Id}
-                                value={company.company_Id}
-                              >
-                                {company.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {isSysAdmin && (
+                    <FormField
+                      control={form.control}
+                      name="company_Id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Compania</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value as string}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Seleccionar compañía" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {companies.map((company) => (
+                                <SelectItem
+                                  key={company.company_Id}
+                                  value={company.company_Id}
+                                >
+                                  {company.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                   <FormField
                     control={form.control}
                     name="roles"
