@@ -28,6 +28,7 @@ export const productCategoryFormConfig: FormConfig = {
         searchAction: searchProductCategories,
         returnMode: "code",
         placeholder: "Buscar categoría padre...",
+        initialDisplayValueField: "parent_category_name",
       },
     },
     {

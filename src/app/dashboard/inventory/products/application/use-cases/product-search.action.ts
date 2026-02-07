@@ -4,12 +4,12 @@ import { createSearchAction } from "@/shared/application/use-cases/create-search
 import type { Product } from "../../domain/entities/product.entity";
 
 const search = createSearchAction<Product & Record<string, unknown>>(
-  "/inventory/products",
+  "/onerp/inventory/products",
   {
-    code: "sku",
+    code: "product_id",
     value: "name",
     searchFields: ["sku", "name", "barcode"],
-    metaFields: ["product_id", "product_type", "base_price", "average_cost"],
+    metaFields: ["sku", "product_type", "base_price", "average_cost"],
   }
 );
 

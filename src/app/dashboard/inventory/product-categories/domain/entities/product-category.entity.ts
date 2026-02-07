@@ -7,6 +7,8 @@ export interface ProductCategory extends BaseEntity {
   name: string;
   description?: string;
   parent_category_id?: string;
+  parent_category_code?: string;
+  parent_category_name?: string;
   level: number;
   path?: string;
   is_active: boolean;

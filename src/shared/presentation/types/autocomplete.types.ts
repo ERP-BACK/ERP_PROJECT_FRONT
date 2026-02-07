@@ -20,5 +20,6 @@ export interface AutocompleteConfig {
   debounceMs?: number;
   placeholder?: string;
   initialDisplayValue?: string;
+  initialDisplayValueField?: string;
   onSelect?: (option: AutocompleteOption | null) => void;
 }

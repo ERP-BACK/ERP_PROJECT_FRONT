@@ -3,7 +3,7 @@
 import { createPaginatedActions } from "@/shared/application/use-cases/create-paginated-actions";
 import type { MovementReason } from "../../domain/entities/movement-reason.entity";
 
-const actions = createPaginatedActions<MovementReason>("/inventory/movement-reasons");
+const actions = createPaginatedActions<MovementReason>("/onerp/inventory/movement-reasons");
 
 export const findAllPaginated = actions.findAllPaginated;
 export const findById = actions.findById;

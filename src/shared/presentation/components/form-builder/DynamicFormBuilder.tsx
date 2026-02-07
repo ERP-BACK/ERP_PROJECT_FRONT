@@ -36,11 +36,30 @@ function FieldRenderer({
   fieldConfig,
   control,
   isLoading,
+  defaultValues,
 }: {
   fieldConfig: FormFieldConfig;
   control: Control<FieldValues>;
   isLoading?: boolean;
+  defaultValues?: Record<string, unknown>;
 }) {
+  // Calculate initialDisplayValue for autocomplete fields
+  const getInitialDisplayValue = () => {
+    if (fieldConfig.type !== "autocomplete" || !fieldConfig.autocompleteConfig) {
+      return undefined;
+    }
+    // Use explicit initialDisplayValue if provided
+    if (fieldConfig.autocompleteConfig.initialDisplayValue) {
+      return fieldConfig.autocompleteConfig.initialDisplayValue;
+    }
+    // Use initialDisplayValueField to get value from defaultValues
+    if (fieldConfig.autocompleteConfig.initialDisplayValueField && defaultValues) {
+      const fieldValue = defaultValues[fieldConfig.autocompleteConfig.initialDisplayValueField];
+      return typeof fieldValue === "string" ? fieldValue : undefined;
+    }
+    return undefined;
+  };
+
   return (
     <FormField
       key={fieldConfig.name}
@@ -108,7 +127,7 @@ function FieldRenderer({
                 disabled={isLoading}
                 minChars={fieldConfig.autocompleteConfig.minChars}
                 debounceMs={fieldConfig.autocompleteConfig.debounceMs}
-                initialDisplayValue={fieldConfig.autocompleteConfig.initialDisplayValue}
+                initialDisplayValue={getInitialDisplayValue()}
                 queryKeyPrefix={fieldConfig.name}
               />
             ) : fieldConfig.type === "boolean" ? (
@@ -162,6 +181,19 @@ function BooleanFieldRenderer({
   );
 }
 
+// Helper to clean empty strings from form data
+function cleanFormData(data: Record<string, unknown>): Record<string, unknown> {
+  const cleaned: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    // Skip empty strings - they become undefined (not sent)
+    if (value === "" || value === null) {
+      continue;
+    }
+    cleaned[key] = value;
+  }
+  return cleaned;
+}
+
 export function DynamicFormBuilder({
   config,
   defaultValues,
@@ -186,13 +218,17 @@ export function DynamicFormBuilder({
     defaultValues: computedDefaults,
   });
 
+  const handleSubmit = (data: Record<string, unknown>) => {
+    onSubmit(cleanFormData(data));
+  };
+
   // Sectioned layout
   if (config.sections) {
     return (
       <Form {...form}>
         <form
           id={formId}
-          onSubmit={form.handleSubmit((data) => onSubmit(data))}
+          onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-0"
         >
           {config.sections.map((section, sIdx) => {
@@ -221,6 +257,7 @@ export function DynamicFormBuilder({
                           fieldConfig={fieldConfig}
                           control={form.control}
                           isLoading={isLoading}
+                          defaultValues={defaultValues}
                         />
                       ))}
                     </div>
@@ -255,7 +292,7 @@ export function DynamicFormBuilder({
     <Form {...form}>
       <form
         id={formId}
-        onSubmit={form.handleSubmit((data) => onSubmit(data))}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="px-6 py-5"
       >
         {regularFields.length > 0 && (
@@ -266,6 +303,7 @@ export function DynamicFormBuilder({
                 fieldConfig={fieldConfig}
                 control={form.control}
                 isLoading={isLoading}
+                defaultValues={defaultValues}
               />
             ))}
           </div>

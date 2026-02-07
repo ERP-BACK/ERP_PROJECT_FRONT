@@ -4,12 +4,12 @@ import { createSearchAction } from "@/shared/application/use-cases/create-search
 import type { WarehouseLocation } from "../../domain/entities/warehouse-location.entity";
 
 const search = createSearchAction<WarehouseLocation & Record<string, unknown>>(
-  "/inventory/warehouse-locations",
+  "/onerp/inventory/warehouse-locations",
   {
-    code: "code",
+    code: "location_id",
     value: "name",
     searchFields: ["code", "name", "full_path"],
-    metaFields: ["location_id", "warehouse_id", "location_type"],
+    metaFields: ["code", "warehouse_id", "location_type"],
   }
 );
 

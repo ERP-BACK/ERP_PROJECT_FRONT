@@ -4,12 +4,12 @@ import { createSearchAction } from "@/shared/application/use-cases/create-search
 import type { Lot } from "../../domain/entities/lot.entity";
 
 const search = createSearchAction<Lot & Record<string, unknown>>(
-  "/inventory/lots",
+  "/onerp/inventory/lots",
   {
-    code: "lot_number",
+    code: "lot_id",
     value: "lot_number",
     searchFields: ["lot_number", "internal_lot", "supplier_lot"],
-    metaFields: ["lot_id", "product_id", "current_quantity", "expiration_date", "status"],
+    metaFields: ["lot_number", "product_id", "current_quantity", "expiration_date", "status"],
   }
 );
 
