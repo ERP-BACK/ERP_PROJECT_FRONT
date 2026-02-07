@@ -59,6 +59,7 @@ import {
   getShipmentStatusLabel,
   getShipmentStatusColor,
 } from "../../shared/types/sales.types";
+import { DocumentActionsDropdown } from "@/components/documents";
 
 // ============================================================================
 // Utility Functions
@@ -442,6 +443,12 @@ export default function ShipmentDetailPage() {
                     Editar
                   </Button>
                 )}
+
+                <DocumentActionsDropdown
+                  documentType="shipment"
+                  documentId={shipmentId}
+                  documentNumber={shipment.shipment_number}
+                />
 
                 {canCancel && (
                   <DropdownMenu>
