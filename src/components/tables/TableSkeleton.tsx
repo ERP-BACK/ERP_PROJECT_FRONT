@@ -17,7 +17,7 @@ interface TableSkeletonProps {
 
 export function TableSkeleton({ columns, rows = 5 }: TableSkeletonProps) {
   return (
-    <div className="overflow-hidden rounded-md border">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border">
       <Table>
         <TableHeader>
           <TableRow>

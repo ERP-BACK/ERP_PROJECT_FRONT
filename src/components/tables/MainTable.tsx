@@ -6,7 +6,13 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import {
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Inbox,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -43,7 +49,6 @@ export function MainDataTable<TData, TValue>({
   onPaginationChange,
   paginationState,
 }: DataTableProps<TData, TValue>) {
-  console.log(paginationState, "paginationState");
   const table = useReactTable({
     data: data || [],
     columns,
@@ -52,46 +57,21 @@ export function MainDataTable<TData, TValue>({
     pageCount: pageCount || 0,
   });
 
-  const handleFirstPage = () => {
-    if (onPaginationChange) {
-      onPaginationChange({
-        limit: paginationState.limit,
-        startCursor: null,
-        endCursor: null,
-      });
-    }
-  };
-
   const handlePreviousPage = () => {
-    if (onPaginationChange && paginationState.hasPreviousPage) {
+    if (onPaginationChange && paginationState?.hasPreviousPage) {
       onPaginationChange({
-        limit: paginationState.limit,
+        limit: paginationState?.limit,
         startCursor: null,
-        endCursor: paginationState.startCursor,
+        endCursor: paginationState?.startCursor,
       });
     }
   };
 
   const handleNextPage = () => {
-    if (onPaginationChange && paginationState.hasNextPage) {
-      console.log({
-        limit: paginationState.limit,
-        startCursor: paginationState.endCursor,
-        endCursor: null,
-      });
+    if (onPaginationChange && paginationState?.hasNextPage) {
       onPaginationChange({
-        limit: paginationState.limit,
-        startCursor: paginationState.endCursor,
-        endCursor: null,
-      });
-    }
-  };
-
-  const handleLastPage = () => {
-    if (onPaginationChange) {
-      onPaginationChange({
-        limit: paginationState.limit,
-        startCursor: null,
+        limit: paginationState?.limit,
+        startCursor: paginationState?.endCursor,
         endCursor: null,
       });
     }
@@ -107,165 +87,119 @@ export function MainDataTable<TData, TValue>({
     }
   };
 
-  // Calcular el rango actual de elementos mostrados
-  const currentPageSize = paginationState?.limit || 0;
   const totalRows = rowCount || 0;
   const currentRows = table.getRowModel().rows.length;
-
-  // Para cursor-based pagination, es difícil calcular el rango exacto
-  // pero podemos mostrar el número de elementos actuales
-  const startRange = 1;
-  const endRange = currentRows;
+  const hasRows = currentRows > 0;
 
   return (
-    <div className="flex flex-col h-full overflow-hidden rounded-md border">
-      <Table className="flex-1">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border">
+      <div className="flex-1 overflow-auto">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="bg-muted/40 hover:bg-muted/40">
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="sticky top-0 z-10 h-10 bg-muted/95 text-xs font-medium uppercase tracking-wide backdrop-blur-sm"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody className="flex-1">
-          {table.getRowModel().rows && table.getRowModel().rows.length > 0 ? (
-            <>
-              {table.getRowModel().rows.map((row) => (
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {hasRows ? (
+              table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-3 text-sm">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-              {/* Filas vacías para llenar el espacio restante */}
-              {Array.from({
-                length: Math.max(0, paginationState.limit - currentRows),
-              }).map((_, index) => (
-                <TableRow key={`empty-${index}`} className="h-12">
-                  {columns.map((_, colIndex) => (
-                    <TableCell
-                      key={`empty-cell-${index}-${colIndex}`}
-                      className="border-b"
-                    >
-                      &nbsp;
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </>
-          ) : (
-            <>
-              <TableRow>
+              ))
+            ) : (
+              <TableRow className="hover:bg-transparent">
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className="h-48"
                 >
-                  No hay resultados.
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                      <Inbox className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm font-medium">Sin resultados</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      No se encontraron registros
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
-              {/* Filas vacías para llenar el espacio cuando no hay datos */}
-              {Array.from({ length: paginationState.limit - 1 }).map(
-                (_, index) => (
-                  <TableRow key={`empty-no-data-${index}`} className="h-12">
-                    {columns.map((_, colIndex) => (
-                      <TableCell
-                        key={`empty-no-data-cell-${index}-${colIndex}`}
-                        className="border-b"
-                      >
-                        &nbsp;
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                )
-              )}
-            </>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-      {/* Paginación con el estilo de la imagen */}
-      <div className="flex items-center justify-between px-4 py-3 border-t bg-gray-50 flex-shrink-0">
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-700">Rows per page:</span>
+      {/* Pagination footer */}
+      <div className="flex shrink-0 items-center justify-between border-t bg-muted/20 px-4 py-2.5">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">Filas por pagina</span>
           <select
-            value={paginationState.limit || 5}
-            onChange={(e) => {
-              handlePageSizeChange(Number(e.target.value));
-            }}
-            className="border border-gray-300 rounded px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={paginationState?.limit || 10}
+            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+            className="h-7 rounded-md border border-border bg-card px-2 text-xs text-foreground outline-none focus:ring-1 focus:ring-ring"
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
+            {[10, 20, 30, 40, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
               </option>
             ))}
           </select>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-700">
-            {currentRows > 0 ? `${startRange}-${endRange}` : "0"} of {totalRows}
+        <div className="flex items-center gap-3">
+          {isLoading && (
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+          )}
+
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {hasRows ? `1–${currentRows}` : "0"} de {totalRows}
           </span>
 
-          <div className="flex items-center space-x-1">
-            <button
-              className={`p-1 rounded ${
-                paginationState.hasPreviousPage
-                  ? "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-                  : "text-gray-300 cursor-not-allowed"
-              }`}
+          <div className="flex items-center gap-0.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               onClick={handlePreviousPage}
-              disabled={!paginationState.hasPreviousPage}
+              disabled={!paginationState?.hasPreviousPage}
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-
-            <button
-              className={`p-1 rounded ${
-                paginationState.hasNextPage
-                  ? "text-gray-600 hover:text-gray-800 hover:bg-gray-200"
-                  : "text-gray-300 cursor-not-allowed"
-              }`}
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
               onClick={handleNextPage}
-              disabled={!paginationState.hasNextPage}
+              disabled={!paginationState?.hasNextPage}
             >
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-
-        {isLoading && <div className="text-sm text-gray-500">Cargando...</div>}
       </div>
     </div>
   );

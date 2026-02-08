@@ -1,46 +1,78 @@
-import NextAuth from "next-auth";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
-import authConfig from "@/auth.config";
-
-const { auth } = NextAuth(authConfig);
-
-const publicRoutes = ["/", "/"];
-const authRoutes = ["/login", "/register"];
-const apiAuthPrefix = "/api/auth";
 
 export default auth((req) => {
-  const { nextUrl } = req;
-  /// const isLoggedIn2 = req.auth ? !!req.auth.isLoggedIn : false;
-  // console.log("Middleware Auth", { isLoggedIn, nextUrl });
-  // console.log({ isLoggedIn, path: nextUrl.pathname });
+    const { pathname } = req.nextUrl;
+    const session = req.auth;
 
-  // // Permitir todas las rutas de API de autenticación
-  //   if (nextUrl.pathname.startsWith(apiAuthPrefix)) {
-  //     return NextResponse.next();
-  //   }
+    // Public routes — always allow
+    if (
+        pathname === "/" ||
+        pathname.startsWith("/api/auth") ||
+        pathname.startsWith("/auth/")
+    ) {
+        return NextResponse.next();
+    }
 
-  //   // Permitir acceso a rutas públicas sin importar el estado de autenticación
-  //   if (publicRoutes.includes(nextUrl.pathname)) {
-  //     return NextResponse.next();
-  //   }
+    // Not authenticated or refresh token failed — redirect to logout to clear cookies
+    if (!session || (session as unknown as { error?: string }).error === "RefreshTokenError") {
+        const url = req.nextUrl.clone();
+        // Si hay error de refresh token, ir a logout para limpiar cookies
+        if ((session as unknown as { error?: string })?.error === "RefreshTokenError") {
+            url.pathname = "/auth/logout";
+        } else {
+            url.pathname = "/";
+        }
+        return NextResponse.redirect(url);
+    }
 
-  //   // Redirigir a /dashboard si el usuario está logueado y trata de acceder a rutas de autenticación
-  //   if (isLoggedIn && authRoutes.includes(nextUrl.pathname)) {
-  //     return NextResponse.redirect(new URL("/dashboard", nextUrl));
-  //   }
+    const roles = (session as any).roles as string[] | undefined;
+    const isSysAdmin = roles?.includes("sysAdmin") ?? false;
+    const isHrManager = roles?.includes("hrManager") ?? false;
+    const isCeo = roles?.includes("ceo") ?? false;
+    const canManageUsers = isSysAdmin || isHrManager || isCeo;
 
-  //   // Redirigir a /login si el usuario no está logueado y trata de acceder a una ruta protegida
-  //   if (
-  //     !isLoggedIn &&
-  //     !authRoutes.includes(nextUrl.pathname) &&
-  //     !publicRoutes.includes(nextUrl.pathname)
-  //   ) {
-  //     return NextResponse.redirect(new URL("/login", nextUrl));
-  //   }
+    // Admin user routes — sysAdmin, hrManager, ceo can manage users
+    if (pathname.startsWith("/dashboard/admin/users")) {
+        if (!canManageUsers) {
+            const url = req.nextUrl.clone();
+            url.pathname = "/dashboard";
+            return NextResponse.redirect(url);
+        }
+        return NextResponse.next();
+    }
 
-  //   return NextResponse.next();
+    // Admin system routes (preferences, audit-logs) — sysAdmin and ceo
+    if (
+        pathname.startsWith("/dashboard/admin/preferences") ||
+        pathname.startsWith("/dashboard/admin/audit-logs")
+    ) {
+        if (!isSysAdmin && !isCeo) {
+            const url = req.nextUrl.clone();
+            url.pathname = "/dashboard";
+            return NextResponse.redirect(url);
+        }
+        return NextResponse.next();
+    }
+
+    // Other admin routes — only sysAdmin
+    if (pathname.startsWith("/dashboard/admin")) {
+        if (!isSysAdmin) {
+            const url = req.nextUrl.clone();
+            url.pathname = "/dashboard";
+            return NextResponse.redirect(url);
+        }
+        return NextResponse.next();
+    }
+
+    // Dashboard routes (non-admin) — authenticated users
+    if (pathname.startsWith("/dashboard")) {
+        return NextResponse.next();
+    }
+
+    return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+    matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };

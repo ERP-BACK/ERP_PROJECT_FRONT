@@ -156,7 +156,7 @@ export default function SalesPage() {
   );
 
   return (
-    <div className="space-y-6 m-2">
+    <div className="flex h-full flex-col gap-6 p-6">
       <Tabs defaultValue="estadisticas" className="w-full">
         <div className="flex justify-evenly items-center mb-4">
           <div className="w-full">

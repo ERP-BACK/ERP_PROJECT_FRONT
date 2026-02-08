@@ -1,0 +1,147 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Plus, Pencil, Trash2, Eye, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MainDataTable } from "@/components/tables/MainTable";
+import { Show } from "@/components/show/Show.component";
+import { TableSkeleton } from "@/components/tables/TableSkeleton";
+import { CrudFormDialog } from "@/shared/presentation/components/form-builder/CrudFormDialog";
+import { useDowntime } from "../hooks/use-downtime";
+import { columnsDowntime } from "./columns-downtime";
+import { downtimeFormConfig } from "../forms/downtime-form.config";
+import type { Downtime } from "../../domain/entities/downtime.entity";
+
+export function DowntimeTablePage() {
+  const router = useRouter();
+  const {
+    data,
+    isLoading,
+    pagination,
+    setPagination,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+  } = useDowntime();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Downtime | null>(null);
+
+  const handleCreate = () => {
+    setEditingItem(null);
+    setDialogOpen(true);
+  };
+
+  const handleEdit = (item: Downtime) => {
+    setEditingItem(item);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id);
+  };
+
+  const handleSubmit = (formData: Record<string, unknown>) => {
+    if (editingItem) {
+      updateMutation.mutate(
+        { id: editingItem.downtime_id, data: formData },
+        { onSuccess: () => setDialogOpen(false) }
+      );
+    } else {
+      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+    }
+  };
+
+  const columnsWithActions = [
+    ...columnsDowntime,
+    {
+      id: "actions",
+      header: "Acciones",
+      cell: ({ row }: { row: { original: Downtime } }) => {
+        const isActive = row.original.status === "active";
+        const canEdit = isActive;
+        const canDelete = row.original.status !== "resolved";
+
+        return (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              title="Ver detalle"
+              onClick={() => router.push(`/dashboard/maintenance/downtime/${row.original.downtime_id}`)}
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            {isActive && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-success"
+                title="Resolver"
+                onClick={() => router.push(`/dashboard/maintenance/downtime/${row.original.downtime_id}`)}
+              >
+                <CheckCircle className="h-4 w-4" />
+              </Button>
+            )}
+            {canEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => handleEdit(row.original)}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            )}
+            {canDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-destructive"
+                onClick={() => handleDelete(row.original.downtime_id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        );
+      },
+    },
+  ];
+
+  return (
+    <>
+      <div className="flex items-center justify-between gap-3">
+        <div />
+        <Button size="sm" onClick={handleCreate}>
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
+          Registrar Parada
+        </Button>
+      </div>
+
+      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsDowntime.length} />}>
+        <MainDataTable
+          columns={columnsWithActions}
+          data={data?.data}
+          pageCount={data?.pageCount}
+          rowCount={data?.rowCount}
+          isLoading={isLoading}
+          onPaginationChange={setPagination}
+          paginationState={data?.pageInfo ?? { limit: pagination.limit }}
+        />
+      </Show>
+
+      <CrudFormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={editingItem ? "Editar Tiempo de Parada" : "Registrar Tiempo de Parada"}
+        description="Registre un evento de parada de equipo"
+        formConfig={downtimeFormConfig}
+        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        onSubmit={handleSubmit}
+        isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+    </>
+  );
+}

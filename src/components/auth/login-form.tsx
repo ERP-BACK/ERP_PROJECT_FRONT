@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-import { signIn } from "@/auth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
