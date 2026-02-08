@@ -2,7 +2,7 @@ import React from "react";
 import { Show } from "../show/Show.component";
 
 interface Props {
-  title: string;
+  title?: string;
   children?: React.ReactNode;
   actionChildren?: React.ReactNode[];
   subtitle?: string;

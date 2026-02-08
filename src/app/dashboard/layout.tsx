@@ -2,7 +2,6 @@ import type React from "react";
 import { auth } from "@/auth";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import Providers from "../providres";
-
 export default async function DashboardLayout({
   children,
 }: {

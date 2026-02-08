@@ -4,7 +4,7 @@ import { PageTabOption } from "./PageTabsOptions";
 import { PageSideTitle } from "./PageSideTitle";
 
 interface Props {
-  title: string;
+  title?: string;
   children: React.ReactNode[] | React.ReactNode;
   isHandleTab: boolean;
   subtitle?: string;

@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Show } from "../show/Show.component";
 
 interface Props {
-  title: string;
+  title?: string;
   children: React.ReactNode[] | React.ReactNode;
   subtitle?: string;
   valueTab?: string[];
