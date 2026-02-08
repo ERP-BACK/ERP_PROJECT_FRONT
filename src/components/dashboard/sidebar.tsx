@@ -19,10 +19,10 @@ import {
   FolderTree,
   Globe,
   Hash,
+  History,
   Landmark,
   Layers,
   LayoutDashboard,
-  LogOut,
   MapPin,
   MapPinned,
   Package,
@@ -32,10 +32,10 @@ import {
   ReceiptText,
   RotateCcw,
   ScrollText,
-  Settings,
   ShoppingCart,
   ShoppingBag,
   Ship,
+  SlidersHorizontal,
   Star,
   Store,
   Tags,
@@ -50,7 +50,6 @@ import {
   Clock,
   AlertTriangle,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -86,6 +85,8 @@ const adminSections = [
     items: [
       { title: "Compañías", href: "/dashboard/admin/companies", icon: Building2 },
       { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
+      { title: "Preferencias", href: "/dashboard/admin/preferences", icon: SlidersHorizontal },
+      { title: "Auditoría", href: "/dashboard/admin/audit-logs", icon: History },
     ],
   },
 ];
@@ -279,6 +280,15 @@ const rrhhSection = {
   label: "RECURSOS HUMANOS",
   items: [
     { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
+  ],
+};
+
+// ── Sistema section (for CEO) ────────────────────────────────────
+const sistemaSection = {
+  label: "SISTEMA",
+  items: [
+    { title: "Preferencias", href: "/dashboard/admin/preferences", icon: SlidersHorizontal },
+    { title: "Auditoría", href: "/dashboard/admin/audit-logs", icon: History },
   ],
 };
 
@@ -518,15 +528,11 @@ export function DashboardSidebar({
   // Build sections based on role
   const sections = isSysAdmin
     ? adminSections
-    : canManageUsers
+    : isCeo
+    ? [...erpSections, rrhhSection, sistemaSection]
+    : isHrManager
     ? [...erpSections, rrhhSection]
     : erpSections;
-
-  const initials = userName
-    ? userName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-    : "U";
-
-  const roleBadge = isSysAdmin ? "Admin" : "ERP";
 
   const handleMobileClose = () => {
     onClose();
@@ -680,52 +686,6 @@ export function DashboardSidebar({
           </button>
         </div>
 
-        {/* User profile */}
-        <div className="border-t border-sidebar-border p-3">
-          {collapsed ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex justify-center">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                    {initials}
-                  </div>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p className="font-medium">{userName ?? "Usuario"}</p>
-                <p className="text-[10px] opacity-70">{userEmail ?? ""}</p>
-              </TooltipContent>
-            </Tooltip>
-          ) : (
-            <div className="flex items-center gap-2.5 rounded-md px-2 py-1.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                {initials}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-sidebar-foreground">
-                  {userName ?? "Usuario"}
-                </p>
-                <span className="inline-block rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                  {roleBadge}
-                </span>
-              </div>
-              <div className="flex items-center gap-0.5">
-                <Link href="/dashboard/settings">
-                  <button className="flex h-7 w-7 items-center justify-center rounded-md text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors duration-150">
-                    <Settings className="h-3.5 w-3.5" />
-                  </button>
-                </Link>
-                <button
-                  onClick={() => signOut({ redirectTo: "/" })}
-                  className="flex h-7 w-7 items-center justify-center rounded-md text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors duration-150"
-                  title="Cerrar sesión"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </TooltipProvider>
   );

@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getAuditLogs,
   getEntityHistory,
-  type AuditFilters,
 } from "../../application/use-cases/audit.actions";
+import type { AuditFilters } from "../../domain/entities/audit-log.entity";
 
 export function useAuditLogs(filters: AuditFilters) {
   return useQuery({

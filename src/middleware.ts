@@ -42,6 +42,19 @@ export default auth((req) => {
         return NextResponse.next();
     }
 
+    // Admin system routes (preferences, audit-logs) — sysAdmin and ceo
+    if (
+        pathname.startsWith("/dashboard/admin/preferences") ||
+        pathname.startsWith("/dashboard/admin/audit-logs")
+    ) {
+        if (!isSysAdmin && !isCeo) {
+            const url = req.nextUrl.clone();
+            url.pathname = "/dashboard";
+            return NextResponse.redirect(url);
+        }
+        return NextResponse.next();
+    }
+
     // Other admin routes — only sysAdmin
     if (pathname.startsWith("/dashboard/admin")) {
         if (!isSysAdmin) {

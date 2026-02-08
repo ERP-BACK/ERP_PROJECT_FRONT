@@ -49,27 +49,45 @@ export async function getPreferenceValue(
   code: string,
   context: PreferenceContext
 ): Promise<ResolvedPreference> {
+  // Backend expects code, company_id, user_id directly
+  const payload = {
+    code,
+    company_id: context.company_Id,
+    user_id: context.user_Id,
+  };
   return apiClient<ResolvedPreference>('/onerp/system/preferences/resolve', {
     method: 'POST',
-    body: JSON.stringify({ code, context }),
+    body: JSON.stringify(payload),
   });
 }
 
 export async function resolveAllPreferences(
   context: PreferenceContext
 ): Promise<Record<string, ResolvedPreference>> {
+  // Backend expects company_id/user_id directly, not wrapped in context
+  const payload = {
+    company_id: context.company_Id,
+    user_id: context.user_Id,
+  };
   return apiClient<Record<string, ResolvedPreference>>('/onerp/system/preferences/resolve-all', {
     method: 'POST',
-    body: JSON.stringify({ context }),
+    body: JSON.stringify(payload),
   });
 }
 
 export async function setPreferenceValue(
   params: SetPreferenceValueParams
 ): Promise<void> {
+  // Backend expects lowercase field names
+  const payload = {
+    code: params.code,
+    value: params.value,
+    company_id: params.company_Id,
+    user_id: params.user_Id,
+  };
   return apiClient<void>('/onerp/system/preferences/value', {
     method: 'PATCH',
-    body: JSON.stringify(params),
+    body: JSON.stringify(payload),
   });
 }
 

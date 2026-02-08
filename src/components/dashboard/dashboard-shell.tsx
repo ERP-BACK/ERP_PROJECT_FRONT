@@ -37,6 +37,9 @@ export function DashboardShell({ children, roles, userName, userEmail }: Dashboa
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           onCollapseToggle={() => setSidebarCollapsed((v) => !v)}
           collapsed={sidebarCollapsed}
+          userName={userName}
+          userEmail={userEmail}
+          roles={roles}
         />
         <main className="flex-1 overflow-auto">
           {children}

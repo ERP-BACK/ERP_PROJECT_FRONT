@@ -40,7 +40,7 @@ export function PreferenceCategorySection({
       <div className="space-y-3">
         {preferences.map((preference) => (
           <PreferenceCard
-            key={preference.preference_Id}
+            key={preference.code}
             definition={preference}
             resolved={resolvedPreferences?.[preference.code]}
             onEdit={onEdit}

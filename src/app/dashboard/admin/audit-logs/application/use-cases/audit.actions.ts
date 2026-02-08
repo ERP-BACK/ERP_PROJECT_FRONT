@@ -8,12 +8,22 @@ import type {
   AuditLogsPaginated,
 } from "../../domain/entities/audit-log.entity";
 
-export type { AuditFilters, AuditReportFilters };
-
 export async function getAuditLogs(filters: AuditFilters): Promise<AuditLogsPaginated> {
+  // Transform frontend field names to backend expected format
+  const payload = {
+    company_id: filters.company_Id,
+    user_id: filters.user_Id,
+    action: filters.action,
+    entity_type: filters.entity_type,
+    entity_id: filters.entity_id,
+    start_date: filters.date_from,
+    end_date: filters.date_to,
+    limit: filters.limit,
+    offset: filters.offset,
+  };
   return apiClient<AuditLogsPaginated>('/onerp/system/audit/logs', {
     method: 'POST',
-    body: JSON.stringify(filters),
+    body: JSON.stringify(payload),
   });
 }
 
