@@ -59,6 +59,7 @@ export async function apiImport<T = unknown>(
     method?: string;
     body?: unknown;
     headers?: Record<string, string>;
+    responseType?: "json" | "blob" | "raw";
   } = {},
 ): Promise<T> {
   const session = await auth();
@@ -97,6 +98,15 @@ export async function apiImport<T = unknown>(
       // response wasn't JSON
     }
     throw new Error(message);
+  }
+
+  // Handle different response types
+  if (options.responseType === "blob") {
+    return res.blob() as unknown as T;
+  }
+
+  if (options.responseType === "raw") {
+    return res as unknown as T;
   }
 
   if (

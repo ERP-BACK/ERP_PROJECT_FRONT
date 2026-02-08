@@ -99,7 +99,10 @@ const planFormSchema = z.object({
 type PlanFormData = z.infer<typeof planFormSchema>;
 
 interface PlanFormPageProps {
-  defaultValues?: Partial<PlanFormData> & { plan_id?: string };
+  defaultValues?: Partial<PlanFormData> & {
+    plan_id?: string;
+    asset?: { asset_id: string; asset_code: string; asset_name: string };
+  };
   onSubmit: (data: Record<string, unknown>) => void;
   isLoading?: boolean;
   isEdit?: boolean;
@@ -200,17 +203,60 @@ export function PlanFormPage({
 
   useEffect(() => {
     if (defaultValues?.asset_id && defaultValues.asset) {
-      const asset = defaultValues.asset as { asset_id: string; asset_code: string; asset_name: string };
-      setSelectedAsset(asset);
+      setSelectedAsset(defaultValues.asset);
     }
   }, [defaultValues]);
 
-  const handleAssetSelect = useCallback(
-    (asset: { asset_id: string; asset_code: string; asset_name: string } | null) => {
-      setSelectedAsset(asset);
-      form.setValue("asset_id", asset?.asset_id || "");
+  const handleAssetChange = useCallback(
+    (value: string) => {
+      form.setValue("asset_id", value);
     },
     [form]
+  );
+
+  const handleAssetSelectOption = useCallback(
+    (option: { code: string; value: string; meta: Record<string, unknown> } | null) => {
+      if (option) {
+        setSelectedAsset({
+          asset_id: option.code,
+          asset_code: option.meta.asset_code as string,
+          asset_name: option.meta.asset_name as string,
+        });
+      } else {
+        setSelectedAsset(null);
+      }
+    },
+    []
+  );
+
+  const wrappedSearchAssets = useCallback(
+    async (query: string) => {
+      const results = await searchAssets(query);
+      return results.map((asset) => ({
+        code: asset.asset_id,
+        value: `${asset.asset_code} - ${asset.asset_name}`,
+        meta: {
+          asset_code: asset.asset_code,
+          asset_name: asset.asset_name,
+        },
+      }));
+    },
+    [searchAssets]
+  );
+
+  const wrappedSearchProducts = useCallback(
+    async (query: string) => {
+      const results = await searchProducts(query);
+      return results.map((product) => ({
+        code: product.product_id,
+        value: `${product.sku} - ${product.name}`,
+        meta: {
+          sku: product.sku,
+          name: product.name,
+        },
+      }));
+    },
+    [searchProducts]
   );
 
   const toggleMonth = (month: number) => {
@@ -333,11 +379,16 @@ export function PlanFormPage({
                 <Label>Activo *</Label>
                 <Autocomplete
                   placeholder="Buscar activo..."
-                  searchFn={searchAssets}
-                  value={selectedAsset}
-                  onChange={handleAssetSelect}
-                  getOptionLabel={(opt) => `${opt.asset_code} - ${opt.asset_name}`}
-                  getOptionValue={(opt) => opt.asset_id}
+                  searchAction={wrappedSearchAssets}
+                  returnMode="code"
+                  value={form.watch("asset_id")}
+                  onChange={handleAssetChange}
+                  onSelect={handleAssetSelectOption}
+                  initialDisplayValue={
+                    selectedAsset
+                      ? `${selectedAsset.asset_code} - ${selectedAsset.asset_name}`
+                      : undefined
+                  }
                 />
                 {form.formState.errors.asset_id && (
                   <p className="text-sm text-destructive flex items-center gap-1">
@@ -714,25 +765,25 @@ export function PlanFormPage({
                         <Label className="text-xs">Producto</Label>
                         <Autocomplete
                           placeholder="Buscar producto..."
-                          searchFn={searchProducts}
-                          value={
-                            form.watch(`spare_parts.${index}.product_id`)
-                              ? {
-                                  product_id: form.watch(`spare_parts.${index}.product_id`),
-                                  sku: "",
-                                  name: form.watch(`spare_parts.${index}.product_name`) || "",
-                                }
-                              : null
-                          }
-                          onChange={(product) => {
-                            form.setValue(
-                              `spare_parts.${index}.product_id`,
-                              product?.product_id || ""
-                            );
-                            form.setValue(`spare_parts.${index}.product_name`, product?.name || "");
+                          searchAction={wrappedSearchProducts}
+                          returnMode="code"
+                          value={form.watch(`spare_parts.${index}.product_id`)}
+                          onChange={(value) => {
+                            form.setValue(`spare_parts.${index}.product_id`, value);
                           }}
-                          getOptionLabel={(opt) => `${opt.sku} - ${opt.name}`}
-                          getOptionValue={(opt) => opt.product_id}
+                          onSelect={(option) => {
+                            if (option) {
+                              form.setValue(
+                                `spare_parts.${index}.product_name`,
+                                option.meta.name as string
+                              );
+                            }
+                          }}
+                          initialDisplayValue={
+                            form.watch(`spare_parts.${index}.product_name`)
+                              ? `${form.watch(`spare_parts.${index}.product_name`)}`
+                              : undefined
+                          }
                         />
                       </div>
                       <div className="col-span-2 space-y-2">

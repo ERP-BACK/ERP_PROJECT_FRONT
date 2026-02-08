@@ -9,9 +9,10 @@ export default function MaintenanceLayout({
     <div className="flex flex-col gap-6 p-6">
       <PageSideTitle
         title="Mantenimiento"
-        description="Gestión de activos, órdenes de trabajo y planes de mantenimiento"
-      />
-      {children}
+        subtitle="Gestión de activos, órdenes de trabajo y planes de mantenimiento"
+      >
+        {children}
+      </PageSideTitle>
     </div>
   );
 }

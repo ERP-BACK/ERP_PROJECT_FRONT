@@ -142,12 +142,12 @@ function StatCard({
 export default function MaintenanceDashboardPage() {
   const { data: assetsData, isLoading: loadingAssets } = useQuery({
     queryKey: ["maintenance-assets-dashboard"],
-    queryFn: () => findAssets({ page: 1, limit: 100 }),
+    queryFn: () => findAssets({ limit: 100 }),
   });
 
   const { data: workOrdersData, isLoading: loadingWorkOrders } = useQuery({
     queryKey: ["maintenance-work-orders-dashboard"],
-    queryFn: () => findWorkOrders({ page: 1, limit: 100 }),
+    queryFn: () => findWorkOrders({ limit: 100 }),
   });
 
   const isLoading = loadingAssets || loadingWorkOrders;

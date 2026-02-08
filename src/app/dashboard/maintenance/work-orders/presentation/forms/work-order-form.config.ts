@@ -99,7 +99,7 @@ export const workOrderFormConfig: FormConfig = {
           required: true,
           autocompleteConfig: {
             searchAction: searchAssets,
-            returnMode: "id",
+            returnMode: "code",
             placeholder: "Buscar activo por código o nombre...",
           },
           gridCols: 2,

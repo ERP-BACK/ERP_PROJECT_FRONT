@@ -382,7 +382,7 @@ export default function CreditNoteDetailPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => rejectMutation.mutate()}
+                    onClick={() => rejectMutation.mutate(undefined)}
                     disabled={rejectMutation.isPending}
                   >
                     {rejectMutation.isPending ? (
@@ -468,7 +468,7 @@ export default function CreditNoteDetailPage() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => voidMutation.mutate()}
+                              onClick={() => voidMutation.mutate(undefined)}
                               className="bg-warning text-warning-foreground hover:bg-warning/90"
                             >
                               Anular

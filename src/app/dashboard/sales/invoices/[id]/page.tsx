@@ -480,7 +480,7 @@ export default function InvoiceDetailPage() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => voidMutation.mutate()}
+                              onClick={() => voidMutation.mutate(undefined)}
                               className="bg-warning text-warning-foreground hover:bg-warning/90"
                             >
                               Anular

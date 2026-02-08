@@ -25,7 +25,12 @@ export async function searchAssets(query: string): Promise<AutocompleteOption[]>
     return response.map((asset) => ({
       code: asset.asset_id,
       value: `${asset.asset_code} - ${asset.asset_name}`,
-      description: [asset.manufacturer, asset.model].filter(Boolean).join(" "),
+      meta: {
+        description: [asset.manufacturer, asset.model].filter(Boolean).join(" "),
+        manufacturer: asset.manufacturer,
+        model: asset.model,
+        status: asset.status,
+      },
     }));
   } catch {
     return [];

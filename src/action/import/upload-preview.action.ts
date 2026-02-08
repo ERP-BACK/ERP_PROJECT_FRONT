@@ -15,6 +15,7 @@ export interface ImportPreviewResult {
   errorCount: number;
   validRows: Record<string, unknown>[];
   errors: RowError[];
+  errorFileBase64?: string;
 }
 
 export async function uploadPreview(

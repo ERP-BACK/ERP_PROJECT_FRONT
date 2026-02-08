@@ -3,7 +3,7 @@ import type { AutocompleteConfig } from "./autocomplete.types";
 export interface FormFieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'select' | 'boolean' | 'textarea' | 'date' | 'uuid' | 'autocomplete';
+  type: 'text' | 'number' | 'select' | 'boolean' | 'textarea' | 'date' | 'uuid' | 'autocomplete' | 'checkbox' | 'switch' | 'datetime-local';
   required?: boolean;
   maxLength?: number;
   min?: number;
@@ -13,7 +13,7 @@ export interface FormFieldConfig {
   options?: { label: string; value: string }[];
   pattern?: { regex: string; message: string };
   hidden?: boolean;
-  gridCols?: 1 | 2;
+  gridCols?: 1 | 2 | 3 | 4;
   autocompleteConfig?: AutocompleteConfig;
 }
 
