@@ -22,6 +22,7 @@ export const thirdPartyFormConfig: FormConfig = {
             { label: "Cliente", value: "customer" },
             { label: "Proveedor", value: "supplier" },
             { label: "Ambos", value: "both" },
+            { label: "Vendedor", value: "salesperson" },
             { label: "Empleado", value: "employee" },
             { label: "Contratista", value: "contractor" },
           ],

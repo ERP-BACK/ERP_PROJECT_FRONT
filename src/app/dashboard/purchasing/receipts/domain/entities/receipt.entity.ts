@@ -23,6 +23,7 @@ export interface ReceiptLine {
   lot_number?: string;
   serial_number?: string;
   expiration_date?: string;
+  manufacture_date?: string;
   location_id?: string;
   inspection_status?: "pending" | "passed" | "failed" | "partial";
   inspection_notes?: string;

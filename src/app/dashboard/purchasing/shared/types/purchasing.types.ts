@@ -193,3 +193,100 @@ export function getVendorClassificationColor(classification: VendorClassificatio
       return "bg-muted text-muted-foreground";
   }
 }
+
+// Vendor Invoice Status
+export type VendorInvoiceStatus =
+  | "draft"
+  | "pending_match"
+  | "matched"
+  | "posted"
+  | "partial_paid"
+  | "paid"
+  | "cancelled"
+  | "hold";
+
+export const VENDOR_INVOICE_STATUS_OPTIONS = [
+  { value: "draft", label: "Borrador" },
+  { value: "pending_match", label: "Pendiente Conciliación" },
+  { value: "matched", label: "Conciliada" },
+  { value: "posted", label: "Contabilizada" },
+  { value: "partial_paid", label: "Pago Parcial" },
+  { value: "paid", label: "Pagada" },
+  { value: "cancelled", label: "Cancelada" },
+  { value: "hold", label: "En Espera" },
+] as const;
+
+export function getVendorInvoiceStatusLabel(status: VendorInvoiceStatus): string {
+  return VENDOR_INVOICE_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
+}
+
+export function getVendorInvoiceStatusColor(status: VendorInvoiceStatus): string {
+  switch (status) {
+    case "draft":
+      return "bg-muted text-muted-foreground";
+    case "pending_match":
+      return "bg-warning/15 text-warning";
+    case "matched":
+      return "bg-primary/15 text-primary";
+    case "posted":
+      return "bg-chart-2/15 text-chart-2";
+    case "partial_paid":
+      return "bg-chart-4/15 text-chart-4";
+    case "paid":
+      return "bg-success/15 text-success";
+    case "cancelled":
+      return "bg-destructive/15 text-destructive";
+    case "hold":
+      return "bg-chart-5/15 text-chart-5";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+}
+
+// Invoice Match Status
+export type InvoiceMatchStatus = "unmatched" | "partial_matched" | "fully_matched";
+
+export const INVOICE_MATCH_STATUS_OPTIONS = [
+  { value: "unmatched", label: "Sin Conciliar" },
+  { value: "partial_matched", label: "Parcialmente Conciliada" },
+  { value: "fully_matched", label: "Totalmente Conciliada" },
+] as const;
+
+export function getInvoiceMatchStatusLabel(status: InvoiceMatchStatus): string {
+  return INVOICE_MATCH_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
+}
+
+export function getInvoiceMatchStatusColor(status: InvoiceMatchStatus): string {
+  switch (status) {
+    case "unmatched":
+      return "bg-muted text-muted-foreground";
+    case "partial_matched":
+      return "bg-warning/15 text-warning";
+    case "fully_matched":
+      return "bg-success/15 text-success";
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+}
+
+// Payment Hold Reason
+export type PaymentHoldReason =
+  | "price_dispute"
+  | "quantity_dispute"
+  | "quality_issue"
+  | "documentation_missing"
+  | "approval_pending"
+  | "other";
+
+export const PAYMENT_HOLD_REASON_OPTIONS = [
+  { value: "price_dispute", label: "Disputa de Precio" },
+  { value: "quantity_dispute", label: "Disputa de Cantidad" },
+  { value: "quality_issue", label: "Problema de Calidad" },
+  { value: "documentation_missing", label: "Documentación Faltante" },
+  { value: "approval_pending", label: "Pendiente de Aprobación" },
+  { value: "other", label: "Otro" },
+] as const;
+
+export function getPaymentHoldReasonLabel(reason: PaymentHoldReason): string {
+  return PAYMENT_HOLD_REASON_OPTIONS.find((o) => o.value === reason)?.label ?? reason;
+}

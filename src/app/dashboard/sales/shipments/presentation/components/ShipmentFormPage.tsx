@@ -77,7 +77,7 @@ interface ShipmentFormPageProps {
   searchWarehouses: (query: string) => Promise<AutocompleteOption[]>;
   searchCarriers: (query: string) => Promise<AutocompleteOption[]>;
   fetchOrderLines: (orderId: string) => Promise<ShipmentLineWithLots[]>;
-  fetchAvailableLots: (productId: string, warehouseId: string) => Promise<InventoryLot[]>;
+  fetchAvailableLots: (productId: string, warehouseId: string, strategy?: "FIFO" | "FEFO") => Promise<InventoryLot[]>;
 }
 
 function formatDate(dateString: string): string {
@@ -193,6 +193,58 @@ export function ShipmentFormPage({
       setIsLoadingLots(false);
     }
   }, [warehouseId, fetchAvailableLots]);
+
+  // Handle auto-select lots
+  const handleAutoSelectLots = useCallback(async (strategy: "FIFO" | "FEFO") => {
+    if (!currentLineForPicking) return;
+
+    setIsLoadingLots(true);
+    try {
+      const lots = await fetchAvailableLots(currentLineForPicking.product_id, warehouseId, strategy);
+      setAvailableLots(lots);
+
+      // Auto-select lots to fulfill quantity
+      const autoSelected = new Map<string, SelectedLot>();
+      let remaining = currentLineForPicking.quantity_shipped;
+
+      for (const lot of lots) {
+        if (remaining <= 0) break;
+
+        const qtyToTake = Math.min(lot.quantity_available, remaining);
+        autoSelected.set(lot.lot_id, {
+          lot_id: lot.lot_id,
+          lot_number: lot.lot_number,
+          serial_number: lot.serial_number,
+          quantity_to_ship: qtyToTake,
+          location_id: lot.location_id,
+          location_name: lot.location_name,
+        });
+        remaining -= qtyToTake;
+      }
+
+      // Update the line with auto-selected lots
+      setLines(prev => prev.map(line => {
+        if (line.line_id !== currentLineForPicking.line_id) return line;
+
+        const selectedArray = Array.from(autoSelected.values());
+        const totalQty = selectedArray.reduce((sum, lot) => sum + lot.quantity_to_ship, 0);
+        const lotNumbers = [...new Set(selectedArray.map(l => l.lot_number))].join(", ");
+        const serialNumbers = selectedArray.map(l => l.serial_number).filter(Boolean).join(", ");
+
+        return {
+          ...line,
+          quantity_shipped: totalQty,
+          lot_number: lotNumbers || undefined,
+          serial_number: serialNumbers || undefined,
+          selected_lots: selectedArray,
+        };
+      }));
+    } catch (error) {
+      console.error("Error auto-selecting lots:", error);
+    } finally {
+      setIsLoadingLots(false);
+    }
+  }, [currentLineForPicking, warehouseId, fetchAvailableLots]);
 
   // Handle lot selection confirm
   const handleLotsConfirm = useCallback((selectedLots: SelectedLot[]) => {
@@ -790,6 +842,7 @@ export function ShipmentFormPage({
           availableLots={availableLots}
           selectedLots={currentLineForPicking.selected_lots || []}
           onConfirm={handleLotsConfirm}
+          onAutoSelect={handleAutoSelectLots}
           isLoading={isLoadingLots}
         />
       )}

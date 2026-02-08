@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Check,
   XCircle,
+  Boxes,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,9 +71,17 @@ interface ReceiptLineWithDetails extends ReceiptLine {
     serial_number?: string;
     quantity: number;
     expiration_date?: string;
+    manufacture_date?: string;
     location_id?: string;
     location_name?: string;
   }>;
+  product?: {
+    product_id: string;
+    sku: string;
+    name: string;
+    is_lot_tracked?: boolean;
+    is_serial_tracked?: boolean;
+  };
 }
 
 interface ReceiptFormPageProps {
@@ -190,6 +199,13 @@ export function ReceiptFormPage({
     setLines(prev => prev.map(line => {
       if (line.line_id !== lineId) return line;
       return { ...line, expiration_date: value };
+    }));
+  }, []);
+
+  const handleManufactureDateChange = useCallback((lineId: string, value: string) => {
+    setLines(prev => prev.map(line => {
+      if (line.line_id !== lineId) return line;
+      return { ...line, manufacture_date: value };
     }));
   }, []);
 
@@ -558,6 +574,9 @@ export function ReceiptFormPage({
                         <TableHead className="w-32 text-xs font-medium uppercase tracking-wide">
                           Vencimiento
                         </TableHead>
+                        <TableHead className="w-32 text-xs font-medium uppercase tracking-wide">
+                          F. Fabricación
+                        </TableHead>
                         {requiresInspection && (
                           <TableHead className="w-32 text-xs font-medium uppercase tracking-wide">
                             Inspección
@@ -568,7 +587,7 @@ export function ReceiptFormPage({
                     <TableBody>
                       {lines.length === 0 ? (
                         <TableRow className="hover:bg-transparent">
-                          <TableCell colSpan={requiresInspection ? 9 : 8} className="h-32 text-center">
+                          <TableCell colSpan={requiresInspection ? 10 : 9} className="h-32 text-center">
                             <div className="flex flex-col items-center justify-center gap-2">
                               <div className="rounded-full bg-muted p-3">
                                 <Package className="h-5 w-5 text-muted-foreground" />
@@ -588,7 +607,15 @@ export function ReceiptFormPage({
                             </TableCell>
                             <TableCell>
                               <div>
-                                <div className="font-medium text-sm">{line.product?.name || line.description}</div>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-sm">{line.product?.name || line.description}</span>
+                                  {(line.product?.is_lot_tracked || line.product?.is_serial_tracked) && (
+                                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20">
+                                      <Boxes className="h-2.5 w-2.5 mr-0.5" />
+                                      {line.product?.is_serial_tracked ? "Serie" : "Lote"}
+                                    </Badge>
+                                  )}
+                                </div>
                                 {line.product?.sku && (
                                   <div className="font-mono text-xs text-muted-foreground">{line.product.sku}</div>
                                 )}
@@ -623,8 +650,8 @@ export function ReceiptFormPage({
                               <Input
                                 value={line.lot_number || ""}
                                 onChange={(e) => handleLotNumberChange(line.line_id, e.target.value)}
-                                placeholder="Lote"
-                                className="h-8 font-mono text-xs"
+                                placeholder={line.product?.is_lot_tracked ? "Lote (requerido)" : "Lote"}
+                                className={`h-8 font-mono text-xs ${line.product?.is_lot_tracked && !line.lot_number ? "border-warning" : ""}`}
                                 disabled={isLoading}
                               />
                             </TableCell>
@@ -632,8 +659,8 @@ export function ReceiptFormPage({
                               <Input
                                 value={line.serial_number || ""}
                                 onChange={(e) => handleSerialNumberChange(line.line_id, e.target.value)}
-                                placeholder="Serial"
-                                className="h-8 font-mono text-xs"
+                                placeholder={line.product?.is_serial_tracked ? "Serial (requerido)" : "Serial"}
+                                className={`h-8 font-mono text-xs ${line.product?.is_serial_tracked && !line.serial_number ? "border-warning" : ""}`}
                                 disabled={isLoading}
                               />
                             </TableCell>
@@ -642,6 +669,15 @@ export function ReceiptFormPage({
                                 type="date"
                                 value={line.expiration_date || ""}
                                 onChange={(e) => handleExpirationChange(line.line_id, e.target.value)}
+                                className="h-8 text-xs"
+                                disabled={isLoading}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                type="date"
+                                value={line.manufacture_date || ""}
+                                onChange={(e) => handleManufactureDateChange(line.line_id, e.target.value)}
                                 className="h-8 text-xs"
                                 disabled={isLoading}
                               />

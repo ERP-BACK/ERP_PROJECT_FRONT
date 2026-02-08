@@ -9,6 +9,16 @@ import { cn } from "@/lib/utils"
 function Accordion({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />
 }
 

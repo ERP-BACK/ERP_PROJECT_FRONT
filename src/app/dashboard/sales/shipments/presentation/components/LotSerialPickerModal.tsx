@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Search, Package, Check, X, AlertTriangle } from "lucide-react";
+import { Search, Package, Check, X, AlertTriangle, Zap, Calendar } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -28,10 +28,12 @@ export interface InventoryLot {
   serial_number?: string;
   quantity_available: number;
   expiration_date?: string;
+  manufacture_date?: string;
   location_id: string;
   location_name: string;
   warehouse_id: string;
   warehouse_name: string;
+  priority_score?: number;
 }
 
 export interface SelectedLot {
@@ -55,6 +57,7 @@ interface LotSerialPickerModalProps {
   availableLots: InventoryLot[];
   selectedLots: SelectedLot[];
   onConfirm: (selected: SelectedLot[]) => void;
+  onAutoSelect?: (strategy: "FIFO" | "FEFO") => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -78,10 +81,12 @@ export function LotSerialPickerModal({
   availableLots,
   selectedLots: initialSelected,
   onConfirm,
+  onAutoSelect,
   isLoading,
 }: LotSerialPickerModalProps) {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Map<string, SelectedLot>>(new Map());
+  const [isAutoSelecting, setIsAutoSelecting] = useState(false);
 
   // Initialize selected from props
   useEffect(() => {
@@ -144,6 +149,19 @@ export function LotSerialPickerModal({
       return newSelected;
     });
   }, []);
+
+  const handleAutoSelect = useCallback(async (strategy: "FIFO" | "FEFO") => {
+    if (!onAutoSelect) return;
+
+    setIsAutoSelecting(true);
+    try {
+      await onAutoSelect(strategy);
+    } catch (error) {
+      console.error("Error auto-selecting lots:", error);
+    } finally {
+      setIsAutoSelecting(false);
+    }
+  }, [onAutoSelect]);
 
   const handleConfirm = useCallback(() => {
     onConfirm(Array.from(selected.values()));
@@ -210,8 +228,8 @@ export function LotSerialPickerModal({
           )}
         </div>
 
-        {/* Search */}
-        <div className="px-6 py-3 border-b">
+        {/* Search and Auto-Select */}
+        <div className="px-6 py-3 border-b space-y-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -221,6 +239,33 @@ export function LotSerialPickerModal({
               className="pl-9 h-9"
             />
           </div>
+          {trackingType === "lot" && onAutoSelect && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Selección automática:</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleAutoSelect("FIFO")}
+                disabled={isLoading || isAutoSelecting}
+                className="h-7 text-xs"
+              >
+                <Zap className="mr-1.5 h-3 w-3" />
+                Auto FIFO
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => handleAutoSelect("FEFO")}
+                disabled={isLoading || isAutoSelecting}
+                className="h-7 text-xs"
+              >
+                <Calendar className="mr-1.5 h-3 w-3" />
+                Auto FEFO
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Table */}

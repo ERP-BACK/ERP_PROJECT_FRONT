@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus, Pencil, Trash2, Eye, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -13,6 +14,7 @@ import { inventoryCountFormConfig } from "../forms/inventory-count-form.config";
 import type { InventoryCount } from "../../domain/entities/inventory-count.entity";
 
 export function InventoryCountsTablePage() {
+  const router = useRouter();
   const {
     data,
     isLoading,
@@ -56,8 +58,9 @@ export function InventoryCountsTablePage() {
       id: "actions",
       header: "Acciones",
       cell: ({ row }: { row: { original: InventoryCount } }) => {
-        const canEdit = ["planned", "in_progress"].includes(row.original.status);
+        const canEdit = ["planned"].includes(row.original.status);
         const canDelete = row.original.status === "planned";
+        const canStart = row.original.status === "planned";
 
         return (
           <div className="flex items-center gap-1">
@@ -66,9 +69,21 @@ export function InventoryCountsTablePage() {
               size="icon"
               className="h-8 w-8"
               title="Ver detalles"
+              onClick={() => router.push(`/dashboard/inventory/inventory-counts/${row.original.count_id}`)}
             >
               <Eye className="h-4 w-4" />
             </Button>
+            {canStart && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-success"
+                title="Iniciar conteo"
+                onClick={() => router.push(`/dashboard/inventory/inventory-counts/${row.original.count_id}`)}
+              >
+                <Play className="h-4 w-4" />
+              </Button>
+            )}
             {canEdit && (
               <Button
                 variant="ghost"

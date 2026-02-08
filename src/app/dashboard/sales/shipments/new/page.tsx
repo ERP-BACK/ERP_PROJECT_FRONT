@@ -7,6 +7,7 @@ import { ShipmentFormPage } from "../presentation/components/ShipmentFormPage";
 import * as shipmentActions from "../application/use-cases/shipment.actions";
 import { searchSalesOrders } from "@/app/dashboard/sales/sales-orders/application/use-cases/sales-order-search.action";
 import { searchWarehouses } from "@/app/dashboard/inventory/warehouses/application/use-cases/warehouse-search.action";
+import { getAvailableLots } from "@/app/dashboard/inventory/lots/application/use-cases/lot.actions";
 import type { InventoryLot } from "../presentation/components/LotSerialPickerModal";
 
 // TODO: These should be actual search actions
@@ -26,10 +27,22 @@ async function fetchOrderLines(orderId: string) {
   return [];
 }
 
-async function fetchAvailableLots(productId: string, warehouseId: string): Promise<InventoryLot[]> {
-  // TODO: Replace with actual API call
-  // This should fetch available inventory lots for the product in the warehouse
-  return [];
+async function fetchAvailableLots(
+  productId: string,
+  warehouseId: string,
+  strategy: "FIFO" | "FEFO" = "FIFO"
+): Promise<InventoryLot[]> {
+  try {
+    const lots = await getAvailableLots({
+      product_id: productId,
+      warehouse_id: warehouseId,
+      strategy,
+    });
+    return lots;
+  } catch (error) {
+    console.error("Error fetching available lots:", error);
+    return [];
+  }
 }
 
 export default function NewShipmentPage() {

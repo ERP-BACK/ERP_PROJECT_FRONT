@@ -46,4 +46,27 @@ export interface InventoryCountLine {
   adjustment_reason?: string;
   adjustment_approved: boolean;
   kardex_id?: string;
+  product?: {
+    product_id: string;
+    sku: string;
+    name: string;
+  };
+  location?: {
+    location_id: string;
+    code: string;
+    name: string;
+  };
+  lot?: {
+    lot_id: string;
+    lot_number: string;
+  };
+}
+
+export interface InventoryCountWithLines extends InventoryCount {
+  lines?: InventoryCountLine[];
+  warehouse?: {
+    warehouse_id: string;
+    code: string;
+    name: string;
+  };
 }

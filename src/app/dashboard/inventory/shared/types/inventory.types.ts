@@ -139,6 +139,81 @@ export const COUNT_STATUS_OPTIONS = [
   { label: 'Cancelado', value: 'cancelled' },
 ] as const;
 
+export function getCountStatusLabel(status: CountStatus): string {
+  return COUNT_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
+}
+
+export function getCountStatusColor(status: CountStatus): string {
+  switch (status) {
+    case 'planned':
+      return 'bg-muted text-muted-foreground';
+    case 'in_progress':
+      return 'bg-primary/15 text-primary';
+    case 'pending_review':
+      return 'bg-warning/15 text-warning';
+    case 'approved':
+      return 'bg-success/15 text-success';
+    case 'posted':
+      return 'bg-chart-2/15 text-chart-2';
+    case 'cancelled':
+      return 'bg-destructive/15 text-destructive';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+}
+
+// --- Kardex helpers ---
+export function getKardexStatusLabel(status: KardexStatus): string {
+  return KARDEX_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
+}
+
+export function getKardexStatusColor(status: KardexStatus): string {
+  switch (status) {
+    case 'draft':
+      return 'bg-muted text-muted-foreground';
+    case 'confirmed':
+      return 'bg-primary/15 text-primary';
+    case 'posted':
+      return 'bg-success/15 text-success';
+    case 'cancelled':
+      return 'bg-destructive/15 text-destructive';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+}
+
+export function getKardexMovementTypeLabel(type: KardexMovementType): string {
+  return KARDEX_MOVEMENT_TYPE_OPTIONS.find((o) => o.value === type)?.label ?? type;
+}
+
+export function isKardexEntryType(type: KardexMovementType): boolean {
+  return ['purchase_receipt', 'production_receipt', 'transfer_in', 'return_from_customer', 'adjustment_in', 'initial_inventory', 'found_inventory'].includes(type);
+}
+
+// --- Lot helpers ---
+export function getLotStatusLabel(status: LotStatus): string {
+  return LOT_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status;
+}
+
+export function getLotStatusColor(status: LotStatus): string {
+  switch (status) {
+    case 'available':
+      return 'bg-success/15 text-success';
+    case 'reserved':
+      return 'bg-primary/15 text-primary';
+    case 'quarantine':
+      return 'bg-warning/15 text-warning';
+    case 'expired':
+      return 'bg-destructive/15 text-destructive';
+    case 'consumed':
+      return 'bg-muted text-muted-foreground';
+    case 'blocked':
+      return 'bg-destructive/15 text-destructive';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+}
+
 // --- Entity Status (común) ---
 export type EntityStatus = 'active' | 'inactive';
 

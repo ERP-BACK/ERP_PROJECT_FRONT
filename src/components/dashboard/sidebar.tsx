@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   BarChart3,
@@ -29,6 +29,7 @@ import {
   PackageCheck,
   PackageOpen,
   Receipt,
+  ReceiptText,
   RotateCcw,
   ScrollText,
   Settings,
@@ -42,6 +43,12 @@ import {
   Users,
   Wallet,
   Warehouse,
+  Wrench,
+  Cog,
+  ClipboardPen,
+  Gauge,
+  Clock,
+  AlertTriangle,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -110,6 +117,7 @@ const comprasSubGroups = [
       { title: "Órdenes de Compra", href: "/dashboard/purchasing/purchase-orders", icon: ShoppingBag },
       { title: "Requisiciones", href: "/dashboard/purchasing/requisitions", icon: ClipboardCheck },
       { title: "Recepciones", href: "/dashboard/purchasing/receipts", icon: PackageOpen },
+      { title: "Facturas Proveedor", href: "/dashboard/purchasing/vendor-invoices", icon: ReceiptText },
     ],
   },
   {
@@ -149,6 +157,31 @@ const inventarioSubGroups = [
     items: [
       { title: "Kardex", href: "/dashboard/inventory/kardex", icon: ScrollText },
       { title: "Conteos", href: "/dashboard/inventory/inventory-counts", icon: ClipboardList },
+    ],
+  },
+];
+
+// ── Mantenimiento sub-groups ──────────────────────────────────
+const mantenimientoSubGroups = [
+  {
+    label: "Principal",
+    items: [
+      { title: "Dashboard", href: "/dashboard/maintenance", icon: Gauge },
+    ],
+  },
+  {
+    label: "Gestión",
+    items: [
+      { title: "Activos / Equipos", href: "/dashboard/maintenance/assets", icon: Cog },
+      { title: "Órdenes de Trabajo", href: "/dashboard/maintenance/work-orders", icon: ClipboardPen },
+      { title: "Planes Preventivos", href: "/dashboard/maintenance/plans", icon: ClipboardList },
+    ],
+  },
+  {
+    label: "Control",
+    items: [
+      { title: "Tiempos de Parada", href: "/dashboard/maintenance/downtime", icon: Clock },
+      { title: "Fallas y Causas", href: "/dashboard/maintenance/failure-codes", icon: AlertTriangle },
     ],
   },
 ];
@@ -224,6 +257,10 @@ const erpSections = [
   {
     label: "INVENTARIO",
     accordion: "inventario",
+  },
+  {
+    label: "MANTENIMIENTO",
+    accordion: "mantenimiento",
   },
   {
     label: "MAESTROS",
@@ -414,14 +451,13 @@ function ExpandedAccordion({
   label: string;
   value: string;
 }) {
-  const accordionId = useId();
   const isAnyActive = subGroups.some((g) =>
     g.items.some((i) => pathname === i.href || pathname.startsWith(i.href + "/")),
   );
 
   return (
     <Accordion type="single" collapsible className="w-full" defaultValue={isAnyActive ? value : undefined}>
-      <AccordionItem value={value} id={accordionId} className="border-none">
+      <AccordionItem value={value} className="border-none">
         <AccordionTrigger className="py-2 px-3 text-sm font-medium text-sidebar-foreground/70 hover:no-underline hover:text-sidebar-foreground">
           <span className="flex items-center gap-2.5">
             <Icon className="h-4 w-4 shrink-0" />
@@ -550,6 +586,8 @@ export function DashboardSidebar({
                       ? comprasSubGroups
                       : accordionType === "inventario"
                       ? inventarioSubGroups
+                      : accordionType === "mantenimiento"
+                      ? mantenimientoSubGroups
                       : maestrosSubGroups;
                   const icon =
                     accordionType === "ventas"
@@ -558,6 +596,8 @@ export function DashboardSidebar({
                       ? ShoppingBag
                       : accordionType === "inventario"
                       ? Package
+                      : accordionType === "mantenimiento"
+                      ? Wrench
                       : Database;
                   const label =
                     accordionType === "ventas"
@@ -566,6 +606,8 @@ export function DashboardSidebar({
                       ? "Compras"
                       : accordionType === "inventario"
                       ? "Inventario"
+                      : accordionType === "mantenimiento"
+                      ? "Mantenimiento"
                       : "Maestros";
                   const value = accordionType;
 

@@ -13,6 +13,7 @@ const typeLabels: Record<string, string> = {
   customer: "Cliente",
   supplier: "Proveedor",
   both: "Ambos",
+  salesperson: "Vendedor",
   employee: "Empleado",
   contractor: "Contratista",
 };
