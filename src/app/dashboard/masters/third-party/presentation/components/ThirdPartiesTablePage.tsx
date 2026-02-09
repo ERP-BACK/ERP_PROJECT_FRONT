@@ -12,6 +12,7 @@ import { useThirdParties } from "../hooks/use-third-parties";
 import { columnsThirdParty } from "./columns-third-party";
 import { thirdPartyFormConfig } from "../forms/third-party-form.config";
 import type { ThirdParty } from "../../domain/entities/third-party.entity";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function ThirdPartiesTablePage() {
   const {
@@ -23,18 +24,40 @@ export function ThirdPartiesTablePage() {
     updateMutation,
     deleteMutation,
   } = useThirdParties();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
   const [editingItem, setEditingItem] = useState<ThirdParty | null>(null);
-  const [importOpen, setImportOpen] = useState(false);
+  const thirdPartyHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setOpenDialog((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
 
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setOpenDialog((prev) => ({ ...prev, dialogOpen: true }));
   };
-
   const handleEdit = (item: ThirdParty) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setOpenDialog((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleDelete = (item: ThirdParty) => {
@@ -47,10 +70,16 @@ export function ThirdPartiesTablePage() {
       const id = editingItem.third_party_id ?? editingItem.id;
       updateMutation.mutate(
         { id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setOpenDialog((prev) => ({ ...prev, dialogOpen: false })),
+        },
       );
     } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+      createMutation.mutate(formData, {
+        onSuccess: () =>
+          setOpenDialog((prev) => ({ ...prev, dialogOpen: false })),
+      });
     }
   };
 
@@ -84,26 +113,12 @@ export function ThirdPartiesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <Filter className="mr-1.5 h-3.5 w-3.5" />
-            Filtros
-          </Button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" onClick={() => setImportOpen(true)}>
-            <Upload className="mr-1.5 h-3.5 w-3.5" />
-            Importar Excel
-          </Button>
-          <Button size="sm" onClick={handleCreate}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" />
-            Crear
-          </Button>
-        </div>
-      </div>
+      <PageHeader pageHeader={thirdPartyHeader} />
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsThirdParty.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsThirdParty.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -116,18 +131,26 @@ export function ThirdPartiesTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={openDialog.dialogOpen}
+        onOpenChange={(open) =>
+          setOpenDialog((prev) => ({ ...prev, dialogOpen: open }))
+        }
         title={editingItem ? "Editar Tercero" : "Crear Tercero"}
         formConfig={thirdPartyFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
       />
 
       <ExcelImportDialog
-        open={importOpen}
-        onOpenChange={setImportOpen}
+        open={openDialog.importOpen}
+        onOpenChange={(open) =>
+          setOpenDialog((prev) => ({ ...prev, importOpen: open }))
+        }
         moduleKey="third-parties"
         title="Importar Terceros desde Excel"
         onSuccess={() => {}}

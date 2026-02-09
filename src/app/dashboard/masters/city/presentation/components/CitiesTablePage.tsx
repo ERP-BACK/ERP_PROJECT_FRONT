@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SimpleDataTable } from "@/shared/presentation/components/SimpleDataTable";
 import { Show } from "@/components/show/Show.component";
@@ -11,21 +11,48 @@ import { useCities } from "../hooks/use-cities";
 import { columnsCities } from "./columns-city";
 import { cityFormConfig } from "../forms/city-form.config";
 import type { City } from "../../domain/entities/city.entity";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
+import Page from "@/app/dashboard/admin/audit-logs/page";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function CitiesTablePage() {
   const { data, isLoading, createMutation, updateMutation, deleteMutation } =
     useCities();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
   const [editingItem, setEditingItem] = useState<City | null>(null);
+  const citiesHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
 
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleEdit = (item: City) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleDelete = (id: string) => {
@@ -36,11 +63,15 @@ export function CitiesTablePage() {
     if (editingItem) {
       updateMutation.mutate(
         { id: editingItem.id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+        },
       );
     } else {
       createMutation.mutate(formData, {
-        onSuccess: () => setDialogOpen(false),
+        onSuccess: () =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
       });
     }
   };
@@ -75,13 +106,7 @@ export function CitiesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Crear
-        </Button>
-      </div>
+      <PageHeader pageHeader={citiesHeader} />
 
       <Show
         when={!isLoading}
@@ -95,8 +120,10 @@ export function CitiesTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={dialogOpen.dialogOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }))
+        }
         title={editingItem ? "Editar Ciudad" : "Crear Ciudad"}
         formConfig={cityFormConfig}
         defaultValues={
@@ -106,6 +133,15 @@ export function CitiesTablePage() {
         }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="cities"
+        title="Importar  Ciudades desde Excel"
+        onSuccess={() => {}}
       />
     </>
   );
