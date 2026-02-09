@@ -4,7 +4,7 @@ import { createSearchAction } from "@/shared/application/use-cases/create-search
 import type { Currency } from "../../domain/entities/currency.entity";
 
 const search = createSearchAction<Currency & Record<string, unknown>>("/onerp/currencies", {
-  code: "id",
+  code: "currency_id",
   value: "name",
   searchFields: ["name", "iso_code"],
 });

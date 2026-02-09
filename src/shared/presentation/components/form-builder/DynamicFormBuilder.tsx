@@ -20,7 +20,10 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import type { FormConfig, FormFieldConfig } from "../../types/form-config.types";
+import type {
+  FormConfig,
+  FormFieldConfig,
+} from "../../types/form-config.types";
 import { buildZodSchema } from "../../validators/build-zod-schema";
 import { Autocomplete } from "../autocomplete/Autocomplete";
 
@@ -45,7 +48,10 @@ function FieldRenderer({
 }) {
   // Calculate initialDisplayValue for autocomplete fields
   const getInitialDisplayValue = () => {
-    if (fieldConfig.type !== "autocomplete" || !fieldConfig.autocompleteConfig) {
+    if (
+      fieldConfig.type !== "autocomplete" ||
+      !fieldConfig.autocompleteConfig
+    ) {
       return undefined;
     }
     // Use explicit initialDisplayValue if provided
@@ -53,8 +59,12 @@ function FieldRenderer({
       return fieldConfig.autocompleteConfig.initialDisplayValue;
     }
     // Use initialDisplayValueField to get value from defaultValues
-    if (fieldConfig.autocompleteConfig.initialDisplayValueField && defaultValues) {
-      const fieldValue = defaultValues[fieldConfig.autocompleteConfig.initialDisplayValueField];
+    if (
+      fieldConfig.autocompleteConfig.initialDisplayValueField &&
+      defaultValues
+    ) {
+      const fieldValue =
+        defaultValues[fieldConfig.autocompleteConfig.initialDisplayValueField];
       return typeof fieldValue === "string" ? fieldValue : undefined;
     }
     return undefined;
@@ -68,20 +78,24 @@ function FieldRenderer({
       render={({ field }) => (
         <FormItem
           className={
-            fieldConfig.gridCols === 2 ? "col-span-2" : "col-span-2 sm:col-span-1"
+            fieldConfig.gridCols === 2
+              ? "col-span-2"
+              : "col-span-2 sm:col-span-1"
           }
         >
           {fieldConfig.type !== "boolean" && (
             <FormLabel>{fieldConfig.label}</FormLabel>
           )}
           <FormControl>
-            {fieldConfig.type === "text" || fieldConfig.type === "date" || fieldConfig.type === "uuid" ? (
+            {fieldConfig.type === "text" ||
+            fieldConfig.type === "date" ||
+            fieldConfig.type === "uuid" ? (
               <Input
                 placeholder={fieldConfig.placeholder ?? ""}
                 type={fieldConfig.type === "date" ? "date" : "text"}
                 disabled={isLoading}
                 {...field}
-                value={field.value as string ?? ""}
+                value={(field.value as string) ?? ""}
               />
             ) : fieldConfig.type === "number" ? (
               <Input
@@ -90,14 +104,14 @@ function FieldRenderer({
                 disabled={isLoading}
                 {...field}
                 onChange={(e) => field.onChange(e.target.valueAsNumber || "")}
-                value={field.value as number ?? ""}
+                value={(field.value as number) ?? ""}
               />
             ) : fieldConfig.type === "textarea" ? (
               <Textarea
                 placeholder={fieldConfig.placeholder ?? ""}
                 disabled={isLoading}
                 {...field}
-                value={field.value as string ?? ""}
+                value={(field.value as string) ?? ""}
               />
             ) : fieldConfig.type === "select" ? (
               <Select
@@ -106,7 +120,12 @@ function FieldRenderer({
                 disabled={isLoading}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={fieldConfig.placeholder ?? `Seleccione ${fieldConfig.label.toLowerCase()}`} />
+                  <SelectValue
+                    placeholder={
+                      fieldConfig.placeholder ??
+                      `Seleccione ${fieldConfig.label.toLowerCase()}`
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   {fieldConfig.options?.map((opt) => (
@@ -116,14 +135,18 @@ function FieldRenderer({
                   ))}
                 </SelectContent>
               </Select>
-            ) : fieldConfig.type === "autocomplete" && fieldConfig.autocompleteConfig ? (
+            ) : fieldConfig.type === "autocomplete" &&
+              fieldConfig.autocompleteConfig ? (
               <Autocomplete
                 searchAction={fieldConfig.autocompleteConfig.searchAction}
                 returnMode={fieldConfig.autocompleteConfig.returnMode}
                 value={field.value as string}
                 onChange={field.onChange}
                 onSelect={fieldConfig.autocompleteConfig.onSelect}
-                placeholder={fieldConfig.autocompleteConfig.placeholder ?? fieldConfig.placeholder}
+                placeholder={
+                  fieldConfig.autocompleteConfig.placeholder ??
+                  fieldConfig.placeholder
+                }
                 disabled={isLoading}
                 minChars={fieldConfig.autocompleteConfig.minChars}
                 debounceMs={fieldConfig.autocompleteConfig.debounceMs}
@@ -137,10 +160,16 @@ function FieldRenderer({
                   onCheckedChange={field.onChange}
                   disabled={isLoading}
                 />
-                <span className="text-sm text-muted-foreground">{fieldConfig.label}</span>
+                <span className="text-sm text-muted-foreground">
+                  {fieldConfig.label}
+                </span>
               </div>
             ) : (
-              <Input disabled={isLoading} {...field} value={field.value as string ?? ""} />
+              <Input
+                disabled={isLoading}
+                {...field}
+                value={(field.value as string) ?? ""}
+              />
             )}
           </FormControl>
           <FormMessage />
@@ -173,7 +202,9 @@ function BooleanFieldRenderer({
               disabled={isLoading}
             />
           </FormControl>
-          <FormLabel className="text-sm font-normal">{fieldConfig.label}</FormLabel>
+          <FormLabel className="text-sm font-normal">
+            {fieldConfig.label}
+          </FormLabel>
           <FormMessage />
         </FormItem>
       )}
@@ -210,10 +241,12 @@ export function DynamicFormBuilder({
   const computedDefaults: Record<string, unknown> = {};
   for (const field of allFields) {
     computedDefaults[field.name] =
-      defaultValues?.[field.name] ?? field.defaultValue ?? (field.type === "boolean" ? false : "");
+      defaultValues?.[field.name] ??
+      field.defaultValue ??
+      (field.type === "boolean" ? false : "");
   }
 
-  const form = useForm({
+  const { watch, ...form } = useForm({
     resolver: zodResolver(schema),
     defaultValues: computedDefaults,
   });
@@ -222,18 +255,23 @@ export function DynamicFormBuilder({
     onSubmit(cleanFormData(data));
   };
 
+  console.log("Form Watch Values:", watch());
   // Sectioned layout
   if (config.sections) {
     return (
-      <Form {...form}>
+      <Form {...form} watch={watch}>
         <form
           id={formId}
           onSubmit={form.handleSubmit(handleSubmit)}
           className="space-y-0"
         >
           {config.sections.map((section, sIdx) => {
-            const regularFields = section.fields.filter((f) => !f.hidden && f.type !== "boolean");
-            const booleanFields = section.fields.filter((f) => !f.hidden && f.type === "boolean");
+            const regularFields = section.fields.filter(
+              (f) => !f.hidden && f.type !== "boolean",
+            );
+            const booleanFields = section.fields.filter(
+              (f) => !f.hidden && f.type === "boolean",
+            );
 
             return (
               <div key={section.title}>
@@ -263,7 +301,9 @@ export function DynamicFormBuilder({
                     </div>
                   )}
                   {booleanFields.length > 0 && (
-                    <div className={`flex flex-wrap items-center gap-5 ${regularFields.length > 0 ? "mt-4 pt-4 border-t border-dashed" : ""}`}>
+                    <div
+                      className={`flex flex-wrap items-center gap-5 ${regularFields.length > 0 ? "mt-4 pt-4 border-t border-dashed" : ""}`}
+                    >
                       {booleanFields.map((fieldConfig) => (
                         <BooleanFieldRenderer
                           key={fieldConfig.name}
@@ -289,7 +329,7 @@ export function DynamicFormBuilder({
   const booleanFields = visibleFields.filter((f) => f.type === "boolean");
 
   return (
-    <Form {...form}>
+    <Form {...form} watch={watch}>
       <form
         id={formId}
         onSubmit={form.handleSubmit(handleSubmit)}
@@ -309,7 +349,9 @@ export function DynamicFormBuilder({
           </div>
         )}
         {booleanFields.length > 0 && (
-          <div className={`flex flex-wrap items-center gap-5 ${regularFields.length > 0 ? "mt-4 pt-4 border-t border-dashed" : ""}`}>
+          <div
+            className={`flex flex-wrap items-center gap-5 ${regularFields.length > 0 ? "mt-4 pt-4 border-t border-dashed" : ""}`}
+          >
             {booleanFields.map((fieldConfig) => (
               <BooleanFieldRenderer
                 key={fieldConfig.name}

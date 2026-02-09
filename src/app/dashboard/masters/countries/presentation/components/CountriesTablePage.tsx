@@ -40,14 +40,17 @@ export function CountriesTablePage() {
   };
 
   const handleSubmit = (formData: Record<string, unknown>) => {
-    if (editingItem) {
-      updateMutation.mutate(
-        { id: editingItem.id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
-      );
-    } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
-    }
+    console.log("Form Data:", formData);
+    // if (editingItem) {
+    //   updateMutation.mutate(
+    //     { id: editingItem.id, data: formData },
+    //     { onSuccess: () => setDialogOpen(false) },
+    //   );
+    // } else {
+    //   createMutation.mutate(formData, {
+    //     onSuccess: () => setDialogOpen(false),
+    //   });
+    // }
   };
 
   const columnsWithActions = [
@@ -88,7 +91,10 @@ export function CountriesTablePage() {
         </Button>
       </div>
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsCountries.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsCountries.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -105,7 +111,11 @@ export function CountriesTablePage() {
         onOpenChange={setDialogOpen}
         title={editingItem ? "Editar País" : "Crear País"}
         formConfig={countryFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
       />
