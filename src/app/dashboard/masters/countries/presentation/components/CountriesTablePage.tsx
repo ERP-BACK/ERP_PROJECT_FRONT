@@ -40,17 +40,16 @@ export function CountriesTablePage() {
   };
 
   const handleSubmit = (formData: Record<string, unknown>) => {
-    console.log("Form Data:", formData);
-    // if (editingItem) {
-    //   updateMutation.mutate(
-    //     { id: editingItem.id, data: formData },
-    //     { onSuccess: () => setDialogOpen(false) },
-    //   );
-    // } else {
-    //   createMutation.mutate(formData, {
-    //     onSuccess: () => setDialogOpen(false),
-    //   });
-    // }
+    if (editingItem) {
+      updateMutation.mutate(
+        { id: editingItem.id, data: formData },
+        { onSuccess: () => setDialogOpen(false) },
+      );
+    } else {
+      createMutation.mutate(formData, {
+        onSuccess: () => setDialogOpen(false),
+      });
+    }
   };
 
   const columnsWithActions = [

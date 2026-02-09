@@ -255,7 +255,6 @@ export function DynamicFormBuilder({
     onSubmit(cleanFormData(data));
   };
 
-  console.log("Form Watch Values:", watch());
   // Sectioned layout
   if (config.sections) {
     return (
