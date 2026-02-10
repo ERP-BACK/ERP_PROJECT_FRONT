@@ -152,6 +152,7 @@ export function CountriesTablePage() {
         }
         moduleKey="countries"
         title="Importar  Países desde Excel"
+        rute="country"
         onSuccess={() => {}}
       />
     </>

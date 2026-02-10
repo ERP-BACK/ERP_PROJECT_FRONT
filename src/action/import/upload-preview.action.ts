@@ -21,9 +21,10 @@ export interface ImportPreviewResult {
 export async function uploadPreview(
   moduleKey: string,
   formData: FormData,
+  rute: string,
 ): Promise<ImportPreviewResult> {
   return apiUpload<ImportPreviewResult>(
-    `/api/import/${moduleKey}/preview`,
+    `/${rute}/${moduleKey}/preview`,
     formData,
   );
 }

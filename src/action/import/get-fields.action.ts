@@ -20,6 +20,7 @@ export interface ImportFieldsConfig {
 
 export async function getImportFields(
   moduleKey: string,
+  rute = "api/import",
 ): Promise<ImportFieldsConfig> {
-  return apiImport<ImportFieldsConfig>(`/api/import/${moduleKey}/fields`);
+  return apiImport<ImportFieldsConfig>(`/${rute}/${moduleKey}/fields`);
 }

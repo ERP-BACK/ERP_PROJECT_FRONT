@@ -58,33 +58,173 @@ function SpreadsheetIllustration({ className }: { className?: string }) {
       className={className}
     >
       {/* Paper shadow */}
-      <rect x="14" y="14" width="52" height="60" rx="4" className="fill-slate-200/60 dark:fill-slate-800/40" />
+      <rect
+        x="14"
+        y="14"
+        width="52"
+        height="60"
+        rx="4"
+        className="fill-slate-200/60 dark:fill-slate-800/40"
+      />
       {/* Paper */}
-      <rect x="10" y="10" width="52" height="60" rx="4" className="fill-white dark:fill-zinc-800 stroke-slate-200 dark:stroke-slate-700" strokeWidth="1.5" />
+      <rect
+        x="10"
+        y="10"
+        width="52"
+        height="60"
+        rx="4"
+        className="fill-white dark:fill-zinc-800 stroke-slate-200 dark:stroke-slate-700"
+        strokeWidth="1.5"
+      />
       {/* Header row */}
-      <rect x="14" y="14" width="44" height="8" rx="1" className="fill-primary/10" />
+      <rect
+        x="14"
+        y="14"
+        width="44"
+        height="8"
+        rx="1"
+        className="fill-primary/10"
+      />
       {/* Grid lines */}
-      <line x1="14" y1="26" x2="58" y2="26" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
-      <line x1="14" y1="34" x2="58" y2="34" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
-      <line x1="14" y1="42" x2="58" y2="42" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
-      <line x1="14" y1="50" x2="58" y2="50" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
-      <line x1="14" y1="58" x2="58" y2="58" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
+      <line
+        x1="14"
+        y1="26"
+        x2="58"
+        y2="26"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
+      <line
+        x1="14"
+        y1="34"
+        x2="58"
+        y2="34"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
+      <line
+        x1="14"
+        y1="42"
+        x2="58"
+        y2="42"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
+      <line
+        x1="14"
+        y1="50"
+        x2="58"
+        y2="50"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
+      <line
+        x1="14"
+        y1="58"
+        x2="58"
+        y2="58"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
       {/* Vertical lines */}
-      <line x1="28" y1="14" x2="28" y2="66" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
-      <line x1="44" y1="14" x2="44" y2="66" strokeWidth="0.5" className="stroke-slate-200 dark:stroke-slate-700" />
+      <line
+        x1="28"
+        y1="14"
+        x2="28"
+        y2="66"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
+      <line
+        x1="44"
+        y1="14"
+        x2="44"
+        y2="66"
+        strokeWidth="0.5"
+        className="stroke-slate-200 dark:stroke-slate-700"
+      />
       {/* Cell content indicators */}
-      <rect x="16" y="28" width="8" height="2" rx="1" className="fill-slate-300 dark:fill-slate-600" />
-      <rect x="30" y="28" width="10" height="2" rx="1" className="fill-primary/60" />
-      <rect x="46" y="28" width="6" height="2" rx="1" className="fill-slate-300 dark:fill-slate-600" />
-      <rect x="16" y="36" width="10" height="2" rx="1" className="fill-slate-300 dark:fill-slate-600" />
-      <rect x="30" y="36" width="8" height="2" rx="1" className="fill-primary/60" />
-      <rect x="46" y="36" width="8" height="2" rx="1" className="fill-slate-300 dark:fill-slate-600" />
-      <rect x="16" y="44" width="6" height="2" rx="1" className="fill-slate-300 dark:fill-slate-600" />
-      <rect x="30" y="44" width="12" height="2" rx="1" className="fill-primary/60" />
-      <rect x="46" y="44" width="4" height="2" rx="1" className="fill-slate-300 dark:fill-slate-600" />
+      <rect
+        x="16"
+        y="28"
+        width="8"
+        height="2"
+        rx="1"
+        className="fill-slate-300 dark:fill-slate-600"
+      />
+      <rect
+        x="30"
+        y="28"
+        width="10"
+        height="2"
+        rx="1"
+        className="fill-primary/60"
+      />
+      <rect
+        x="46"
+        y="28"
+        width="6"
+        height="2"
+        rx="1"
+        className="fill-slate-300 dark:fill-slate-600"
+      />
+      <rect
+        x="16"
+        y="36"
+        width="10"
+        height="2"
+        rx="1"
+        className="fill-slate-300 dark:fill-slate-600"
+      />
+      <rect
+        x="30"
+        y="36"
+        width="8"
+        height="2"
+        rx="1"
+        className="fill-primary/60"
+      />
+      <rect
+        x="46"
+        y="36"
+        width="8"
+        height="2"
+        rx="1"
+        className="fill-slate-300 dark:fill-slate-600"
+      />
+      <rect
+        x="16"
+        y="44"
+        width="6"
+        height="2"
+        rx="1"
+        className="fill-slate-300 dark:fill-slate-600"
+      />
+      <rect
+        x="30"
+        y="44"
+        width="12"
+        height="2"
+        rx="1"
+        className="fill-primary/60"
+      />
+      <rect
+        x="46"
+        y="44"
+        width="4"
+        height="2"
+        rx="1"
+        className="fill-slate-300 dark:fill-slate-600"
+      />
       {/* Check mark */}
       <circle cx="62" cy="58" r="10" className="fill-success" />
-      <path d="M57 58L60 61L67 54" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M57 58L60 61L67 54"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -95,6 +235,7 @@ interface ExcelImportDialogProps {
   moduleKey: string;
   title?: string;
   onSuccess?: () => void;
+  rute?: string;
 }
 
 export function ExcelImportDialog({
@@ -103,6 +244,7 @@ export function ExcelImportDialog({
   moduleKey,
   title = "Importar Excel",
   onSuccess,
+  rute = "api/import",
 }: ExcelImportDialogProps) {
   const [step, setStep] = useState<Step>("upload");
   const [loading, setLoading] = useState(false);
@@ -153,7 +295,9 @@ export function ExcelImportDialog({
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error descargando plantilla");
+      setError(
+        err instanceof Error ? err.message : "Error descargando plantilla",
+      );
     } finally {
       setLoading(false);
     }
@@ -198,7 +342,7 @@ export function ExcelImportDialog({
       setError(null);
       const formData = new FormData();
       formData.append("file", file);
-      const result = await uploadPreview(moduleKey, formData);
+      const result = await uploadPreview(moduleKey, formData, rute);
       setPreview(result);
       setStep("preview");
     } catch (err) {
@@ -252,7 +396,9 @@ export function ExcelImportDialog({
 
       poll();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error confirmando importacion");
+      setError(
+        err instanceof Error ? err.message : "Error confirmando importacion",
+      );
       setStep("failed");
     } finally {
       setLoading(false);
@@ -278,7 +424,9 @@ export function ExcelImportDialog({
       URL.revokeObjectURL(url);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Error descargando archivo de errores",
+        err instanceof Error
+          ? err.message
+          : "Error descargando archivo de errores",
       );
     } finally {
       setDownloadingErrors(false);
@@ -300,13 +448,18 @@ export function ExcelImportDialog({
                 <Table2 className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-base font-semibold">{title}</DialogTitle>
+                <DialogTitle className="text-base font-semibold">
+                  {title}
+                </DialogTitle>
                 <DialogDescription className="text-[13px]">
-                  {step === "upload" && "Sube un archivo Excel (.xlsx) para importar datos."}
+                  {step === "upload" &&
+                    "Sube un archivo Excel (.xlsx) para importar datos."}
                   {step === "preview" && "Revisa los datos antes de confirmar."}
                   {step === "processing" && "Procesando la importacion..."}
-                  {step === "completed" && "Importacion completada exitosamente."}
-                  {step === "failed" && "Ocurrio un error durante la importacion."}
+                  {step === "completed" &&
+                    "Importacion completada exitosamente."}
+                  {step === "failed" &&
+                    "Ocurrio un error durante la importacion."}
                 </DialogDescription>
               </div>
             </div>
@@ -327,13 +480,14 @@ export function ExcelImportDialog({
                     <div
                       className={`
                         relative flex h-8 w-8 items-center justify-center rounded-full border-2 transition-all
-                        ${isCompleted
-                          ? "border-success bg-success text-white"
-                          : isActive
-                            ? isFailed
-                              ? "border-destructive bg-destructive/10 text-destructive"
-                              : "border-primary bg-primary/10 text-primary"
-                            : "border-muted-foreground/20 bg-muted/50 text-muted-foreground/50"
+                        ${
+                          isCompleted
+                            ? "border-success bg-success text-white"
+                            : isActive
+                              ? isFailed
+                                ? "border-destructive bg-destructive/10 text-destructive"
+                                : "border-primary bg-primary/10 text-primary"
+                              : "border-muted-foreground/20 bg-muted/50 text-muted-foreground/50"
                         }
                       `}
                     >
@@ -401,11 +555,12 @@ export function ExcelImportDialog({
                 onClick={() => fileRef.current?.click()}
                 className={`
                   group relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-8 text-center transition-all
-                  ${isDragging
-                    ? "border-primary bg-primary/5 scale-[1.01]"
-                    : selectedFile
-                      ? "border-success/50 bg-success/5"
-                      : "border-border hover:border-primary/50 hover:bg-muted/30"
+                  ${
+                    isDragging
+                      ? "border-primary bg-primary/5 scale-[1.01]"
+                      : selectedFile
+                        ? "border-success/50 bg-success/5"
+                        : "border-border hover:border-primary/50 hover:bg-muted/30"
                   }
                 `}
               >
@@ -425,13 +580,18 @@ export function ExcelImportDialog({
                     <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-lg bg-success/10">
                       <FileSpreadsheet className="h-7 w-7 text-success" />
                     </div>
-                    <p className="text-sm font-semibold text-foreground">{selectedFile.name}</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {selectedFile.name}
+                    </p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {(selectedFile.size / 1024).toFixed(0)} KB · Listo para procesar
+                      {(selectedFile.size / 1024).toFixed(0)} KB · Listo para
+                      procesar
                     </p>
                     <div className="mt-3 flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1">
                       <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-                      <span className="text-xs font-medium text-success">Archivo seleccionado</span>
+                      <span className="text-xs font-medium text-success">
+                        Archivo seleccionado
+                      </span>
                     </div>
                     <button
                       type="button"
@@ -488,7 +648,7 @@ export function ExcelImportDialog({
               </button>
 
               {/* Fields info accordion */}
-              <ImportFieldsInfo moduleKey={moduleKey} />
+              <ImportFieldsInfo moduleKey={moduleKey} rute={rute} />
             </div>
           )}
 
@@ -498,17 +658,27 @@ export function ExcelImportDialog({
               {/* Stats cards */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-lg border border-border/50 bg-muted/20 p-3 text-center">
-                  <p className="text-2xl font-bold text-foreground">{preview.totalRows}</p>
-                  <p className="text-[11px] text-muted-foreground">Filas totales</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {preview.totalRows}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Filas totales
+                  </p>
                 </div>
                 <div className="rounded-lg border border-success/20 bg-success/5 p-3 text-center">
-                  <p className="text-2xl font-bold text-success">{preview.validCount}</p>
+                  <p className="text-2xl font-bold text-success">
+                    {preview.validCount}
+                  </p>
                   <p className="text-[11px] text-success">Validas</p>
                 </div>
                 {preview.errorCount > 0 && (
                   <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-center">
-                    <p className="text-2xl font-bold text-destructive">{preview.errorCount}</p>
-                    <p className="text-[11px] text-destructive/80">Con errores</p>
+                    <p className="text-2xl font-bold text-destructive">
+                      {preview.errorCount}
+                    </p>
+                    <p className="text-[11px] text-destructive/80">
+                      Con errores
+                    </p>
                   </div>
                 )}
                 {preview.errorCount === 0 && (
@@ -597,15 +767,21 @@ export function ExcelImportDialog({
               <p className="text-base font-semibold">Importacion exitosa</p>
               <div className="mt-3 flex items-center gap-4">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-success">{jobResult.result.created}</p>
+                  <p className="text-2xl font-bold text-success">
+                    {jobResult.result.created}
+                  </p>
                   <p className="text-[11px] text-muted-foreground">Creados</p>
                 </div>
                 {jobResult.result.failed > 0 && (
                   <>
                     <div className="h-8 w-px bg-border" />
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-destructive">{jobResult.result.failed}</p>
-                      <p className="text-[11px] text-muted-foreground">Fallidos</p>
+                      <p className="text-2xl font-bold text-destructive">
+                        {jobResult.result.failed}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Fallidos
+                      </p>
                     </div>
                   </>
                 )}
@@ -632,7 +808,12 @@ export function ExcelImportDialog({
           <div className="flex items-center justify-between">
             <div>
               {step === "preview" && (
-                <Button variant="ghost" size="sm" onClick={reset} className="text-muted-foreground hover:text-foreground">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={reset}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
                   Volver
                 </Button>
@@ -645,7 +826,9 @@ export function ExcelImportDialog({
                   onClick={handleFileUpload}
                   disabled={loading || !selectedFile}
                 >
-                  {loading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
+                  {loading && (
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  )}
                   {!loading && <Upload className="mr-1.5 h-3.5 w-3.5" />}
                   Subir y previsualizar
                 </Button>
@@ -656,13 +839,19 @@ export function ExcelImportDialog({
                   onClick={handleConfirm}
                   disabled={loading || !preview || preview.validCount === 0}
                 >
-                  {loading && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
+                  {loading && (
+                    <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                  )}
                   {!loading && <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />}
                   Confirmar {preview?.validCount || 0} filas
                 </Button>
               )}
               {(step === "completed" || step === "failed") && (
-                <Button size="sm" variant="outline" onClick={() => handleClose(false)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleClose(false)}
+                >
                   Cerrar
                 </Button>
               )}
