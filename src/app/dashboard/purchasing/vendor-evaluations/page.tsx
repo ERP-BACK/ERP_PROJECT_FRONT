@@ -2,8 +2,8 @@ import { VendorEvaluationsTablePage } from "./presentation/components/VendorEval
 
 export default function VendorEvaluationsPage() {
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-1">
+    <div className="flex h-full flex-col gap-6 p-6">
+      <div>
         <h1 className="text-2xl font-semibold tracking-tight">
           Evaluación de Proveedores
         </h1>

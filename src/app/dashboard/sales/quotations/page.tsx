@@ -2,11 +2,9 @@ import { QuotationsTablePage } from "./presentation/components/QuotationsTablePa
 
 export default function QuotationsPage() {
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Cotizaciones
-        </h1>
+    <div className="flex h-full flex-col gap-6 p-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Cotizaciones</h1>
         <p className="text-sm text-muted-foreground">
           Gestiona las cotizaciones de clientes y convierte en órdenes de venta
         </p>

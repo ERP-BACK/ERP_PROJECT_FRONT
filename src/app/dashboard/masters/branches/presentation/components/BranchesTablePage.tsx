@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -11,6 +11,8 @@ import { useBranches } from "../hooks/use-branchs";
 import { columnsBranches } from "./columns-branch";
 import { branchFormConfig } from "../forms/branch-form.config";
 import type { Branch } from "../../domain/entities/branch.entity";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function BranchesTablePage() {
   const {
@@ -22,17 +24,40 @@ export function BranchesTablePage() {
     updateMutation,
     deleteMutation,
   } = useBranches();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
   const [editingItem, setEditingItem] = useState<Branch | null>(null);
-
+  const branchesHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleEdit = (item: Branch) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleDelete = (id: string) => {
@@ -43,10 +68,16 @@ export function BranchesTablePage() {
     if (editingItem) {
       updateMutation.mutate(
         { id: editingItem.id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+        },
       );
     } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+      createMutation.mutate(formData, {
+        onSuccess: () =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+      });
     }
   };
 
@@ -80,15 +111,12 @@ export function BranchesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Crear
-        </Button>
-      </div>
+      <PageHeader pageHeader={branchesHeader} />
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsBranches.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsBranches.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -101,13 +129,28 @@ export function BranchesTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={dialogOpen.dialogOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }))
+        }
         title={editingItem ? "Editar Sucursal" : "Crear Sucursal"}
         formConfig={branchFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="branches"
+        title="Importar  Sucursales desde Excel"
+        onSuccess={() => {}}
       />
     </>
   );

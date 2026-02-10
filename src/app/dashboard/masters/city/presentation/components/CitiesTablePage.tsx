@@ -12,7 +12,6 @@ import { columnsCities } from "./columns-city";
 import { cityFormConfig } from "../forms/city-form.config";
 import type { City } from "../../domain/entities/city.entity";
 import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
-import Page from "@/app/dashboard/admin/audit-logs/page";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function CitiesTablePage() {

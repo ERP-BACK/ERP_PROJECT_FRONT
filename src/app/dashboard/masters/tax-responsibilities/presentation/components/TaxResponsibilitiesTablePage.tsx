@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -11,6 +11,9 @@ import { useTaxResponsibilities } from "../hooks/use-tax-responsibilitys";
 import { columnsTaxResponsibilities } from "./columns-tax-responsibility";
 import { taxResponsibilityFormConfig } from "../forms/tax-responsibility-form.config";
 import type { TaxResponsibility } from "../../domain/entities/tax-responsibility.entity";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
+import Page from "@/app/dashboard/admin/audit-logs/page";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function TaxResponsibilitiesTablePage() {
   const {
@@ -22,17 +25,42 @@ export function TaxResponsibilitiesTablePage() {
     updateMutation,
     deleteMutation,
   } = useTaxResponsibilities();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<TaxResponsibility | null>(null);
-
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const [editingItem, setEditingItem] = useState<TaxResponsibility | null>(
+    null,
+  );
+  const taxResponsibilitiesHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleEdit = (item: TaxResponsibility) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleDelete = (id: string) => {
@@ -43,10 +71,16 @@ export function TaxResponsibilitiesTablePage() {
     if (editingItem) {
       updateMutation.mutate(
         { id: editingItem.id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+        },
       );
     } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+      createMutation.mutate(formData, {
+        onSuccess: () =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+      });
     }
   };
 
@@ -80,15 +114,12 @@ export function TaxResponsibilitiesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Crear
-        </Button>
-      </div>
+      <PageHeader pageHeader={taxResponsibilitiesHeader} />
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsTaxResponsibilities.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsTaxResponsibilities.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -101,13 +132,32 @@ export function TaxResponsibilitiesTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        title={editingItem ? "Editar Responsabilidad Tributaria" : "Crear Responsabilidad Tributaria"}
+        open={dialogOpen.dialogOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }))
+        }
+        title={
+          editingItem
+            ? "Editar Responsabilidad Tributaria"
+            : "Crear Responsabilidad Tributaria"
+        }
         formConfig={taxResponsibilityFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="tax_responsibilities"
+        title="Importar responsabilidades tributarias desde Excel"
+        onSuccess={() => {}}
       />
     </>
   );
