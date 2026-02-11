@@ -141,9 +141,10 @@ export function StateDepartmentsTablePage() {
         onOpenChange={(open) =>
           setDialogOpen((prev) => ({ ...prev, importOpen: open }))
         }
-        moduleKey="state-deparments"
+        moduleKey="state_deparments"
         title="Importar Departamentos/Estados desde Excel"
         onSuccess={() => {}}
+        rute="department"
       />
     </>
   );
