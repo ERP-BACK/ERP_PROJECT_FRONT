@@ -102,7 +102,6 @@ export function CitiesTablePage() {
       ),
     },
   ];
-
   return (
     <>
       <PageHeader pageHeader={citiesHeader} />
