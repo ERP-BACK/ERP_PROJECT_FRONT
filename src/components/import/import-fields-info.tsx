@@ -34,20 +34,58 @@ import {
 
 interface ImportFieldsInfoProps {
   moduleKey: string;
+  rute?: string;
 }
 
 // Corporate blue-tinted palette matching the ERP system
-const typeConfig: Record<string, { icon: typeof Type; label: string; color: string }> = {
-  string: { icon: Type, label: "Texto", color: "text-slate-500 dark:text-slate-400" },
-  number: { icon: Hash, label: "Numero", color: "text-slate-500 dark:text-slate-400" },
-  boolean: { icon: ToggleLeft, label: "Si/No", color: "text-slate-500 dark:text-slate-400" },
-  email: { icon: Mail, label: "Email", color: "text-slate-500 dark:text-slate-400" },
-  enum: { icon: List, label: "Lista", color: "text-slate-500 dark:text-slate-400" },
-  date: { icon: Calendar, label: "Fecha", color: "text-slate-500 dark:text-slate-400" },
+const typeConfig: Record<
+  string,
+  { icon: typeof Type; label: string; color: string }
+> = {
+  string: {
+    icon: Type,
+    label: "Texto",
+    color: "text-slate-500 dark:text-slate-400",
+  },
+  number: {
+    icon: Hash,
+    label: "Numero",
+    color: "text-slate-500 dark:text-slate-400",
+  },
+  boolean: {
+    icon: ToggleLeft,
+    label: "Si/No",
+    color: "text-slate-500 dark:text-slate-400",
+  },
+  email: {
+    icon: Mail,
+    label: "Email",
+    color: "text-slate-500 dark:text-slate-400",
+  },
+  enum: {
+    icon: List,
+    label: "Lista",
+    color: "text-slate-500 dark:text-slate-400",
+  },
+  date: {
+    icon: Calendar,
+    label: "Fecha",
+    color: "text-slate-500 dark:text-slate-400",
+  },
 };
 
-function FieldChip({ field, isRequired }: { field: FieldInfo; isRequired: boolean }) {
-  const config = typeConfig[field.type] || { icon: Type, label: field.type, color: "text-muted-foreground" };
+function FieldChip({
+  field,
+  isRequired,
+}: {
+  field: FieldInfo;
+  isRequired: boolean;
+}) {
+  const config = typeConfig[field.type] || {
+    icon: Type,
+    label: field.type,
+    color: "text-muted-foreground",
+  };
   const Icon = config.icon;
 
   const tooltipContent = (
@@ -60,7 +98,10 @@ function FieldChip({ field, isRequired }: { field: FieldInfo; isRequired: boolea
       {field.type === "enum" && field.enumValues && (
         <div className="flex flex-wrap gap-1 pt-1">
           {field.enumValues.map((val) => (
-            <span key={val} className="rounded bg-muted px-1.5 py-0.5 text-[10px]">
+            <span
+              key={val}
+              className="rounded bg-muted px-1.5 py-0.5 text-[10px]"
+            >
               {val}
             </span>
           ))}
@@ -68,7 +109,10 @@ function FieldChip({ field, isRequired }: { field: FieldInfo; isRequired: boolea
       )}
       {field.example && (
         <div className="pt-1 text-muted-foreground">
-          Ej: <code className="rounded bg-muted px-1 font-mono">{field.example}</code>
+          Ej:{" "}
+          <code className="rounded bg-muted px-1 font-mono">
+            {field.example}
+          </code>
         </div>
       )}
     </div>
@@ -80,14 +124,19 @@ function FieldChip({ field, isRequired }: { field: FieldInfo; isRequired: boolea
         <div
           className={`
             group flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-all cursor-default
-            ${isRequired
-              ? "border-primary/20 bg-primary/5 hover:bg-primary/10 dark:border-primary/30 dark:bg-primary/10 dark:hover:bg-primary/15"
-              : "border-border/50 bg-muted/20 hover:bg-muted/40"
+            ${
+              isRequired
+                ? "border-primary/20 bg-primary/5 hover:bg-primary/10 dark:border-primary/30 dark:bg-primary/10 dark:hover:bg-primary/15"
+                : "border-border/50 bg-muted/20 hover:bg-muted/40"
             }
           `}
         >
-          <Icon className={`h-3 w-3 shrink-0 ${isRequired ? "text-primary" : config.color}`} />
-          <span className="truncate max-w-[100px] font-medium">{field.name}</span>
+          <Icon
+            className={`h-3 w-3 shrink-0 ${isRequired ? "text-primary" : config.color}`}
+          />
+          <span className="truncate max-w-[100px] font-medium">
+            {field.name}
+          </span>
           {isRequired && <span className="text-primary text-[10px]">*</span>}
         </div>
       </TooltipTrigger>
@@ -98,7 +147,7 @@ function FieldChip({ field, isRequired }: { field: FieldInfo; isRequired: boolea
   );
 }
 
-export function ImportFieldsInfo({ moduleKey }: ImportFieldsInfoProps) {
+export function ImportFieldsInfo({ moduleKey, rute }: ImportFieldsInfoProps) {
   const [config, setConfig] = useState<ImportFieldsConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -110,7 +159,7 @@ export function ImportFieldsInfo({ moduleKey }: ImportFieldsInfoProps) {
       try {
         setLoading(true);
         setError(null);
-        const data = await getImportFields(moduleKey);
+        const data = await getImportFields(moduleKey, rute);
         if (mounted) {
           setConfig(data);
         }
@@ -164,16 +213,24 @@ export function ImportFieldsInfo({ moduleKey }: ImportFieldsInfoProps) {
 
   return (
     <TooltipProvider>
-      <Accordion type="single" collapsible className="rounded-lg border border-border/50 bg-card/50">
+      <Accordion
+        type="single"
+        collapsible
+        className="rounded-lg border border-border/50 bg-card/50"
+      >
         <AccordionItem value="fields" className="border-0">
           <AccordionTrigger className="px-3 py-2.5 hover:no-underline [&[data-state=open]]:pb-1.5">
             <div className="flex items-center gap-2.5 text-sm w-full">
               <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10">
                 <FileText className="h-3.5 w-3.5 text-primary" />
               </div>
-              <span className="font-medium text-[13px]">Campos del archivo</span>
+              <span className="font-medium text-[13px]">
+                Campos del archivo
+              </span>
               <div className="ml-auto flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span className="text-primary font-medium">{requiredFields.length}</span>
+                <span className="text-primary font-medium">
+                  {requiredFields.length}
+                </span>
                 <span>obligatorios</span>
                 <span className="text-muted-foreground/40">·</span>
                 <span>{optionalFields.length} opcionales</span>
@@ -192,7 +249,11 @@ export function ImportFieldsInfo({ moduleKey }: ImportFieldsInfoProps) {
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {requiredFields.map((field) => (
-                    <FieldChip key={field.key} field={field} isRequired={true} />
+                    <FieldChip
+                      key={field.key}
+                      field={field}
+                      isRequired={true}
+                    />
                   ))}
                 </div>
               </div>
@@ -208,7 +269,11 @@ export function ImportFieldsInfo({ moduleKey }: ImportFieldsInfoProps) {
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {optionalFields.map((field) => (
-                      <FieldChip key={field.key} field={field} isRequired={false} />
+                      <FieldChip
+                        key={field.key}
+                        field={field}
+                        isRequired={false}
+                      />
                     ))}
                   </div>
                 </div>

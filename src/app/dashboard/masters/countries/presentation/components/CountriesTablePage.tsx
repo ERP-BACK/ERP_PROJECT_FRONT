@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -11,6 +11,9 @@ import { useCountries } from "../hooks/use-countrys";
 import { columnsCountries } from "./columns-country";
 import { countryFormConfig } from "../forms/country-form.config";
 import type { Country } from "../../domain/entities/country.entity";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
+import Page from "@/app/dashboard/admin/audit-logs/page";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function CountriesTablePage() {
   const {
@@ -22,17 +25,41 @@ export function CountriesTablePage() {
     updateMutation,
     deleteMutation,
   } = useCountries();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState({
+    importOpen: false,
+    editOpen: false,
+  });
   const [editingItem, setEditingItem] = useState<Country | null>(null);
+  const countryHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
 
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, editOpen: true }));
   };
 
   const handleEdit = (item: Country) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, editOpen: true }));
   };
 
   const handleDelete = (id: string) => {
@@ -43,10 +70,16 @@ export function CountriesTablePage() {
     if (editingItem) {
       updateMutation.mutate(
         { id: editingItem.id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setDialogOpen((prev) => ({ ...prev, editOpen: false })),
+        },
       );
     } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+      createMutation.mutate(formData, {
+        onSuccess: () =>
+          setDialogOpen((prev) => ({ ...prev, editOpen: false })),
+      });
     }
   };
 
@@ -80,15 +113,12 @@ export function CountriesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Crear
-        </Button>
-      </div>
+      <PageHeader pageHeader={countryHeader} />
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsCountries.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsCountries.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -101,13 +131,29 @@ export function CountriesTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={dialogOpen.editOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, editOpen: open }))
+        }
         title={editingItem ? "Editar País" : "Crear País"}
         formConfig={countryFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="countries"
+        title="Importar  Países desde Excel"
+        rute="country"
+        onSuccess={() => {}}
       />
     </>
   );

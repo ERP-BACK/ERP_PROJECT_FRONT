@@ -2,7 +2,7 @@ import React from "react";
 import { SideTitleOptionComponent } from "../titles/SideTitleOption.component";
 
 interface Props {
-  title: string;
+  title?: string;
   children: React.ReactNode[] | React.ReactNode;
   subtitle?: string;
   valueTab?: string[];

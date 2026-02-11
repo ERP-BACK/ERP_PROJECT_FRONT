@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -11,6 +11,9 @@ import { useBankAccounts } from "../hooks/use-bank-accounts";
 import { columnsBankAccounts } from "./columns-bank-account";
 import { bankAccountFormConfig } from "../forms/bank-account-form.config";
 import type { BankAccount } from "../../domain/entities/bank-account.entity";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
+import Page from "@/app/dashboard/admin/audit-logs/page";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function BankAccountsTablePage() {
   const {
@@ -22,17 +25,41 @@ export function BankAccountsTablePage() {
     updateMutation,
     deleteMutation,
   } = useBankAccounts();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
   const [editingItem, setEditingItem] = useState<BankAccount | null>(null);
+  const bankAccountsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
 
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleEdit = (item: BankAccount) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleDelete = (id: string) => {
@@ -43,10 +70,16 @@ export function BankAccountsTablePage() {
     if (editingItem) {
       updateMutation.mutate(
         { id: editingItem.id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+        },
       );
     } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+      createMutation.mutate(formData, {
+        onSuccess: () =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+      });
     }
   };
 
@@ -80,15 +113,12 @@ export function BankAccountsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Crear
-        </Button>
-      </div>
+      <PageHeader pageHeader={bankAccountsHeader} />
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsBankAccounts.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsBankAccounts.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -101,13 +131,28 @@ export function BankAccountsTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={dialogOpen.dialogOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }))
+        }
         title={editingItem ? "Editar Cuenta Bancaria" : "Crear Cuenta Bancaria"}
         formConfig={bankAccountFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="bank_accounts"
+        title="Importar cuentas bancarias desde Excel"
+        onSuccess={() => {}}
       />
     </>
   );
