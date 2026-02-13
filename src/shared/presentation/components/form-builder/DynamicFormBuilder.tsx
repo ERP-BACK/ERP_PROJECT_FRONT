@@ -326,7 +326,7 @@ export function DynamicFormBuilder({
   const visibleFields = config.fields.filter((f) => !f.hidden);
   const regularFields = visibleFields.filter((f) => f.type !== "boolean");
   const booleanFields = visibleFields.filter((f) => f.type === "boolean");
-
+  console.log("Regular fields:", watch());
   return (
     <Form {...form} watch={watch}>
       <form

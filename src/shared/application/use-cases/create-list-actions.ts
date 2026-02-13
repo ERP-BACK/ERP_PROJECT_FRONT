@@ -39,5 +39,9 @@ export function createListActions<T>(basePath: string) {
     await apiClient<void>(`${basePath}/${id}`, { method: "DELETE" });
   }
 
-  return { findAll, findById, create, update, remove };
+  async function getOne(id: string): Promise<T> {
+    return apiClient<T>(`${basePath}/${id}`, { method: "GET" });
+  }
+
+  return { findAll, findById, create, update, remove, getOne };
 }

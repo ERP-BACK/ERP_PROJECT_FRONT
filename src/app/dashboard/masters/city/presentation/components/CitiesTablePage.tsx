@@ -15,13 +15,20 @@ import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function CitiesTablePage() {
-  const { data, isLoading, createMutation, updateMutation, deleteMutation } =
-    useCities();
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const {
+    data,
+    isLoading,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+    getOne,
+    getOneIsLoading,
+  } = useCities(selectedId);
   const [dialogOpen, setDialogOpen] = useState({
     dialogOpen: false,
     importOpen: false,
   });
-  const [editingItem, setEditingItem] = useState<City | null>(null);
   const citiesHeader = {
     filters: [
       {
@@ -45,12 +52,12 @@ export function CitiesTablePage() {
   };
 
   const handleCreate = () => {
-    setEditingItem(null);
+    setSelectedId(undefined);
     setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleEdit = (item: City) => {
-    setEditingItem(item);
+    setSelectedId(item.id);
     setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
@@ -59,12 +66,15 @@ export function CitiesTablePage() {
   };
 
   const handleSubmit = (formData: Record<string, unknown>) => {
-    if (editingItem) {
+    console.log("Form data submitted:", formData);
+    if (selectedId) {
       updateMutation.mutate(
-        { id: editingItem.id, data: formData },
+        { id: selectedId, data: formData },
         {
-          onSuccess: () =>
-            setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+          onSuccess: () => {
+            setSelectedId(undefined);
+            setDialogOpen((prev) => ({ ...prev, dialogOpen: false }));
+          },
         },
       );
     } else {
@@ -119,18 +129,21 @@ export function CitiesTablePage() {
 
       <CrudFormDialog
         open={dialogOpen.dialogOpen}
-        onOpenChange={(open) =>
-          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }))
-        }
-        title={editingItem ? "Editar Ciudad" : "Crear Ciudad"}
+        onOpenChange={(open) => {
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }));
+          if (!open) setSelectedId(undefined);
+        }}
+        title={selectedId ? "Editar Ciudad" : "Crear Ciudad"}
         formConfig={cityFormConfig}
         defaultValues={
-          editingItem
-            ? (editingItem as unknown as Record<string, unknown>)
-            : undefined
+          getOne ? (getOne as unknown as Record<string, unknown>) : undefined
         }
         onSubmit={handleSubmit}
-        isLoading={createMutation.isPending || updateMutation.isPending}
+        isLoading={
+          createMutation.isPending ||
+          updateMutation.isPending ||
+          getOneIsLoading
+        }
       />
       <ExcelImportDialog
         open={dialogOpen.importOpen}

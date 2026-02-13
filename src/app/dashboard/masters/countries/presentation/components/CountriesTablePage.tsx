@@ -150,7 +150,7 @@ export function CountriesTablePage() {
         onOpenChange={(open) =>
           setDialogOpen((prev) => ({ ...prev, importOpen: open }))
         }
-        moduleKey="countries"
+        moduleKey="country"
         title="Importar  Países desde Excel"
         rute="country"
         onSuccess={() => {}}
