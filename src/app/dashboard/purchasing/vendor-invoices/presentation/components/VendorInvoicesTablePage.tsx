@@ -11,6 +11,7 @@ import {
   FileCheck,
   PauseCircle,
   PlayCircle,
+  Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
@@ -25,12 +26,33 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function VendorInvoicesTablePage() {
   const router = useRouter();
   const { data, isLoading, pagination, setPagination, deleteMutation } =
     useVendorInvoices();
-
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const vendorInvoicesHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
   const handleCreate = () => {
     router.push("/dashboard/purchasing/vendor-invoices/new");
   };
@@ -40,7 +62,9 @@ export function VendorInvoicesTablePage() {
   };
 
   const handleEdit = (invoice: VendorInvoice) => {
-    router.push(`/dashboard/purchasing/vendor-invoices/${invoice.invoice_id}/edit`);
+    router.push(
+      `/dashboard/purchasing/vendor-invoices/${invoice.invoice_id}/edit`,
+    );
   };
 
   const handleDelete = (id: string) => {
@@ -54,10 +78,14 @@ export function VendorInvoicesTablePage() {
       header: "Acciones",
       cell: ({ row }: { row: { original: VendorInvoice } }) => {
         const invoice = row.original;
-        const canEdit = invoice.status === "draft" || invoice.status === "pending_match";
+        const canEdit =
+          invoice.status === "draft" || invoice.status === "pending_match";
         const canDelete = invoice.status === "draft";
         const canPost = invoice.status === "matched" && !invoice.payment_hold;
-        const canHold = !invoice.payment_hold && invoice.status !== "cancelled" && invoice.status !== "paid";
+        const canHold =
+          !invoice.payment_hold &&
+          invoice.status !== "cancelled" &&
+          invoice.status !== "paid";
         const canRelease = invoice.payment_hold;
 
         return (
@@ -162,13 +190,7 @@ export function VendorInvoicesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Factura
-        </Button>
-      </div>
+      <PageHeader pageHeader={vendorInvoicesHeader} />
 
       <Show
         when={!isLoading}

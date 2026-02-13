@@ -1,6 +1,16 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, Send, CheckCircle, XCircle, ShoppingCart } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  Send,
+  CheckCircle,
+  XCircle,
+  ShoppingCart,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,17 +19,33 @@ import { useRequisitions } from "../hooks/use-requisitions";
 import { columnsRequisitions } from "./columns-requisition";
 import type { Requisition } from "../../domain/entities/requisition.entity";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function RequisitionsTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useRequisitions();
-
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useRequisitions();
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const requisitionsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleNew(),
+      },
+    ],
+  };
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
@@ -125,13 +151,7 @@ export function RequisitionsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleNew}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Requisición
-        </Button>
-      </div>
+      <PageHeader pageHeader={requisitionsHeader} />
 
       <Show
         when={!isLoading}

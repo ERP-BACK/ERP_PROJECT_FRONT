@@ -1,6 +1,16 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, ClipboardCheck, CheckCircle, XCircle, Package } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  ClipboardCheck,
+  CheckCircle,
+  XCircle,
+  Package,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,17 +19,33 @@ import { useReceipts } from "../hooks/use-receipts";
 import { columnsReceipts } from "./columns-receipt";
 import type { Receipt } from "../../domain/entities/receipt.entity";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function ReceiptsTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useReceipts();
-
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useReceipts();
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const receiptsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleNew(),
+      },
+    ],
+  };
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
@@ -41,9 +67,12 @@ export function ReceiptsTablePage() {
         const receipt = row.original;
         const canEdit = receipt.status === "draft";
         const canDelete = receipt.status === "draft";
-        const canStartInspection = receipt.status === "draft" && receipt.requires_inspection;
+        const canStartInspection =
+          receipt.status === "draft" && receipt.requires_inspection;
         const canCompleteInspection = receipt.status === "pending_inspection";
-        const canConfirm = receipt.status === "inspected" || (receipt.status === "draft" && !receipt.requires_inspection);
+        const canConfirm =
+          receipt.status === "inspected" ||
+          (receipt.status === "draft" && !receipt.requires_inspection);
 
         return (
           <div className="flex items-center gap-1">
@@ -115,14 +144,7 @@ export function ReceiptsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleNew}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Recepción
-        </Button>
-      </div>
-
+      <PageHeader pageHeader={receiptsHeader} />
       <Show
         when={!isLoading}
         fallback={<TableSkeleton columns={columnsReceipts.length} />}
