@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,16 +9,29 @@ import { TableSkeleton } from "@/components/tables/TableSkeleton";
 import { useSalesOrders } from "../hooks/use-sales-orders";
 import { columnsSalesOrders } from "./columns-sales-order";
 import type { SalesOrder } from "../../domain/entities/sales-order.entity";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function SalesOrdersTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useSalesOrders();
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useSalesOrders();
+  const salesOrderHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
 
   const handleCreate = () => {
     router.push("/dashboard/sales/sales-orders/new");
@@ -39,7 +52,8 @@ export function SalesOrdersTablePage() {
       header: "Acciones",
       cell: ({ row }: { row: { original: SalesOrder } }) => {
         const order = row.original;
-        const canEdit = order.status === "draft" || order.status === "pending_approval";
+        const canEdit =
+          order.status === "draft" || order.status === "pending_approval";
         const canDelete = order.status === "draft";
 
         return (
@@ -48,7 +62,11 @@ export function SalesOrdersTablePage() {
               variant="ghost"
               size="icon"
               className="h-7 w-7"
-              onClick={() => router.push(`/dashboard/sales/sales-orders/${order.sales_order_id}`)}
+              onClick={() =>
+                router.push(
+                  `/dashboard/sales/sales-orders/${order.sales_order_id}`,
+                )
+              }
               title="Ver detalle"
             >
               <Eye className="h-4 w-4" />
@@ -83,13 +101,7 @@ export function SalesOrdersTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Orden
-        </Button>
-      </div>
+      <PageHeader pageHeader={salesOrderHeader} />
 
       <Show
         when={!isLoading}

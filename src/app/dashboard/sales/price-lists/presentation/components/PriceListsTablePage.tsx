@@ -1,6 +1,17 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, Power, PowerOff, Copy, Star } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  Power,
+  PowerOff,
+  Copy,
+  Star,
+  Filter,
+  Upload,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,17 +20,39 @@ import { usePriceLists } from "../hooks/use-price-lists";
 import { columnsPriceLists } from "./columns-price-list";
 import type { PriceList } from "../../domain/entities/price-list.entity";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
 
 export function PriceListsTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = usePriceLists();
-
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    usePriceLists();
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const citiesHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleNew(),
+      },
+    ],
+  };
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
   };
@@ -116,13 +149,7 @@ export function PriceListsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleNew}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Lista de Precios
-        </Button>
-      </div>
+      <PageHeader pageHeader={citiesHeader} />
 
       <Show
         when={!isLoading}
@@ -138,6 +165,15 @@ export function PriceListsTablePage() {
           paginationState={data?.pageInfo ?? { limit: pagination.limit }}
         />
       </Show>
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="price_lists"
+        title="Importar  Listas de Precios desde Excel"
+        onSuccess={() => {}}
+      />
     </>
   );
 }

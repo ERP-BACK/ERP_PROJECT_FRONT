@@ -1,6 +1,17 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, Send, CheckCircle, XCircle, PackageCheck, RefreshCw } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  Send,
+  CheckCircle,
+  XCircle,
+  PackageCheck,
+  RefreshCw,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,16 +20,28 @@ import { useReturns } from "../hooks/use-returns";
 import { columnsReturns } from "./columns-return";
 import type { SalesReturn } from "../../domain/entities/return.entity";
 import { useRouter } from "next/navigation";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function ReturnsTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useReturns();
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useReturns();
+  const returnsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleNew(),
+      },
+    ],
+  };
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
@@ -136,13 +159,7 @@ export function ReturnsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleNew}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Devolución
-        </Button>
-      </div>
+      <PageHeader pageHeader={returnsHeader} />
 
       <Show
         when={!isLoading}

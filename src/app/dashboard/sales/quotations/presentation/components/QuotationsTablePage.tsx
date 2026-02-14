@@ -1,6 +1,16 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, Send, FileCheck, FileX, ArrowRight } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  Send,
+  FileCheck,
+  FileX,
+  ArrowRight,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -8,18 +18,30 @@ import { TableSkeleton } from "@/components/tables/TableSkeleton";
 import { useQuotations } from "../hooks/use-quotations";
 import { columnsQuotations } from "./columns-quotation";
 import type { Quotation } from "../../domain/entities/quotation.entity";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function QuotationsTablePage() {
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useQuotations();
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useQuotations();
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
+  };
+  const quotationsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
   };
 
   const columnsWithActions = [
@@ -93,13 +115,7 @@ export function QuotationsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm">
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Cotización
-        </Button>
-      </div>
+      <PageHeader pageHeader={quotationsHeader} />
 
       <Show
         when={!isLoading}
@@ -117,4 +133,7 @@ export function QuotationsTablePage() {
       </Show>
     </>
   );
+}
+function handleCreate() {
+  throw new Error("Function not implemented.");
 }
