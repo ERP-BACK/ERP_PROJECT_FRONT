@@ -83,10 +83,22 @@ const adminSections = [
   {
     label: "ADMINISTRACIÓN",
     items: [
-      { title: "Compañías", href: "/dashboard/admin/companies", icon: Building2 },
+      {
+        title: "Compañías",
+        href: "/dashboard/admin/companies",
+        icon: Building2,
+      },
       { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
-      { title: "Preferencias", href: "/dashboard/admin/preferences", icon: SlidersHorizontal },
-      { title: "Auditoría", href: "/dashboard/admin/audit-logs", icon: History },
+      {
+        title: "Preferencias",
+        href: "/dashboard/admin/preferences",
+        icon: SlidersHorizontal,
+      },
+      {
+        title: "Auditoría",
+        href: "/dashboard/admin/audit-logs",
+        icon: History,
+      },
     ],
   },
 ];
@@ -96,16 +108,36 @@ const ventasSubGroups = [
   {
     label: "Transacciones",
     items: [
-      { title: "Órdenes de Venta", href: "/dashboard/sales/sales-orders", icon: ShoppingCart },
-      { title: "Cotizaciones", href: "/dashboard/sales/quotations", icon: FileSpreadsheet },
-      { title: "Despachos", href: "/dashboard/sales/shipments", icon: PackageCheck },
-      { title: "Devoluciones", href: "/dashboard/sales/returns", icon: RotateCcw },
+      {
+        title: "Órdenes de Venta",
+        href: "/dashboard/sales/sales-orders",
+        icon: ShoppingCart,
+      },
+      {
+        title: "Cotizaciones",
+        href: "/dashboard/sales/quotations",
+        icon: FileSpreadsheet,
+      },
+      {
+        title: "Despachos",
+        href: "/dashboard/sales/shipments",
+        icon: PackageCheck,
+      },
+      {
+        title: "Devoluciones",
+        href: "/dashboard/sales/returns",
+        icon: RotateCcw,
+      },
     ],
   },
   {
     label: "Configuración",
     items: [
-      { title: "Listas de Precios", href: "/dashboard/sales/price-lists", icon: Receipt },
+      {
+        title: "Listas de Precios",
+        href: "/dashboard/sales/price-lists",
+        icon: Receipt,
+      },
     ],
   },
 ];
@@ -115,16 +147,36 @@ const comprasSubGroups = [
   {
     label: "Transacciones",
     items: [
-      { title: "Órdenes de Compra", href: "/dashboard/purchasing/purchase-orders", icon: ShoppingBag },
-      { title: "Requisiciones", href: "/dashboard/purchasing/requisitions", icon: ClipboardCheck },
-      { title: "Recepciones", href: "/dashboard/purchasing/receipts", icon: PackageOpen },
-      { title: "Facturas Proveedor", href: "/dashboard/purchasing/vendor-invoices", icon: ReceiptText },
+      {
+        title: "Órdenes de Compra",
+        href: "/dashboard/purchasing/purchase-orders",
+        icon: ShoppingBag,
+      },
+      {
+        title: "Requisiciones",
+        href: "/dashboard/purchasing/requisitions",
+        icon: ClipboardCheck,
+      },
+      {
+        title: "Recepciones",
+        href: "/dashboard/purchasing/receipts",
+        icon: PackageOpen,
+      },
+      {
+        title: "Facturas Proveedor",
+        href: "/dashboard/purchasing/vendor-invoices",
+        icon: ReceiptText,
+      },
     ],
   },
   {
     label: "Gestión",
     items: [
-      { title: "Evaluación Proveedores", href: "/dashboard/purchasing/vendor-evaluations", icon: Star },
+      {
+        title: "Evaluación Proveedores",
+        href: "/dashboard/purchasing/vendor-evaluations",
+        icon: Star,
+      },
     ],
   },
 ];
@@ -134,30 +186,62 @@ const inventarioSubGroups = [
   {
     label: "Catálogos",
     items: [
-      { title: "Categorías", href: "/dashboard/inventory/product-categories", icon: FolderTree },
-      { title: "Productos", href: "/dashboard/inventory/products", icon: Package },
-      { title: "Razones de Movimiento", href: "/dashboard/inventory/movement-reasons", icon: Tags },
+      {
+        title: "Categorías",
+        href: "/dashboard/inventory/product-categories",
+        icon: FolderTree,
+      },
+      {
+        title: "Productos",
+        href: "/dashboard/inventory/products",
+        icon: Package,
+      },
+      {
+        title: "Razones de Movimiento",
+        href: "/dashboard/inventory/movement-reasons",
+        icon: Tags,
+      },
     ],
   },
   {
     label: "Almacenes",
     items: [
-      { title: "Almacenes", href: "/dashboard/inventory/warehouses", icon: Warehouse },
-      { title: "Ubicaciones", href: "/dashboard/inventory/warehouse-locations", icon: MapPinned },
+      {
+        title: "Almacenes",
+        href: "/dashboard/inventory/warehouses",
+        icon: Warehouse,
+      },
+      {
+        title: "Ubicaciones",
+        href: "/dashboard/inventory/warehouse-locations",
+        icon: MapPinned,
+      },
     ],
   },
   {
     label: "Control",
     items: [
       { title: "Lotes", href: "/dashboard/inventory/lots", icon: Layers },
-      { title: "Niveles de Stock", href: "/dashboard/inventory/stock-levels", icon: Box },
+      {
+        title: "Niveles de Stock",
+        href: "/dashboard/inventory/stock-levels",
+        icon: Box,
+      },
     ],
   },
   {
     label: "Movimientos",
     items: [
-      { title: "Kardex", href: "/dashboard/inventory/kardex", icon: ScrollText },
-      { title: "Conteos", href: "/dashboard/inventory/inventory-counts", icon: ClipboardList },
+      {
+        title: "Kardex",
+        href: "/dashboard/inventory/kardex",
+        icon: ScrollText,
+      },
+      {
+        title: "Conteos",
+        href: "/dashboard/inventory/inventory-counts",
+        icon: ClipboardList,
+      },
     ],
   },
 ];
@@ -173,16 +257,66 @@ const mantenimientoSubGroups = [
   {
     label: "Gestión",
     items: [
-      { title: "Activos / Equipos", href: "/dashboard/maintenance/assets", icon: Cog },
-      { title: "Órdenes de Trabajo", href: "/dashboard/maintenance/work-orders", icon: ClipboardPen },
-      { title: "Planes Preventivos", href: "/dashboard/maintenance/plans", icon: ClipboardList },
+      {
+        title: "Activos / Equipos",
+        href: "/dashboard/maintenance/assets",
+        icon: Cog,
+      },
+      {
+        title: "Órdenes de Trabajo",
+        href: "/dashboard/maintenance/work-orders",
+        icon: ClipboardPen,
+      },
+      {
+        title: "Planes Preventivos",
+        href: "/dashboard/maintenance/plans",
+        icon: ClipboardList,
+      },
     ],
   },
   {
     label: "Control",
     items: [
-      { title: "Tiempos de Parada", href: "/dashboard/maintenance/downtime", icon: Clock },
-      { title: "Fallas y Causas", href: "/dashboard/maintenance/failure-codes", icon: AlertTriangle },
+      {
+        title: "Tiempos de Parada",
+        href: "/dashboard/maintenance/downtime",
+        icon: Clock,
+      },
+      {
+        title: "Fallas y Causas",
+        href: "/dashboard/maintenance/failure-codes",
+        icon: AlertTriangle,
+      },
+    ],
+  },
+];
+
+// ── finance ────────────────────────────────────────'
+
+const financeSubGroups = [
+  {
+    label: "Principal",
+    items: [
+      {
+        title: "Dashboard",
+        href: "/dashboard/finance",
+        icon: Gauge,
+      },
+    ],
+  },
+  {
+    label: "Contabilidad",
+    items: [
+      {
+        title: "Asientos Contables",
+        href: "/dashboard/finance/journal-entries",
+        icon: FileText,
+      },
+      {
+        title: "Plan de Cuentas",
+        href: "/dashboard/finance/chart-of-accounts",
+        icon: Layers,
+      },
     ],
   },
 ];
@@ -192,48 +326,100 @@ const maestrosSubGroups = [
   {
     label: "Entidades",
     items: [
-      { title: "Terceros", href: "/dashboard/masters/third-party", icon: Users },
-      { title: "Transportistas", href: "/dashboard/masters/carriers", icon: Truck },
+      {
+        title: "Terceros",
+        href: "/dashboard/masters/third-party",
+        icon: Users,
+      },
+      {
+        title: "Transportistas",
+        href: "/dashboard/masters/carriers",
+        icon: Truck,
+      },
       { title: "Sucursales", href: "/dashboard/masters/branches", icon: Store },
     ],
   },
   {
     label: "Documentos",
     items: [
-      { title: "Tipos de documento", href: "/dashboard/masters/document-types", icon: FileText },
-      { title: "Secuencias", href: "/dashboard/masters/document-sequences", icon: Hash },
+      {
+        title: "Tipos de documento",
+        href: "/dashboard/masters/document-types",
+        icon: FileText,
+      },
+      {
+        title: "Secuencias",
+        href: "/dashboard/masters/document-sequences",
+        icon: Hash,
+      },
     ],
   },
   {
     label: "Pagos",
     items: [
-      { title: "Condiciones de pago", href: "/dashboard/masters/payment-terms", icon: Receipt },
-      { title: "Métodos de pago", href: "/dashboard/masters/payment-methods", icon: CreditCard },
+      {
+        title: "Condiciones de pago",
+        href: "/dashboard/masters/payment-terms",
+        icon: Receipt,
+      },
+      {
+        title: "Métodos de pago",
+        href: "/dashboard/masters/payment-methods",
+        icon: CreditCard,
+      },
       { title: "Bancos", href: "/dashboard/masters/banks", icon: Landmark },
-      { title: "Cuentas bancarias", href: "/dashboard/masters/bank-accounts", icon: Wallet },
+      {
+        title: "Cuentas bancarias",
+        href: "/dashboard/masters/bank-accounts",
+        icon: Wallet,
+      },
     ],
   },
   {
     label: "Fiscal",
     items: [
-      { title: "Responsab. tributarias", href: "/dashboard/masters/tax-responsibilities", icon: CircleDollarSign },
-      { title: "Actividades económicas", href: "/dashboard/masters/economic-activities", icon: Banknote },
-      { title: "Monedas", href: "/dashboard/masters/currencies", icon: Banknote },
+      {
+        title: "Responsab. tributarias",
+        href: "/dashboard/masters/tax-responsibilities",
+        icon: CircleDollarSign,
+      },
+      {
+        title: "Actividades económicas",
+        href: "/dashboard/masters/economic-activities",
+        icon: Banknote,
+      },
+      {
+        title: "Monedas",
+        href: "/dashboard/masters/currencies",
+        icon: Banknote,
+      },
     ],
   },
   {
     label: "Envío",
     items: [
-      { title: "Métodos de envío", href: "/dashboard/masters/shipping-methods", icon: Ship },
+      {
+        title: "Métodos de envío",
+        href: "/dashboard/masters/shipping-methods",
+        icon: Ship,
+      },
       { title: "Incoterms", href: "/dashboard/masters/incoterms", icon: Globe },
     ],
   },
   {
     label: "Geografía",
     items: [
-      { title: "Regiones y zonas", href: "/dashboard/masters/regions-zones", icon: MapPin },
+      {
+        title: "Regiones y zonas",
+        href: "/dashboard/masters/regions-zones",
+        icon: MapPin,
+      },
       { title: "Países", href: "/dashboard/masters/countries", icon: Globe },
-      { title: "Departamentos", href: "/dashboard/masters/state-deparment", icon: MapPin },
+      {
+        title: "Departamentos",
+        href: "/dashboard/masters/state-deparment",
+        icon: MapPin,
+      },
       { title: "Ciudades", href: "/dashboard/masters/city", icon: Building2 },
     ],
   },
@@ -243,9 +429,7 @@ const maestrosSubGroups = [
 const erpSections = [
   {
     label: "PRINCIPAL",
-    items: [
-      { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    ],
+    items: [{ title: "Dashboard", href: "/dashboard", icon: LayoutDashboard }],
   },
   {
     label: "VENTAS",
@@ -264,30 +448,34 @@ const erpSections = [
     accordion: "mantenimiento",
   },
   {
+    label: "FINANZAS",
+    accordion: "finance",
+  },
+  {
     label: "MAESTROS",
     accordion: "maestros",
   },
   {
     label: "ANÁLISIS",
-    items: [
-      { title: "Reportes", href: "/dashboard/reports", icon: BarChart3 },
-    ],
+    items: [{ title: "Reportes", href: "/dashboard/reports", icon: BarChart3 }],
   },
 ];
 
 // ── RRHH section (for hrManager) ────────────────────────────────
 const rrhhSection = {
   label: "RECURSOS HUMANOS",
-  items: [
-    { title: "Usuarios", href: "/dashboard/admin/users", icon: Users },
-  ],
+  items: [{ title: "Usuarios", href: "/dashboard/admin/users", icon: Users }],
 };
 
 // ── Sistema section (for CEO) ────────────────────────────────────
 const sistemaSection = {
   label: "SISTEMA",
   items: [
-    { title: "Preferencias", href: "/dashboard/admin/preferences", icon: SlidersHorizontal },
+    {
+      title: "Preferencias",
+      href: "/dashboard/admin/preferences",
+      icon: SlidersHorizontal,
+    },
     { title: "Auditoría", href: "/dashboard/admin/audit-logs", icon: History },
   ],
 };
@@ -378,7 +566,9 @@ function CollapsedAccordionButton({
 }) {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const isAnyActive = subGroups.some((g) =>
-    g.items.some((i) => pathname === i.href || pathname.startsWith(i.href + "/")),
+    g.items.some(
+      (i) => pathname === i.href || pathname.startsWith(i.href + "/"),
+    ),
   );
 
   return (
@@ -425,7 +615,8 @@ function CollapsedAccordionButton({
                     <button
                       className={cn(
                         "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors duration-150",
-                        pathname === item.href || pathname.startsWith(item.href + "/")
+                        pathname === item.href ||
+                          pathname.startsWith(item.href + "/")
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
                       )}
@@ -462,11 +653,18 @@ function ExpandedAccordion({
   value: string;
 }) {
   const isAnyActive = subGroups.some((g) =>
-    g.items.some((i) => pathname === i.href || pathname.startsWith(i.href + "/")),
+    g.items.some(
+      (i) => pathname === i.href || pathname.startsWith(i.href + "/"),
+    ),
   );
 
   return (
-    <Accordion type="single" collapsible className="w-full" defaultValue={isAnyActive ? value : undefined}>
+    <Accordion
+      type="single"
+      collapsible
+      className="w-full"
+      defaultValue={isAnyActive ? value : undefined}
+    >
       <AccordionItem value={value} className="border-none">
         <AccordionTrigger className="py-2 px-3 text-sm font-medium text-sidebar-foreground/70 hover:no-underline hover:text-sidebar-foreground">
           <span className="flex items-center gap-2.5">
@@ -486,12 +684,14 @@ function ExpandedAccordion({
                     <button
                       className={cn(
                         "relative flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-sm transition-colors duration-150",
-                        pathname === item.href || pathname.startsWith(item.href + "/")
+                        pathname === item.href ||
+                          pathname.startsWith(item.href + "/")
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-sidebar-foreground/65 hover:bg-sidebar-accent hover:text-sidebar-foreground",
                       )}
                     >
-                      {(pathname === item.href || pathname.startsWith(item.href + "/")) && (
+                      {(pathname === item.href ||
+                        pathname.startsWith(item.href + "/")) && (
                         <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r bg-primary" />
                       )}
                       <item.icon className="h-4 w-4 shrink-0" />
@@ -529,10 +729,10 @@ export function DashboardSidebar({
   const sections = isSysAdmin
     ? adminSections
     : isCeo
-    ? [...erpSections, rrhhSection, sistemaSection]
-    : isHrManager
-    ? [...erpSections, rrhhSection]
-    : erpSections;
+      ? [...erpSections, rrhhSection, sistemaSection]
+      : isHrManager
+        ? [...erpSections, rrhhSection]
+        : erpSections;
 
   const handleMobileClose = () => {
     onClose();
@@ -552,7 +752,9 @@ export function DashboardSidebar({
           "h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-200 ease-out",
           "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:transition-transform max-lg:duration-200 max-lg:ease-out",
           "lg:relative lg:flex lg:translate-x-0",
-          open ? "max-lg:translate-x-0 max-lg:flex" : "max-lg:-translate-x-full max-lg:hidden",
+          open
+            ? "max-lg:translate-x-0 max-lg:flex"
+            : "max-lg:-translate-x-full max-lg:hidden",
           collapsed ? "w-[52px]" : "w-56",
         )}
       >
@@ -589,32 +791,38 @@ export function DashboardSidebar({
                     accordionType === "ventas"
                       ? ventasSubGroups
                       : accordionType === "compras"
-                      ? comprasSubGroups
-                      : accordionType === "inventario"
-                      ? inventarioSubGroups
-                      : accordionType === "mantenimiento"
-                      ? mantenimientoSubGroups
-                      : maestrosSubGroups;
+                        ? comprasSubGroups
+                        : accordionType === "inventario"
+                          ? inventarioSubGroups
+                          : accordionType === "mantenimiento"
+                            ? mantenimientoSubGroups
+                            : accordionType === "finance"
+                              ? financeSubGroups
+                              : maestrosSubGroups;
                   const icon =
                     accordionType === "ventas"
                       ? ShoppingCart
                       : accordionType === "compras"
-                      ? ShoppingBag
-                      : accordionType === "inventario"
-                      ? Package
-                      : accordionType === "mantenimiento"
-                      ? Wrench
-                      : Database;
+                        ? ShoppingBag
+                        : accordionType === "inventario"
+                          ? Package
+                          : accordionType === "mantenimiento"
+                            ? Wrench
+                            : accordionType === "finance"
+                              ? FileText
+                              : Database;
                   const label =
                     accordionType === "ventas"
                       ? "Ventas"
                       : accordionType === "compras"
-                      ? "Compras"
-                      : accordionType === "inventario"
-                      ? "Inventario"
-                      : accordionType === "mantenimiento"
-                      ? "Mantenimiento"
-                      : "Maestros";
+                        ? "Compras"
+                        : accordionType === "inventario"
+                          ? "Inventario"
+                          : accordionType === "mantenimiento"
+                            ? "Mantenimiento"
+                            : accordionType === "finance"
+                              ? "Finanzas"
+                              : "Maestros";
                   const value = accordionType;
 
                   return (
@@ -685,7 +893,6 @@ export function DashboardSidebar({
             )}
           </button>
         </div>
-
       </div>
     </TooltipProvider>
   );
