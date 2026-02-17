@@ -283,7 +283,7 @@ export function ExcelImportDialog({
   const handleDownloadTemplate = async () => {
     try {
       setLoading(true);
-      const base64 = await downloadTemplate(moduleKey);
+      const base64 = await downloadTemplate(moduleKey, rute);
       const byteArray = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
       const blob = new Blob([byteArray], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

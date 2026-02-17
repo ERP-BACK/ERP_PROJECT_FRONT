@@ -159,6 +159,11 @@ export function ImportFieldsInfo({ moduleKey, rute }: ImportFieldsInfoProps) {
       try {
         setLoading(true);
         setError(null);
+        console.log(`esta es la ruta ${rute}`);
+        console.log(
+          `Loading import fields for module: ${moduleKey}, route: ${rute}`,
+        );
+
         const data = await getImportFields(moduleKey, rute);
         if (mounted) {
           setConfig(data);

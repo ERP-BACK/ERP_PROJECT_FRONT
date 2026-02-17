@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { AuthenticationError } from "@/lib/api";
 
 const IMPORT_API_URL =
-  process.env.NEXT_PUBLIC_IMPORT_API_URL ?? "http://localhost:3003";
+  process.env.NEXT_PUBLIC_IMPORT_API_URL ?? "http://localhost:3004";
 
 interface UploadOptions {
   headers?: Record<string, string>;

@@ -150,8 +150,9 @@ export function CitiesTablePage() {
         onOpenChange={(open) =>
           setDialogOpen((prev) => ({ ...prev, importOpen: open }))
         }
-        moduleKey="cities"
+        moduleKey="city"
         title="Importar  Ciudades desde Excel"
+        rute="city"
         onSuccess={() => {}}
       />
     </>
