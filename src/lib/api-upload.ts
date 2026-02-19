@@ -49,7 +49,7 @@ export async function apiUpload<T = unknown>(
     }
     throw new Error(message);
   }
-
+  console.log("Response from upload:", res);
   return res.json() as Promise<T>;
 }
 
