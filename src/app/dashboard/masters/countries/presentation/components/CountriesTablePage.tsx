@@ -12,7 +12,6 @@ import { columnsCountries } from "./columns-country";
 import { countryFormConfig } from "../forms/country-form.config";
 import type { Country } from "../../domain/entities/country.entity";
 import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
-import Page from "@/app/dashboard/admin/audit-logs/page";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function CountriesTablePage() {

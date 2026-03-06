@@ -14,16 +14,19 @@ import type { PurchaseOrder } from "../domain/entities/purchase-order.entity";
 import type { OrderLine } from "@/shared/presentation/components/order-lines";
 
 function mapToBackendLines(lines: OrderLine[]) {
-  return lines.map((line) => ({
-    product_id: line.product_id || undefined,
-    description: line.description,
-    quantity_ordered: line.quantity,
-    uom_id: line.uom_id || "UND",
-    unit_price: line.unit_price,
-    discount_percent: line.discount_percent,
-    tax_code_id: line.tax_code_id || undefined,
-    destination_warehouse_id: line.warehouse_id || undefined,
-  }));
+  return lines.map((line) => {
+    const payload: Record<string, any> = {
+      description: line.description,
+      quantity_ordered: line.quantity,
+      uom_id: line.uom_id || "UND",
+      unit_price: line.unit_price,
+      discount_percent: line.discount_percent,
+    };
+    if (line.product_id) payload.product_id = line.product_id;
+    if (line.tax_code_id) payload.tax_code_id = line.tax_code_id;
+    if (line.warehouse_id) payload.destination_warehouse_id = line.warehouse_id;
+    return payload;
+  });
 }
 
 export default function NewPurchaseOrderPage() {
@@ -37,17 +40,32 @@ export default function NewPurchaseOrderPage() {
       router.push("/dashboard/purchasing/purchase-orders");
     },
     onError: (error: Error) => {
-      toast({ title: "Error", description: error.message || "Error al crear la orden de compra", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: error.message || "Error al crear la orden de compra",
+        variant: "destructive",
+      });
     },
   });
 
-  const handleSubmit = (formData: Record<string, unknown>, lines: OrderLine[]) => {
-    const dataWithLines = {
-      ...formData,
-      lines: mapToBackendLines(lines),
-    } as Partial<PurchaseOrder>;
+  const handleSubmit = (
+    formData: Record<string, unknown>,
+    lines: OrderLine[],
+  ) => {
+    const { currency, ...restFormData } = formData;
+    
+    // Remove any undefined or empty values to prevent $undefined serialization issues
+    const cleanFormData = Object.fromEntries(
+      Object.entries(restFormData).filter(([_, v]) => v !== undefined && v !== "")
+    );
 
-    createMutation.mutate(dataWithLines);
+    const dataWithLines = {
+      ...cleanFormData,
+      currency_id: currency,
+      lines: mapToBackendLines(lines),
+    };
+
+    createMutation.mutate({ purchase_order: dataWithLines } as any);
   };
 
   return (

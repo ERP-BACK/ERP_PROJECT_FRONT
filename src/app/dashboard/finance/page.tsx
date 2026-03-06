@@ -1,6 +1,6 @@
 import { KPICard } from "@/components/cards/kpiCard.component";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Wrench,
   Cog,
@@ -18,6 +18,7 @@ import {
   ArrowRight,
   PlayCircle,
   PauseCircle,
+  Car,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -92,6 +93,55 @@ export default function FinanceDashboard() {
               </Button>
             </div>
           </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <p className="text-sm text-muted-foreground">Total CxC: $30,000M</p>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Agin de Cartera</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <ul className="space-y-2">
+                    <li className="flex items-center justify-between ">
+                      <span>Vigente</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$15,000</span>
+                        <div className=" rounded-full bg-green-500 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>1-30 días</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$10,000M</span>
+                        <div className=" rounded-full bg-yellow-600 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>31-60 días</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$2,000M</span>
+                        <div className=" rounded-full bg-orange-500 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>61-90 días</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$2,000M</span>
+                        <div className=" rounded-full bg-red-500 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>{`>90 días`}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$2,000M</span>
+                        <div className=" rounded-full bg-gray-500 h-4 w-4" />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </CardContent>
         </Card>
         <Card className="lg:col-span-1">
           <CardHeader>
@@ -108,6 +158,55 @@ export default function FinanceDashboard() {
               </Button>
             </div>
           </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <p className="text-sm text-muted-foreground">Total CxP: $20,000M</p>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Vencimientos próximos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div>
+                  <ul className="space-y-2">
+                    <li className="flex items-center justify-between ">
+                      <span>Esta semana</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$10,789M</span>
+                        <div className=" rounded-full bg-green-500 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>Prox. semana</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$5,753M</span>
+                        <div className=" rounded-full bg-yellow-600 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>Este mes</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$3,987M</span>
+                        <div className=" rounded-full bg-orange-500 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>61-90 días</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$1,789M</span>
+                        <div className=" rounded-full bg-red-500 h-4 w-4" />
+                      </div>
+                    </li>
+                    <li className="flex items-center justify-between">
+                      <span>{`>30 días`}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-black">$1,7865M</span>
+                        <div className=" rounded-full bg-gray-500 h-4 w-4" />
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </CardContent>
         </Card>
       </div>
     </div>
