@@ -48,7 +48,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Autocomplete } from "@/shared/presentation/components/autocomplete/Autocomplete";
-import type { Receipt, ReceiptLine } from "../../domain/entities/receipt.entity";
+import type {
+  Receipt,
+  ReceiptLine,
+} from "../../domain/entities/receipt.entity";
 import type { AutocompleteOption } from "@/shared/presentation/types/autocomplete.types";
 
 const receiptSchema = z.object({
@@ -93,7 +96,10 @@ interface ReceiptFormPageProps {
   receiptNumber?: string;
   searchPurchaseOrders: (query: string) => Promise<AutocompleteOption[]>;
   searchWarehouses: (query: string) => Promise<AutocompleteOption[]>;
-  searchLocations: (query: string, warehouseId: string) => Promise<AutocompleteOption[]>;
+  searchLocations: (
+    query: string,
+    warehouseId: string,
+  ) => Promise<AutocompleteOption[]>;
   fetchOrderLines: (orderId: string) => Promise<ReceiptLineWithDetails[]>;
 }
 
@@ -111,18 +117,19 @@ export function ReceiptFormPage({
 }: ReceiptFormPageProps) {
   const router = useRouter();
   const [lines, setLines] = useState<ReceiptLineWithDetails[]>(defaultLines);
-  const [selectedOrderName, setSelectedOrderName] = useState<string | undefined>(
-    defaultValues?.purchase_order?.order_number
-  );
-  const [selectedWarehouseName, setSelectedWarehouseName] = useState<string | undefined>(
-    defaultValues?.warehouse?.name
-  );
+  const [selectedOrderName, setSelectedOrderName] = useState<
+    string | undefined
+  >(defaultValues?.purchase_order?.order_number);
+  const [selectedWarehouseName, setSelectedWarehouseName] = useState<
+    string | undefined
+  >(defaultValues?.warehouse?.name);
 
   const form = useForm<ReceiptFormData>({
     resolver: zodResolver(receiptSchema),
     defaultValues: {
       purchase_order_id: defaultValues?.purchase_order_id || "",
-      receipt_date: defaultValues?.receipt_date || new Date().toISOString().split("T")[0],
+      receipt_date:
+        defaultValues?.receipt_date || new Date().toISOString().split("T")[0],
       warehouse_id: defaultValues?.warehouse_id || "",
       delivery_note_number: defaultValues?.delivery_note_number || "",
       carrier: defaultValues?.carrier || "",
@@ -137,94 +144,150 @@ export function ReceiptFormPage({
   const requiresInspection = form.watch("requires_inspection");
 
   // Load order lines when order is selected
-  const handleOrderSelect = useCallback(async (option: AutocompleteOption | null) => {
-    if (!option) return;
-    setSelectedOrderName(option.value);
+  const handleOrderSelect = useCallback(
+    async (option: AutocompleteOption | null) => {
+      if (!option) return;
+      setSelectedOrderName(option.value);
 
-    try {
-      const orderLines = await fetchOrderLines(option.code);
-      setLines(orderLines);
-    } catch (error) {
-      console.error("Error fetching order lines:", error);
-    }
-  }, [fetchOrderLines]);
+      try {
+        const orderLines = await fetchOrderLines(option.code);
+        setLines(orderLines);
+      } catch (error) {
+        console.error("Error fetching order lines:", error);
+      }
+    },
+    [fetchOrderLines],
+  );
 
-  const handleWarehouseSelect = useCallback((option: AutocompleteOption | null) => {
-    if (option) {
-      setSelectedWarehouseName(option.value);
-    }
-  }, []);
+  const handleWarehouseSelect = useCallback(
+    (option: AutocompleteOption | null) => {
+      if (option) {
+        setSelectedWarehouseName(option.value);
+      }
+    },
+    [],
+  );
 
   // Handle quantity changes
-  const handleQuantityReceived = useCallback((lineId: string, value: number) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      return {
-        ...line,
-        quantity_received: Math.min(value, line.quantity_ordered),
-        quantity_accepted: Math.min(value, line.quantity_ordered),
-        quantity_rejected: 0,
-      };
-    }));
-  }, []);
+  const handleQuantityReceived = useCallback(
+    (lineId: string, value: number) => {
+      setLines((prev) =>
+        prev.map((line) => {
+          if (line.line_id !== lineId) return line;
+          return {
+            ...line,
+            quantity_received: Math.min(value, line.quantity_ordered),
+            quantity_accepted: Math.min(value, line.quantity_ordered),
+            quantity_rejected: 0,
+          };
+        }),
+      );
+    },
+    [],
+  );
 
-  const handleQuantityAccepted = useCallback((lineId: string, value: number) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      const accepted = Math.min(value, line.quantity_received);
-      return {
-        ...line,
-        quantity_accepted: accepted,
-        quantity_rejected: line.quantity_received - accepted,
-      };
-    }));
-  }, []);
+  const handleQuantityAccepted = useCallback(
+    (lineId: string, value: number) => {
+      setLines((prev) =>
+        prev.map((line) => {
+          if (line.line_id !== lineId) return line;
+          const accepted = Math.min(value, line.quantity_received);
+          return {
+            ...line,
+            quantity_accepted: accepted,
+            quantity_rejected: line.quantity_received - accepted,
+          };
+        }),
+      );
+    },
+    [],
+  );
 
   // Handle lot/serial entry
   const handleLotNumberChange = useCallback((lineId: string, value: string) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      return { ...line, lot_number: value };
-    }));
+    setLines((prev) =>
+      prev.map((line) => {
+        if (line.line_id !== lineId) return line;
+        return { ...line, lot_number: value };
+      }),
+    );
   }, []);
 
-  const handleSerialNumberChange = useCallback((lineId: string, value: string) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      return { ...line, serial_number: value };
-    }));
-  }, []);
+  const handleSerialNumberChange = useCallback(
+    (lineId: string, value: string) => {
+      setLines((prev) =>
+        prev.map((line) => {
+          if (line.line_id !== lineId) return line;
+          return { ...line, serial_number: value };
+        }),
+      );
+    },
+    [],
+  );
 
-  const handleExpirationChange = useCallback((lineId: string, value: string) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      return { ...line, expiration_date: value };
-    }));
-  }, []);
+  const handleExpirationChange = useCallback(
+    (lineId: string, value: string) => {
+      setLines((prev) =>
+        prev.map((line) => {
+          if (line.line_id !== lineId) return line;
+          return { ...line, expiration_date: value };
+        }),
+      );
+    },
+    [],
+  );
 
-  const handleManufactureDateChange = useCallback((lineId: string, value: string) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      return { ...line, manufacture_date: value };
-    }));
-  }, []);
+  const handleManufactureDateChange = useCallback(
+    (lineId: string, value: string) => {
+      setLines((prev) =>
+        prev.map((line) => {
+          if (line.line_id !== lineId) return line;
+          return { ...line, manufacture_date: value };
+        }),
+      );
+    },
+    [],
+  );
 
-  const handleInspectionStatusChange = useCallback((lineId: string, value: string) => {
-    setLines(prev => prev.map(line => {
-      if (line.line_id !== lineId) return line;
-      return { ...line, inspection_status: value as ReceiptLine["inspection_status"] };
-    }));
-  }, []);
+  const handleInspectionStatusChange = useCallback(
+    (lineId: string, value: string) => {
+      setLines((prev) =>
+        prev.map((line) => {
+          if (line.line_id !== lineId) return line;
+          return {
+            ...line,
+            inspection_status: value as ReceiptLine["inspection_status"],
+          };
+        }),
+      );
+    },
+    [],
+  );
 
-  const handleSubmit = useCallback((data: ReceiptFormData) => {
-    onSubmit(data, lines);
-  }, [lines, onSubmit]);
+  const handleSubmit = useCallback(
+    (data: ReceiptFormData) => {
+      onSubmit(data, lines);
+    },
+    [lines, onSubmit],
+  );
 
   const totalLines = lines.length;
-  const totalOrdered = lines.reduce((sum, line) => sum + line.quantity_ordered, 0);
-  const totalReceived = lines.reduce((sum, line) => sum + line.quantity_received, 0);
-  const totalAccepted = lines.reduce((sum, line) => sum + line.quantity_accepted, 0);
-  const totalRejected = lines.reduce((sum, line) => sum + line.quantity_rejected, 0);
+  const totalOrdered = lines.reduce(
+    (sum, line) => sum + line.quantity_ordered,
+    0,
+  );
+  const totalReceived = lines.reduce(
+    (sum, line) => sum + line.quantity_received,
+    0,
+  );
+  const totalAccepted = lines.reduce(
+    (sum, line) => sum + line.quantity_accepted,
+    0,
+  );
+  const totalRejected = lines.reduce(
+    (sum, line) => sum + line.quantity_rejected,
+    0,
+  );
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-3.5rem)]">
@@ -317,7 +380,8 @@ export function ReceiptFormPage({
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-xs font-medium text-muted-foreground">
-                                Orden de Compra <span className="text-destructive">*</span>
+                                Orden de Compra{" "}
+                                <span className="text-destructive">*</span>
                               </FormLabel>
                               <FormControl>
                                 <Autocomplete
@@ -343,10 +407,16 @@ export function ReceiptFormPage({
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs font-medium text-muted-foreground">
-                              Fecha de Recepción <span className="text-destructive">*</span>
+                              Fecha de Recepción{" "}
+                              <span className="text-destructive">*</span>
                             </FormLabel>
                             <FormControl>
-                              <Input type="date" className="h-9" {...field} disabled={isLoading} />
+                              <Input
+                                type="date"
+                                className="h-9"
+                                {...field}
+                                disabled={isLoading}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -359,7 +429,8 @@ export function ReceiptFormPage({
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-xs font-medium text-muted-foreground">
-                                Bodega <span className="text-destructive">*</span>
+                                Bodega{" "}
+                                <span className="text-destructive">*</span>
                               </FormLabel>
                               <FormControl>
                                 <Autocomplete
@@ -403,7 +474,12 @@ export function ReceiptFormPage({
                               Número de Remisión
                             </FormLabel>
                             <FormControl>
-                              <Input placeholder="Remisión del proveedor" className="h-9 font-mono" {...field} disabled={isLoading} />
+                              <Input
+                                placeholder="Remisión del proveedor"
+                                className="h-9 font-mono"
+                                {...field}
+                                disabled={isLoading}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -418,7 +494,12 @@ export function ReceiptFormPage({
                               Transportadora
                             </FormLabel>
                             <FormControl>
-                              <Input placeholder="Nombre de transportadora" className="h-9" {...field} disabled={isLoading} />
+                              <Input
+                                placeholder="Nombre de transportadora"
+                                className="h-9"
+                                {...field}
+                                disabled={isLoading}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -433,7 +514,12 @@ export function ReceiptFormPage({
                               Número de Guía
                             </FormLabel>
                             <FormControl>
-                              <Input placeholder="Número de tracking" className="h-9 font-mono" {...field} disabled={isLoading} />
+                              <Input
+                                placeholder="Número de tracking"
+                                className="h-9 font-mono"
+                                {...field}
+                                disabled={isLoading}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -453,9 +539,12 @@ export function ReceiptFormPage({
                           <ClipboardCheck className="h-5 w-5 text-warning" />
                         </div>
                         <div>
-                          <p className="font-medium text-sm">Inspección de Calidad</p>
+                          <p className="font-medium text-sm">
+                            Inspección de Calidad
+                          </p>
                           <p className="text-xs text-muted-foreground">
-                            Requiere revisión de calidad antes de confirmar la recepción
+                            Requiere revisión de calidad antes de confirmar la
+                            recepción
                           </p>
                         </div>
                       </div>
@@ -490,37 +579,54 @@ export function ReceiptFormPage({
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Líneas</span>
-                        <span className="font-semibold tabular-nums">{totalLines}</span>
+                        <span className="font-semibold tabular-nums">
+                          {totalLines}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Ordenado</span>
-                        <span className="font-semibold tabular-nums">{totalOrdered}</span>
+                        <span className="font-semibold tabular-nums">
+                          {totalOrdered}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Recibido</span>
-                        <span className="font-semibold tabular-nums">{totalReceived}</span>
+                        <span className="font-semibold tabular-nums">
+                          {totalReceived}
+                        </span>
                       </div>
                       <div className="border-t pt-3 space-y-2">
                         <div className="flex justify-between text-sm">
                           <div className="flex items-center gap-1.5">
                             <Check className="h-3.5 w-3.5 text-success" />
-                            <span className="text-muted-foreground">Aceptado</span>
+                            <span className="text-muted-foreground">
+                              Aceptado
+                            </span>
                           </div>
-                          <span className="font-semibold tabular-nums text-success">{totalAccepted}</span>
+                          <span className="font-semibold tabular-nums text-success">
+                            {totalAccepted}
+                          </span>
                         </div>
                         {totalRejected > 0 && (
                           <div className="flex justify-between text-sm">
                             <div className="flex items-center gap-1.5">
                               <XCircle className="h-3.5 w-3.5 text-destructive" />
-                              <span className="text-muted-foreground">Rechazado</span>
+                              <span className="text-muted-foreground">
+                                Rechazado
+                              </span>
                             </div>
-                            <span className="font-semibold tabular-nums text-destructive">{totalRejected}</span>
+                            <span className="font-semibold tabular-nums text-destructive">
+                              {totalRejected}
+                            </span>
                           </div>
                         )}
                       </div>
                       {requiresInspection && (
                         <div className="pt-2 border-t">
-                          <Badge variant="outline" className="bg-warning/15 text-warning border-0">
+                          <Badge
+                            variant="outline"
+                            className="bg-warning/15 text-warning border-0"
+                          >
                             <ClipboardCheck className="mr-1.5 h-3 w-3" />
                             Requiere inspección
                           </Badge>
@@ -587,14 +693,18 @@ export function ReceiptFormPage({
                     <TableBody>
                       {lines.length === 0 ? (
                         <TableRow className="hover:bg-transparent">
-                          <TableCell colSpan={requiresInspection ? 10 : 9} className="h-32 text-center">
+                          <TableCell
+                            colSpan={requiresInspection ? 10 : 9}
+                            className="h-32 text-center"
+                          >
                             <div className="flex flex-col items-center justify-center gap-2">
                               <div className="rounded-full bg-muted p-3">
                                 <Package className="h-5 w-5 text-muted-foreground" />
                               </div>
                               <p className="text-sm font-medium">Sin líneas</p>
                               <p className="text-xs text-muted-foreground">
-                                Selecciona una orden de compra para cargar las líneas
+                                Selecciona una orden de compra para cargar las
+                                líneas
                               </p>
                             </div>
                           </TableCell>
@@ -608,21 +718,33 @@ export function ReceiptFormPage({
                             <TableCell>
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="font-medium text-sm">{line.product?.name || line.description}</span>
-                                  {(line.product?.is_lot_tracked || line.product?.is_serial_tracked) && (
-                                    <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20">
+                                  <span className="font-medium text-sm">
+                                    {line.product?.name || line.description}
+                                  </span>
+                                  {(line.product?.is_lot_tracked ||
+                                    line.product?.is_serial_tracked) && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-[10px] px-1 py-0 h-4 bg-primary/10 text-primary border-primary/20"
+                                    >
                                       <Boxes className="h-2.5 w-2.5 mr-0.5" />
-                                      {line.product?.is_serial_tracked ? "Serie" : "Lote"}
+                                      {line.product?.is_serial_tracked
+                                        ? "Serie"
+                                        : "Lote"}
                                     </Badge>
                                   )}
                                 </div>
                                 {line.product?.sku && (
-                                  <div className="font-mono text-xs text-muted-foreground">{line.product.sku}</div>
+                                  <div className="font-mono text-xs text-muted-foreground">
+                                    {line.product.sku}
+                                  </div>
                                 )}
                               </div>
                             </TableCell>
                             <TableCell className="text-center">
-                              <span className="font-mono text-sm tabular-nums">{line.quantity_ordered}</span>
+                              <span className="font-mono text-sm tabular-nums">
+                                {line.quantity_ordered}
+                              </span>
                             </TableCell>
                             <TableCell>
                               <Input
@@ -630,7 +752,12 @@ export function ReceiptFormPage({
                                 min={0}
                                 max={line.quantity_ordered}
                                 value={line.quantity_received}
-                                onChange={(e) => handleQuantityReceived(line.line_id, e.target.valueAsNumber || 0)}
+                                onChange={(e) =>
+                                  handleQuantityReceived(
+                                    line.line_id,
+                                    e.target.valueAsNumber || 0,
+                                  )
+                                }
                                 disabled={isLoading}
                                 className="h-8 w-20 text-center tabular-nums mx-auto"
                               />
@@ -641,7 +768,12 @@ export function ReceiptFormPage({
                                 min={0}
                                 max={line.quantity_received}
                                 value={line.quantity_accepted}
-                                onChange={(e) => handleQuantityAccepted(line.line_id, e.target.valueAsNumber || 0)}
+                                onChange={(e) =>
+                                  handleQuantityAccepted(
+                                    line.line_id,
+                                    e.target.valueAsNumber || 0,
+                                  )
+                                }
                                 disabled={isLoading}
                                 className="h-8 w-20 text-center tabular-nums mx-auto"
                               />
@@ -649,8 +781,17 @@ export function ReceiptFormPage({
                             <TableCell>
                               <Input
                                 value={line.lot_number || ""}
-                                onChange={(e) => handleLotNumberChange(line.line_id, e.target.value)}
-                                placeholder={line.product?.is_lot_tracked ? "Lote (requerido)" : "Lote"}
+                                onChange={(e) =>
+                                  handleLotNumberChange(
+                                    line.line_id,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder={
+                                  line.product?.is_lot_tracked
+                                    ? "Lote (requerido)"
+                                    : "Lote"
+                                }
                                 className={`h-8 font-mono text-xs ${line.product?.is_lot_tracked && !line.lot_number ? "border-warning" : ""}`}
                                 disabled={isLoading}
                               />
@@ -658,8 +799,17 @@ export function ReceiptFormPage({
                             <TableCell>
                               <Input
                                 value={line.serial_number || ""}
-                                onChange={(e) => handleSerialNumberChange(line.line_id, e.target.value)}
-                                placeholder={line.product?.is_serial_tracked ? "Serial (requerido)" : "Serial"}
+                                onChange={(e) =>
+                                  handleSerialNumberChange(
+                                    line.line_id,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder={
+                                  line.product?.is_serial_tracked
+                                    ? "Serial (requerido)"
+                                    : "Serial"
+                                }
                                 className={`h-8 font-mono text-xs ${line.product?.is_serial_tracked && !line.serial_number ? "border-warning" : ""}`}
                                 disabled={isLoading}
                               />
@@ -668,7 +818,12 @@ export function ReceiptFormPage({
                               <Input
                                 type="date"
                                 value={line.expiration_date || ""}
-                                onChange={(e) => handleExpirationChange(line.line_id, e.target.value)}
+                                onChange={(e) =>
+                                  handleExpirationChange(
+                                    line.line_id,
+                                    e.target.value,
+                                  )
+                                }
                                 className="h-8 text-xs"
                                 disabled={isLoading}
                               />
@@ -677,7 +832,12 @@ export function ReceiptFormPage({
                               <Input
                                 type="date"
                                 value={line.manufacture_date || ""}
-                                onChange={(e) => handleManufactureDateChange(line.line_id, e.target.value)}
+                                onChange={(e) =>
+                                  handleManufactureDateChange(
+                                    line.line_id,
+                                    e.target.value,
+                                  )
+                                }
                                 className="h-8 text-xs"
                                 disabled={isLoading}
                               />
@@ -686,17 +846,30 @@ export function ReceiptFormPage({
                               <TableCell>
                                 <Select
                                   value={line.inspection_status || "pending"}
-                                  onValueChange={(value) => handleInspectionStatusChange(line.line_id, value)}
+                                  onValueChange={(value) =>
+                                    handleInspectionStatusChange(
+                                      line.line_id,
+                                      value,
+                                    )
+                                  }
                                   disabled={isLoading}
                                 >
                                   <SelectTrigger className="h-8 text-xs">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="pending">Pendiente</SelectItem>
-                                    <SelectItem value="passed">Aprobado</SelectItem>
-                                    <SelectItem value="failed">Rechazado</SelectItem>
-                                    <SelectItem value="partial">Parcial</SelectItem>
+                                    <SelectItem value="pending">
+                                      Pendiente
+                                    </SelectItem>
+                                    <SelectItem value="passed">
+                                      Aprobado
+                                    </SelectItem>
+                                    <SelectItem value="failed">
+                                      Rechazado
+                                    </SelectItem>
+                                    <SelectItem value="partial">
+                                      Parcial
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               </TableCell>
