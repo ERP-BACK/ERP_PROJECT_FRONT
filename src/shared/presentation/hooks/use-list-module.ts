@@ -11,9 +11,16 @@ interface ListActions<T> {
   create: (data: Partial<T>) => Promise<T>;
   update: (id: string, data: Partial<T>) => Promise<T>;
   remove: (id: string) => Promise<void>;
+  getOne: (id: string) => Promise<T>;
 }
 
-export function useListModule<T>(queryKey: string, actions: ListActions<T>) {
+interface UseListModuleOptions<T> {
+  queryKey: string;
+  actions: ListActions<T>;
+  id?: string;
+}
+
+export function useListModule<T>({ queryKey, actions, id }: UseListModuleOptions<T>) {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -36,6 +43,12 @@ export function useListModule<T>(queryKey: string, actions: ListActions<T>) {
     },
   });
 
+  const { data: getOne, isLoading: getOneIsLoading } = useQuery({
+    queryKey: [queryKey, id], // Incluir id en el queryKey para mejor caché
+    queryFn: () => actions.getOne(id!),
+    enabled: !!id, // Solo obtener elemento cuando hay id
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => actions.remove(id),
     onSuccess: () => {
@@ -49,5 +62,7 @@ export function useListModule<T>(queryKey: string, actions: ListActions<T>) {
     createMutation,
     updateMutation,
     deleteMutation,
+    getOne,
+    getOneIsLoading,
   };
 }

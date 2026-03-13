@@ -151,8 +151,9 @@ export function RegionsZonesTablePage() {
         onOpenChange={(open) =>
           setDialogOpen((prev) => ({ ...prev, importOpen: open }))
         }
-        moduleKey="regions-zones"
+        moduleKey="regions_zones"
         title="Importar  Regiones/Zonas desde Excel"
+        rute="regions_zones"
         onSuccess={() => {}}
       />
     </>

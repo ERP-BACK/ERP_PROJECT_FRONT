@@ -10,3 +10,6 @@ export const findById = actions.findById;
 export const create = actions.create;
 export const update = actions.update;
 export const remove = actions.remove;
+export const getOne = actions.getOne;
+
+

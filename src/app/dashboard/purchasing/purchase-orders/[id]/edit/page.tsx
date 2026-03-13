@@ -44,16 +44,19 @@ function mapToOrderLines(lines?: PurchaseOrderLine[]): OrderLine[] {
 }
 
 function mapToBackendLines(lines: OrderLine[]) {
-  return lines.map((line) => ({
-    product_id: line.product_id || undefined,
-    description: line.description,
-    quantity_ordered: line.quantity,
-    uom_id: line.uom_id || "UND",
-    unit_price: line.unit_price,
-    discount_percent: line.discount_percent,
-    tax_code_id: line.tax_code_id || undefined,
-    destination_warehouse_id: line.warehouse_id || undefined,
-  }));
+  return lines.map((line) => {
+    const payload: Record<string, any> = {
+      description: line.description,
+      quantity_ordered: line.quantity,
+      uom_id: line.uom_id || "UND",
+      unit_price: line.unit_price,
+      discount_percent: line.discount_percent,
+    };
+    if (line.product_id) payload.product_id = line.product_id;
+    if (line.tax_code_id) payload.tax_code_id = line.tax_code_id;
+    if (line.warehouse_id) payload.destination_warehouse_id = line.warehouse_id;
+    return payload;
+  });
 }
 
 export default function EditPurchaseOrderPage() {
@@ -83,12 +86,20 @@ export default function EditPurchaseOrderPage() {
   });
 
   const handleSubmit = (formData: Record<string, unknown>, lines: OrderLine[]) => {
-    const dataWithLines = {
-      ...formData,
-      lines: mapToBackendLines(lines),
-    } as Partial<PurchaseOrder>;
+    const { currency, ...restFormData } = formData;
+    
+    // Remove any undefined or empty values to prevent $undefined serialization issues
+    const cleanFormData = Object.fromEntries(
+      Object.entries(restFormData).filter(([_, v]) => v !== undefined && v !== "")
+    );
 
-    updateMutation.mutate(dataWithLines);
+    const dataWithLines = {
+      ...cleanFormData,
+      currency_id: currency,
+      lines: mapToBackendLines(lines),
+    };
+
+    updateMutation.mutate({ purchase_order: dataWithLines } as any);
   };
 
   const defaultLines = useMemo(

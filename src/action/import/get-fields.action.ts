@@ -22,5 +22,6 @@ export async function getImportFields(
   moduleKey: string,
   rute = "api/import",
 ): Promise<ImportFieldsConfig> {
+  console.log(`Fetching import fields for module: ${moduleKey}, route: ${rute}`);
   return apiImport<ImportFieldsConfig>(`/${rute}/${moduleKey}/fields`);
 }

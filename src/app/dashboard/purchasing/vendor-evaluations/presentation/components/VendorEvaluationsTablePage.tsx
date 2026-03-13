@@ -1,6 +1,17 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, Send, CheckCircle, XCircle, Calculator, History } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  Send,
+  CheckCircle,
+  XCircle,
+  Calculator,
+  History,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,16 +20,33 @@ import { useVendorEvaluations } from "../hooks/use-vendor-evaluations";
 import { columnsVendorEvaluations } from "./columns-vendor-evaluation";
 import type { VendorEvaluation } from "../../domain/entities/vendor-evaluation.entity";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function VendorEvaluationsTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useVendorEvaluations();
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useVendorEvaluations();
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const vendorEvaluationsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleNew(),
+      },
+    ],
+  };
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
@@ -133,13 +161,7 @@ export function VendorEvaluationsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleNew}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Evaluación
-        </Button>
-      </div>
+      <PageHeader pageHeader={vendorEvaluationsHeader} />
 
       <Show
         when={!isLoading}

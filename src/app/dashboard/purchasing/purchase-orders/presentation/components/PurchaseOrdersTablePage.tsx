@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, Eye, Send } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Send, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,23 +9,41 @@ import { TableSkeleton } from "@/components/tables/TableSkeleton";
 import { usePurchaseOrders } from "../hooks/use-purchase-orders";
 import { columnsPurchaseOrders } from "./columns-purchase-order";
 import type { PurchaseOrder } from "../../domain/entities/purchase-order.entity";
+import { useState } from "react";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function PurchaseOrdersTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = usePurchaseOrders();
-
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    usePurchaseOrders();
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
+  const purchaseHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
   const handleCreate = () => {
     router.push("/dashboard/purchasing/purchase-orders/new");
   };
 
   const handleEdit = (order: PurchaseOrder) => {
-    router.push(`/dashboard/purchasing/purchase-orders/${order.purchase_order_id}/edit`);
+    router.push(
+      `/dashboard/purchasing/purchase-orders/${order.purchase_order_id}/edit`,
+    );
   };
 
   const handleDelete = (id: string) => {
@@ -39,7 +57,8 @@ export function PurchaseOrdersTablePage() {
       header: "Acciones",
       cell: ({ row }: { row: { original: PurchaseOrder } }) => {
         const order = row.original;
-        const canEdit = order.status === "draft" || order.status === "pending_approval";
+        const canEdit =
+          order.status === "draft" || order.status === "pending_approval";
         const canDelete = order.status === "draft";
         const canSend = order.status === "approved";
 
@@ -93,13 +112,7 @@ export function PurchaseOrdersTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nueva Orden
-        </Button>
-      </div>
+      <PageHeader pageHeader={purchaseHeader} />
 
       <Show
         when={!isLoading}

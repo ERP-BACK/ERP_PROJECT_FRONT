@@ -1,6 +1,16 @@
 "use client";
 
-import { Plus, Pencil, Trash2, Eye, PackageCheck, Truck, CheckCircle, XCircle } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  PackageCheck,
+  Truck,
+  CheckCircle,
+  XCircle,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -9,16 +19,29 @@ import { useShipments } from "../hooks/use-shipments";
 import { columnsShipments } from "./columns-shipment";
 import type { Shipment } from "../../domain/entities/shipment.entity";
 import { useRouter } from "next/navigation";
+import { PageHeader } from "@/components/dashboard/PageHeader";
 
 export function ShipmentsTablePage() {
   const router = useRouter();
-  const {
-    data,
-    isLoading,
-    pagination,
-    setPagination,
-    deleteMutation,
-  } = useShipments();
+  const { data, isLoading, pagination, setPagination, deleteMutation } =
+    useShipments();
+
+  const shipmentsHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleNew(),
+      },
+    ],
+  };
 
   const handleDelete = (id: string) => {
     deleteMutation.mutate(id);
@@ -51,7 +74,11 @@ export function ShipmentsTablePage() {
               variant="ghost"
               size="icon"
               className="h-7 w-7"
-              onClick={() => router.push(`/dashboard/sales/shipments/${shipment.shipment_id}`)}
+              onClick={() =>
+                router.push(
+                  `/dashboard/sales/shipments/${shipment.shipment_id}`,
+                )
+              }
               title="Ver detalle"
             >
               <Eye className="h-4 w-4" />
@@ -116,13 +143,7 @@ export function ShipmentsTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleNew}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Nuevo Despacho
-        </Button>
-      </div>
+      <PageHeader pageHeader={shipmentsHeader} />
 
       <Show
         when={!isLoading}

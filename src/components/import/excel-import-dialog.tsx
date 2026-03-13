@@ -283,7 +283,7 @@ export function ExcelImportDialog({
   const handleDownloadTemplate = async () => {
     try {
       setLoading(true);
-      const base64 = await downloadTemplate(moduleKey);
+      const base64 = await downloadTemplate(moduleKey, rute);
       const byteArray = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
       const blob = new Blob([byteArray], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -534,7 +534,7 @@ export function ExcelImportDialog({
         <div className="border-t border-border/50" />
 
         {/* Content */}
-        <div className="px-6 py-5">
+        <div className="px-6 py-5 scroll-my-20 max-h-[400px] overflow-y-auto">
           {error && (
             <div className="mb-4 flex items-center gap-3 rounded-xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-destructive/10">

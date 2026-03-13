@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Filter, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MainDataTable } from "@/components/tables/MainTable";
 import { Show } from "@/components/show/Show.component";
@@ -12,6 +12,8 @@ import { useWarehouses } from "../hooks/use-warehouses";
 import { columnsWarehouses } from "./columns-warehouse";
 import { warehouseFormConfig } from "../forms/warehouse-form.config";
 import type { Warehouse } from "../../domain/entities/warehouse.entity";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+import { ExcelImportDialog } from "@/components/import/excel-import-dialog";
 
 export function WarehousesTablePage() {
   const router = useRouter();
@@ -24,17 +26,41 @@ export function WarehousesTablePage() {
     updateMutation,
     deleteMutation,
   } = useWarehouses();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState({
+    dialogOpen: false,
+    importOpen: false,
+  });
   const [editingItem, setEditingItem] = useState<Warehouse | null>(null);
+  const warehousesHeader = {
+    filters: [
+      {
+        title: "Filtros",
+        icon: <Filter className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => {},
+      },
+    ],
+    import: [
+      {
+        title: "Importar Excel",
+        icon: <Upload className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => setDialogOpen((prev) => ({ ...prev, importOpen: true })),
+      },
+      {
+        title: "Crear",
+        icon: <Plus className="mr-1.5 h-3.5 w-3.5" />,
+        onClick: () => handleCreate(),
+      },
+    ],
+  };
 
   const handleCreate = () => {
     setEditingItem(null);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleEdit = (item: Warehouse) => {
     setEditingItem(item);
-    setDialogOpen(true);
+    setDialogOpen((prev) => ({ ...prev, dialogOpen: true }));
   };
 
   const handleDelete = (id: string) => {
@@ -45,10 +71,16 @@ export function WarehousesTablePage() {
     if (editingItem) {
       updateMutation.mutate(
         { id: editingItem.warehouse_id, data: formData },
-        { onSuccess: () => setDialogOpen(false) }
+        {
+          onSuccess: () =>
+            setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+        },
       );
     } else {
-      createMutation.mutate(formData, { onSuccess: () => setDialogOpen(false) });
+      createMutation.mutate(formData, {
+        onSuccess: () =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: false })),
+      });
     }
   };
 
@@ -64,7 +96,11 @@ export function WarehousesTablePage() {
             size="icon"
             className="h-8 w-8"
             title="Ver detalle"
-            onClick={() => router.push(`/dashboard/inventory/warehouses/${row.original.warehouse_id}`)}
+            onClick={() =>
+              router.push(
+                `/dashboard/inventory/warehouses/${row.original.warehouse_id}`,
+              )
+            }
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -91,15 +127,12 @@ export function WarehousesTablePage() {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <div />
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
-          Crear
-        </Button>
-      </div>
+      <PageHeader pageHeader={warehousesHeader} />
 
-      <Show when={!isLoading} fallback={<TableSkeleton columns={columnsWarehouses.length} />}>
+      <Show
+        when={!isLoading}
+        fallback={<TableSkeleton columns={columnsWarehouses.length} />}
+      >
         <MainDataTable
           columns={columnsWithActions}
           data={data?.data}
@@ -112,13 +145,28 @@ export function WarehousesTablePage() {
       </Show>
 
       <CrudFormDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={dialogOpen.dialogOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, dialogOpen: open }))
+        }
         title={editingItem ? "Editar Almacén" : "Crear Almacén"}
         formConfig={warehouseFormConfig}
-        defaultValues={editingItem ? (editingItem as unknown as Record<string, unknown>) : undefined}
+        defaultValues={
+          editingItem
+            ? (editingItem as unknown as Record<string, unknown>)
+            : undefined
+        }
         onSubmit={handleSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
+      />
+      <ExcelImportDialog
+        open={dialogOpen.importOpen}
+        onOpenChange={(open) =>
+          setDialogOpen((prev) => ({ ...prev, importOpen: open }))
+        }
+        moduleKey="banks"
+        title="Importar bancos desde excel"
+        onSuccess={() => {}}
       />
     </>
   );
