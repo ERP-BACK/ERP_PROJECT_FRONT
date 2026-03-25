@@ -21,6 +21,7 @@ import {
   Car,
 } from "lucide-react";
 import Link from "next/link";
+import { ChartAreaInteractive } from "./components/Chart";
 
 const cardData: Array<{
   title: string;
@@ -209,6 +210,14 @@ export default function FinanceDashboard() {
           </CardContent>
         </Card>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Agin de Proveedores</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ChartAreaInteractive />
+        </CardContent>
+      </Card>
     </div>
   );
 }
